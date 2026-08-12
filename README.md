@@ -59,12 +59,17 @@ text**, which is where a low-contrast panel struggles. `Solid` additionally
 crushes antialiased glyph edges to black, making stems solid at the cost of
 harder edges.
 
-ReadingLab also exposes a **white point**, the counterpart to the black point:
-antialiasing leaves a faint grey halo on the *background* side of a glyph, and
-crushing it makes the page pure white. Together they are a levels adjustment
-that hardens both sides of a text edge — as close to sharpening as this
-pipeline gets, since real sharpening would have to look at neighbouring pixels
-and a display transform only ever sees one pixel at a time.
+ReadingLab also exposes a **white point**, the counterpart to the black point.
+In practice it turned out **not to be worth promoting to a level**: with macOS
+font smoothing doing stem darkening, glyph fringe pixels sit mostly on the dark
+side of the edge, which the black point already handles — so there is little
+light halo left to crush. It only helps with grey text on a dark background,
+which is a layout to avoid on a reflective panel anyway. Kept in the lab for
+completeness.
+
+That is roughly the ceiling for this approach. A display transform only ever
+sees one pixel at a time, so real sharpening or outlining — which need
+neighbouring pixels — would require capturing and re-rendering the screen.
 
 White stays exactly 1.000 at every level, so the page never greys.
 
@@ -113,6 +118,10 @@ colours are unaffected.
 
 So: **turn it on for video and photos, off for reading.** The app warns in the
 UI whenever a level is active.
+
+Related: prefer **Light mode** on colour e-ink generally. The panel is
+reflective, so white is its natural resting state; dark backgrounds cost
+contrast and are where Video Enhance does the most damage to text.
 
 **It does not persist.** Video Enhance drives the display's gamma table, which
 macOS clears on sleep and on display changes. The app re-applies it on wake and
