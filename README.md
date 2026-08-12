@@ -82,6 +82,11 @@ UI whenever a level is active.
 macOS clears on sleep and on display changes. The app re-applies it on wake and
 reconfiguration, so it needs to keep running — unlike saturation.
 
+Quitting the app clears the tone curve from every display, and so does logging
+out or shutting down. Saturation is not cleared on quit: it lives in the colour
+profile and is meant to persist, exactly like a Colour Profile choice made in
+System Settings. To remove it, use the 100% button or un-mark the display.
+
 ## Tuning labs
 
 Two tools for finding your own curve rather than using the presets. Both drive

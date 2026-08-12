@@ -325,12 +325,18 @@ final class AssistantDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ note: Notification) {
         NSApp.setActivationPolicy(.accessory)
+        NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.willPowerOffNotification,
+            object: nil, queue: .main
+        ) { _ in restoreAllDisplaysToneCurves() }
     }
 
     // Video Enhance lives in a volatile gamma table; don't leave it applied
-    // with nothing running to maintain or undo it.
+    // with nothing running to maintain or undo it. This must not depend on the
+    // UI model — that is only wired up once the menu bar panel is opened, so
+    // quitting without opening it used to leave the curve in place.
     func applicationWillTerminate(_ note: Notification) {
-        model?.restoreAll()
+        restoreAllDisplaysToneCurves()
     }
 }
 
