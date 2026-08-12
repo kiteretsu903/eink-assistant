@@ -14,7 +14,7 @@
 "text.title"   = "Text Contrast";
 "text.caption" = "Darkens text so it reads on a low-contrast panel. For reading.";
 
-"video.title"   = "Video Enhance";
+"video.title"   = "Video Shadow Lift";
 "video.caption" = "Brightens dark areas only. Turn on for video and photos.";
 "video.warning" = "Text is lighter: %@. Best turned off for reading.";
 "video.blocked" = "Off while Text Contrast is on: they use the same hardware table and pull opposite ways.";
@@ -37,7 +37,7 @@
 
 "help.title"      = "How this works";
 "help.saturation" = "Saturation: rewrites the display's colour profile so macOS sends more vivid signals to a narrow-gamut panel.";
-"help.video"      = "Video Enhance: brightens only the darkest tones. Mid-tones and highlights are untouched.";
+"help.video"      = "Video Shadow Lift: brightens only the darkest tones. Mid-tones and highlights are untouched.";
 "help.tradeoff"   = "It cannot tell dark video from dark text, so text loses contrast. Worst in Dark Mode. Use for video, off for reading.";
 "help.volatile"   = "All settings here need the app running: quitting restores your displays, launching re-applies your settings.";
 

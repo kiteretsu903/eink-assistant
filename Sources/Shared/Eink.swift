@@ -135,10 +135,10 @@ enum EinkSettings {
 ///
 /// The gamma table this uses is volatile — macOS resets it on sleep, display
 /// reconfiguration and logout — so this has to be re-run on those events. That
-/// is why Video Enhance needs the app running, while saturation does not.
+/// is why Video Shadow Lift needs the app running, while saturation does not.
 /// The curve a display should currently be showing.
 ///
-/// Text and Video Enhance both drive the one gamma table and pull in opposite
+/// Text and Video Shadow Lift both drive the one gamma table and pull in opposite
 /// directions, so they are mutually exclusive; Text wins if both are somehow set.
 func effectiveCurve(displayID: CGDirectDisplayID) -> ToneCurve? {
     guard EinkSettings.isEink(displayID) else { return nil }

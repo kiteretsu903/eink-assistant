@@ -4,7 +4,7 @@
 //
 //   Saturation     written into the display's ICC profile. macOS re-applies it
 //                  at login, so it survives quitting this app entirely.
-//   Video Enhance  driven through the display's gamma table, which macOS resets
+//   Video Shadow Lift  driven through the display's gamma table, which macOS resets
 //                  on sleep and display changes. That needs the app running to
 //                  be re-applied, which is why it is framed as a mode you turn
 //                  on and off rather than a setting.
@@ -69,7 +69,7 @@ final class AssistantModel: ObservableObject {
         launchAtLogin = SMAppService.mainApp.status == .enabled
 
         // The gamma table is volatile: macOS clears it on wake and on any
-        // display reconfiguration, so Video Enhance has to be re-asserted.
+        // display reconfiguration, so Video Shadow Lift has to be re-asserted.
         NotificationCenter.default.addObserver(
             forName: NSApplication.didChangeScreenParametersNotification,
             object: nil, queue: .main
@@ -723,7 +723,7 @@ final class AssistantDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    // Video Enhance lives in a volatile gamma table; don't leave it applied
+    // Video Shadow Lift lives in a volatile gamma table; don't leave it applied
     // with nothing running to maintain or undo it. This must not depend on the
     // UI model — that is only wired up once the menu bar panel is opened, so
     // quitting without opening it used to leave the curve in place.

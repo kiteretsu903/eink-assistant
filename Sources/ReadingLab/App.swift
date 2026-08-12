@@ -1,6 +1,6 @@
 // ReadingLab — live tuning for the reading (text contrast) curve.
 //
-// The mirror of Video Enhance: gamma above 1 darkens the low end while pinning
+// The mirror of Video Shadow Lift: gamma above 1 darkens the low end while pinning
 // white, pushing text toward the panel's floor instead of lifting shadows.
 //
 // Saturation is deliberately untouched here — reading mode is a tone-only
