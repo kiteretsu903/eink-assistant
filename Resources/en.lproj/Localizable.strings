@@ -1,4 +1,4 @@
-/* E-Ink Assistant — English */
+/* E-Ink Assistant (English) */
 
 "app.title"        = "E-Ink Assistant";
 "display.mark"     = "Select your e-ink displays to enable tuning.";
@@ -16,8 +16,8 @@
 
 "video.title"   = "Video Enhance";
 "video.caption" = "Brightens dark areas only. Turn on for video and photos.";
-"video.warning" = "Text is lighter — %@. Best turned off for reading.";
-"video.blocked" = "Off while Text Contrast is on — they use the same hardware table and pull opposite ways.";
+"video.warning" = "Text is lighter: %@. Best turned off for reading.";
+"video.blocked" = "Off while Text Contrast is on: they use the same hardware table and pull opposite ways.";
 
 "level.off"    = "Off";
 "level.subtle" = "Subtle";
@@ -33,13 +33,13 @@
 "text.detail.medium" = "Mild darkening of text.";
 "text.detail.strong" = "More darkening; faint text still faint.";
 "text.detail.sharp"  = "Strong. Big gain on secondary and faint text.";
-"text.detail.solid"  = "Also crushes antialiased edges solid — crisper, but text may look harder-edged.";
+"text.detail.solid"  = "Also crushes antialiased edges solid: crisper, but text may look harder-edged.";
 
 "help.title"      = "How this works";
 "help.saturation" = "Saturation: rewrites the display's colour profile so macOS sends more vivid signals to a narrow-gamut panel.";
 "help.video"      = "Video Enhance: brightens only the darkest tones. Mid-tones and highlights are untouched.";
-"help.tradeoff"   = "It cannot tell dark video from dark text, so text loses contrast — worst in Dark Mode. Use for video, off for reading.";
-"help.volatile"   = "Both need the app running: quitting restores your displays, launching re-applies your settings.";
+"help.tradeoff"   = "It cannot tell dark video from dark text, so text loses contrast. Worst in Dark Mode. Use for video, off for reading.";
+"help.volatile"   = "All settings here need the app running: quitting restores your displays, launching re-applies your settings.";
 
 "error.saturation" = "Could not apply saturation to %@.";
 "error.login"      = "Could not change launch at login.";
@@ -47,5 +47,5 @@
 "language.title"  = "Language";
 "language.system" = "System";
 
-"notice.tuned" = "Tuned for Bigme B251 Pro (R2 FW V2.0) — Web Mode, Hardware Gamma Level 3, Contrast 50, Color Restore Mode off.";
+"notice.tuned" = "Tuned for Bigme B251 Pro (R2 FW V2.0): Web Mode, Hardware Gamma Level 3, Contrast 50, Color Restore Mode off.";
 "notice.risk"  = "Other e-ink monitors may also benefit. Use at your own risk.";
