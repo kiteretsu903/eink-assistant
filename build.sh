@@ -51,7 +51,13 @@ swiftc -O -parse-as-library -target "$TARGET" \
   Sources/Shared/*.swift Sources/ToneLab/*.swift -o "ToneLab.bin"
 bundle "ToneLab" "local.eink.ToneLab"
 
+echo "building ReadingLab…"
+swiftc -O -parse-as-library -target "$TARGET" \
+  Sources/Shared/*.swift Sources/ReadingLab/*.swift -o "ReadingLab.bin"
+bundle "ReadingLab" "local.eink.ReadingLab"
+
 echo
 echo "done:"
 echo "  open 'E-Ink Assistant.app'"
-echo "  open ToneLab.app        # curve tuning tool"
+echo "  open ToneLab.app        # shadow-lift (video) tuning"
+echo "  open ReadingLab.app     # text-contrast (reading) tuning"

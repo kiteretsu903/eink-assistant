@@ -82,17 +82,33 @@ UI whenever a level is active.
 macOS clears on sleep and on display changes. The app re-applies it on wake and
 reconfiguration, so it needs to keep running — unlike saturation.
 
-## ToneLab
+## Tuning labs
 
-A tuning tool, if you want to find your own curve rather than use the presets.
+Two tools for finding your own curve rather than using the presets. Both drive
+the gamma table live, so nothing persists — quitting restores the display.
 
-```
-open ToneLab.app
-```
-
-Live knee and γ sliders driving the gamma table directly, a curve plot, a
-numeric read-out of the lift at each level, and dark step-wedge and ramp
+**ToneLab** (`open ToneLab.app`) — shadow lift, for video. Knee and γ sliders,
+a curve plot, the lift factor at each level, and dark step-wedge and ramp
 patterns for judging tone separation and banding by eye.
+
+**ReadingLab** (`open ReadingLab.app`) — text contrast, the mirror image. Uses
+γ **above** 1 to darken the low end while pinning white, pushing text toward the
+panel's floor. Shows live WCAG contrast ratios before and after, and renders real
+text specimens at the greys macOS actually uses (body, secondary, tertiary,
+headings, regular and bold) on a white page.
+
+Reading mode is **tone-only** — it does not touch saturation, so whatever the
+colour profile is doing stays as it is.
+
+| preset | knee | γ | body text | secondary |
+|---|---|---|---|---|
+| off | 0.55 | 1.00 | 15.1:1 | 4.8:1 |
+| light | 0.45 | 1.35 | 17.7:1 | 4.8:1 |
+| medium | 0.55 | 1.70 | 19.1:1 | 5.1:1 |
+| strong | 0.65 | 2.10 | 19.9:1 | 6.0:1 |
+
+These are *signal* contrast ratios. A colour e-ink panel's physical ceiling is
+far lower, so the perceived gain is bounded by the panel, not by the curve.
 
 Worth knowing: colour e-ink has few grey levels per channel, so an aggressive
 curve can reveal posterization. The ramp patterns are there to catch that.
