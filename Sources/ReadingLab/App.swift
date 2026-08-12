@@ -214,6 +214,17 @@ struct ReadingLabView: View {
                         Text("Crushes antialiased edges to solid black. 0 is off.")
                             .font(.system(size: 9)).foregroundStyle(.secondary)
                     }
+                    VStack(alignment: .leading, spacing: 2) {
+                        HStack {
+                            Text("White point").font(.system(size: 12, weight: .medium))
+                            Spacer()
+                            Text(String(format: "%.2f", model.curve.whitePoint))
+                                .monospacedDigit().foregroundStyle(.secondary)
+                        }
+                        Slider(value: $model.curve.whitePoint, in: 0.60...1.00)
+                        Text("Pushes the grey halo around glyphs to pure white. 1 is off.")
+                            .font(.system(size: 9)).foregroundStyle(.secondary)
+                    }
                     ReadingPresets(model: model)
                 }
             }

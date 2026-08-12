@@ -29,17 +29,29 @@ struct ToneCurve: Equatable {
     /// system-wide setting.
     var blackPoint: Double = 0.0
 
+    /// Everything above this input is pushed to pure white.
+    ///
+    /// The counterpart to `blackPoint`. Antialiasing leaves a faint grey halo
+    /// on the *background* side of every glyph; crushing it makes the page pure
+    /// white. Together the two are a levels adjustment, and they harden both
+    /// sides of a text edge — the closest this pipeline gets to sharpening,
+    /// which would otherwise need to look at neighbouring pixels.
+    var whitePoint: Double = 1.0
+
     static let identity = ToneCurve(knee: 0.35, gamma: 1.0)
 
     var isIdentity: Bool {
-        (abs(gamma - 1.0) < 0.001 || knee <= 0.0) && blackPoint <= 0.0
+        (abs(gamma - 1.0) < 0.001 || knee <= 0.0)
+            && blackPoint <= 0.0 && whitePoint >= 1.0
     }
 
     func value(_ x: Double) -> Double {
-        // Black-point crush first, so the tone curve shapes what survives it.
+        // Levels first (black and white point), so the tone curve shapes what
+        // survives the crush.
         var v = max(0, min(x, 1))
-        if blackPoint > 0 {
-            v = blackPoint >= 1 ? 0 : max(0, (v - blackPoint) / (1 - blackPoint))
+        let lo = blackPoint, hi = max(whitePoint, blackPoint + 0.001)
+        if lo > 0 || hi < 1 {
+            v = min(max((v - lo) / (hi - lo), 0), 1)
         }
         guard knee > 0, v > 0 else { return v }
         guard v < knee else { return min(v, 1) }

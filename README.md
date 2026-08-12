@@ -59,6 +59,13 @@ text**, which is where a low-contrast panel struggles. `Solid` additionally
 crushes antialiased glyph edges to black, making stems solid at the cost of
 harder edges.
 
+ReadingLab also exposes a **white point**, the counterpart to the black point:
+antialiasing leaves a faint grey halo on the *background* side of a glyph, and
+crushing it makes the page pure white. Together they are a levels adjustment
+that hardens both sides of a text edge — as close to sharpening as this
+pipeline gets, since real sharpening would have to look at neighbouring pixels
+and a display transform only ever sees one pixel at a time.
+
 White stays exactly 1.000 at every level, so the page never greys.
 
 **Text Contrast and Video Enhance are mutually exclusive.** They drive the same
