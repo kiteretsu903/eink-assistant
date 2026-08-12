@@ -32,6 +32,30 @@ final class AssistantModel: ObservableObject {
     @Published var launchAtLogin = false
     @Published var lastError: String?
 
+    // Writing a gamma table or a colour profile makes macOS post a storm of
+    // didChangeScreenParameters notifications — measured at 13 and 15 for a
+    // single write. Re-applying on each one feeds back into itself and the
+    // display visibly flickers, so our own changes are ignored for a moment
+    // and external ones are coalesced.
+    private var selfChangeUntil = Date.distantPast
+    private var reapplyTask: Task<Void, Never>?
+
+    private func markSelfChange() {
+        selfChangeUntil = Date().addingTimeInterval(1.5)
+    }
+
+    private func scheduleReapply() {
+        reapplyTask?.cancel()
+        reapplyTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(nanoseconds: 700_000_000)
+            guard !Task.isCancelled, let self else { return }
+            self.refresh()
+            // A change we caused ourselves needs no response.
+            guard Date() >= self.selfChangeUntil else { return }
+            self.reapplyAll()
+        }
+    }
+
     init() {
         refresh()
         launchAtLogin = SMAppService.mainApp.status == .enabled
@@ -42,13 +66,13 @@ final class AssistantModel: ObservableObject {
             forName: NSApplication.didChangeScreenParametersNotification,
             object: nil, queue: .main
         ) { [weak self] _ in
-            Task { @MainActor in self?.refresh(); self?.reapplyAll() }
+            Task { @MainActor in self?.scheduleReapply() }
         }
         NSWorkspace.shared.notificationCenter.addObserver(
             forName: NSWorkspace.didWakeNotification,
             object: nil, queue: .main
         ) { [weak self] _ in
-            Task { @MainActor in self?.reapplyAll() }
+            Task { @MainActor in self?.scheduleReapply() }
         }
 
         reapplyAll()
@@ -74,6 +98,7 @@ final class AssistantModel: ObservableObject {
     /// app-managed: quitting returns displays to their original state, so
     /// launching has to put the stored settings back.
     func reapplyAll() {
+        markSelfChange()
         for panel in panels {
             reapplyEnhance(displayID: panel.id)
             guard panel.isEink else { continue }
@@ -95,6 +120,7 @@ final class AssistantModel: ObservableObject {
         // ran the un-mark cleanup path and wiped the user's saturation.
         guard panels[i].isEink != value else { return }
 
+        markSelfChange()
         panels[i].isEink = value
         EinkSettings.setEink(value, for: id)
 
@@ -114,6 +140,7 @@ final class AssistantModel: ObservableObject {
 
     func setSaturation(_ amount: Double, for id: CGDirectDisplayID) {
         guard let i = index(of: id) else { return }
+        markSelfChange()
         panels[i].saturation = amount
         EinkSettings.setSaturation(amount, for: id)
         do {
@@ -127,6 +154,7 @@ final class AssistantModel: ObservableObject {
     func setEnhance(_ level: EnhanceLevel, for id: CGDirectDisplayID) {
         guard let i = index(of: id) else { return }
         guard panels[i].enhance != level else { return }   // ignore phantom writes
+        markSelfChange()
         panels[i].enhance = level
         EinkSettings.setEnhance(level, for: id)
         // One gamma table, and these two pull in opposite directions.
@@ -140,6 +168,7 @@ final class AssistantModel: ObservableObject {
     func setTextLevel(_ level: TextLevel, for id: CGDirectDisplayID) {
         guard let i = index(of: id) else { return }
         guard panels[i].textLevel != level else { return }
+        markSelfChange()
         panels[i].textLevel = level
         EinkSettings.setTextLevel(level, for: id)
         if level != .off {
