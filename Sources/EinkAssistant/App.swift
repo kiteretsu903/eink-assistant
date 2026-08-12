@@ -85,13 +85,15 @@ final class AssistantModel: ObservableObject {
         panels[i].isEink = value
         EinkSettings.setEink(value, for: id)
 
-        // Un-marking a display should leave nothing of ours behind on it. The
-        // tone curve is ours and volatile, so always clear it; saturation is a
-        // profile the user may have deliberately set, so it is left alone.
+        // Un-marking a display restores it completely: no tone curve, and the
+        // factory colour profile back in place. Safe to do unconditionally
+        // because of the transition guard above — an accidental write can no
+        // longer reach this path.
         if !value {
             panels[i].enhance = .off
             EinkSettings.setEnhance(.off, for: id)
             clearToneCurveLive(displayID: id)
+            setSaturation(1.0, for: id)
         }
     }
 
@@ -141,7 +143,9 @@ final class AssistantModel: ObservableObject {
 
 struct PanelRow: View {
     @ObservedObject var model: AssistantModel
-    let panel: PanelState
+    // A binding, not a copy. A captured struct keeps reporting its
+    // creation-time value during a drag, so the slider springs back.
+    @Binding var panel: PanelState
 
     private let presets: [Double] = [1.3, 1.5, 2.0]
     private let levels: [EnhanceLevel] = [.off, .subtle, .medium, .strong]
@@ -183,14 +187,7 @@ struct PanelRow: View {
             }
             HStack(spacing: 6) {
                 Slider(
-                    value: Binding(
-                        get: { panel.saturation },
-                        set: { v in
-                            if let i = model.panels.firstIndex(where: { $0.id == panel.id }) {
-                                model.panels[i].saturation = v
-                            }
-                        }
-                    ),
+                    value: $panel.saturation,
                     in: 1.0...3.0,
                     // Each change rewrites a display profile, so commit on release.
                     onEditingChanged: { editing in
@@ -290,8 +287,8 @@ struct AssistantView: View {
             } else {
                 Text("Mark your e-ink panels:")
                     .font(.system(size: 10)).foregroundStyle(.secondary)
-                ForEach(0..<model.panels.count, id: \.self) { i in
-                    PanelRow(model: model, panel: model.panels[i])
+                ForEach($model.panels) { $panel in
+                    PanelRow(model: model, panel: $panel)
                 }
             }
 

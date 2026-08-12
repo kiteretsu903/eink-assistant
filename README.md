@@ -32,6 +32,9 @@ or not this app is running.
 
 Presets at 130% / 150% / 200%, or a slider up to 300%.
 
+Un-marking a display as e-ink resets it fully: the tone curve is cleared and the
+factory colour profile is restored, leaving the panel exactly as it was.
+
 ### Video Enhance
 
 Colour e-ink has a very low contrast ratio, so dark detail collapses into an
