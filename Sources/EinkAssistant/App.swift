@@ -286,6 +286,7 @@ struct PanelRow: View {
                 }
             }
             .pickerStyle(.segmented)
+            .controlSize(.small)
             .labelsHidden()
 
             Text(panel.textLevel.detail
@@ -307,6 +308,7 @@ struct PanelRow: View {
                 }
             }
             .pickerStyle(.segmented)
+            .controlSize(.small)
             .labelsHidden()
 
             if let cost = panel.enhance.textContrastCost {
@@ -404,7 +406,7 @@ struct AssistantView: View {
             }
         }
         .padding(14)
-        .frame(width: 340)
+        .frame(minWidth: 420)
     }
 }
 
