@@ -4,7 +4,8 @@ A macOS menu bar app for colour e-ink displays. Mark which of your displays are
 e-ink panels, then give each one a saturation boost and an optional shadow-lift
 mode for video.
 
-Public APIs only. No permissions required.
+Public APIs only. No permissions required. English and Simplified Chinese
+(简体中文), following the system language.
 
 ```
 ./build.sh

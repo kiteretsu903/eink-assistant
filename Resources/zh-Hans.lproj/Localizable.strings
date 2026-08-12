@@ -1,0 +1,44 @@
+/* E-Ink Assistant — 简体中文 */
+
+"app.title"        = "墨水屏助手";
+"display.mark"     = "标记你的墨水屏显示器：";
+"display.none"     = "未找到显示器。";
+"display.builtin"  = "内置";
+"quit"             = "退出";
+"login.toggle"     = "登录时启动";
+
+"saturation.title"   = "饱和度";
+"saturation.caption" = "补偿墨水屏偏窄的色域。退出应用后会恢复原状。";
+
+"text.title"   = "文字对比度";
+"text.caption" = "加深文字，让低对比度的屏幕更易阅读。适合看文字时使用。";
+
+"video.title"   = "视频增强";
+"video.caption" = "只提亮暗部。看视频和照片时开启。";
+"video.warning" = "文字会变浅——%@。阅读时建议关闭。";
+"video.blocked" = "文字对比度开启时此项不可用——两者使用同一个硬件色彩表，且作用方向相反。";
+
+"level.off"    = "关闭";
+"level.subtle" = "轻微";
+"level.medium" = "中等";
+"level.strong" = "强";
+"level.sharp"  = "锐利";
+"level.solid"  = "实边";
+
+"cost.13" = "文字对比度约降低 13%";
+"cost.34" = "文字对比度约降低 34%";
+"cost.56" = "文字对比度约降低 56%";
+
+"text.detail.medium" = "轻度加深文字。";
+"text.detail.strong" = "加深更明显；浅色文字仍然偏浅。";
+"text.detail.sharp"  = "较强。对次要文字和浅色文字提升明显。";
+"text.detail.solid"  = "同时把抗锯齿边缘压成纯黑——更清晰，但文字边缘可能显得偏硬。";
+
+"help.title"      = "工作原理";
+"help.saturation" = "饱和度会改写显示器的颜色配置文件，让 macOS 向色域偏窄的屏幕输出更鲜艳的信号。";
+"help.video"      = "视频增强只提亮画面最暗的部分，中间调和高光完全不变。彩色墨水屏对比度很低，暗部细节会糊成一团；这项调整把这些色阶拉开，让细节重新可见。";
+"help.tradeoff"   = "代价是：它无法区分暗部画面和深色文字。所有暗的内容都会变浅，正文文字因此损失对比度——在深色模式下尤其明显，因为背景也会一起被提亮。所以建议看视频和照片时开启，阅读时关闭。";
+"help.volatile"   = "两项调整都需要本应用保持运行：退出时会把所有显示器恢复原状，启动时再重新应用你的设置。";
+
+"error.saturation" = "无法对 %@ 应用饱和度设置。";
+"error.login"      = "无法修改登录启动设置。";

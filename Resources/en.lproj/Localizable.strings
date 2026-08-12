@@ -1,0 +1,45 @@
+/* E-Ink Assistant — English */
+
+"app.title"        = "E-Ink Assistant";
+"display.mark"     = "Mark your e-ink panels:";
+"display.none"     = "No displays found.";
+"display.builtin"  = "built-in";
+"quit"             = "Quit";
+"login.toggle"     = "Launch at Login";
+
+"saturation.title"   = "Saturation";
+/* Saturation is cleared on quit and re-applied on launch. */
+"saturation.caption" = "Compensates for the narrow colour gamut. Restored when the app quits.";
+
+"text.title"   = "Text Contrast";
+"text.caption" = "Darkens text so it reads on a low-contrast panel. For reading.";
+
+"video.title"   = "Video Enhance";
+"video.caption" = "Brightens dark areas only. Turn on for video and photos.";
+"video.warning" = "Text is lighter — %@. Best turned off for reading.";
+"video.blocked" = "Off while Text Contrast is on — they use the same hardware table and pull opposite ways.";
+
+"level.off"    = "Off";
+"level.subtle" = "Subtle";
+"level.medium" = "Medium";
+"level.strong" = "Strong";
+"level.sharp"  = "Sharp";
+"level.solid"  = "Solid";
+
+"cost.13" = "about 13% less text contrast";
+"cost.34" = "about 34% less text contrast";
+"cost.56" = "about 56% less text contrast";
+
+"text.detail.medium" = "Mild darkening of text.";
+"text.detail.strong" = "More darkening; faint text still faint.";
+"text.detail.sharp"  = "Strong. Big gain on secondary and faint text.";
+"text.detail.solid"  = "Also crushes antialiased edges solid — crisper, but text may look harder-edged.";
+
+"help.title"      = "How this works";
+"help.saturation" = "Saturation rewrites the display's colour profile so macOS sends more vivid signals to a panel with a narrow gamut.";
+"help.video"      = "Video Enhance brightens only the darkest part of the image and leaves mid-tones and highlights exactly as they were. Colour e-ink has a low contrast ratio, so dark detail collapses into an undifferentiated mush; this spreads those tones apart so they become visible.";
+"help.tradeoff"   = "The trade-off: it cannot tell dark video from dark text. Anything dark gets lighter, so body text loses contrast — noticeably so in Dark Mode, where the background lifts too. That is why it is recommended for video and photos, and off while reading.";
+"help.volatile"   = "Both adjustments need this app running: quitting restores every display to its original state, and launching puts your settings back.";
+
+"error.saturation" = "Could not apply saturation to %@.";
+"error.login"      = "Could not change launch at login.";

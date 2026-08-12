@@ -8,6 +8,11 @@ import Foundation
 import CoreGraphics
 import ApplicationServices
 
+/// Localized string lookup. Keys are stable identifiers rather than English
+/// text, because several UI strings are assembled by concatenation and SwiftUI
+/// only auto-localizes a bare literal.
+func L(_ key: String) -> String { NSLocalizedString(key, comment: "") }
+
 /// Stable per-display identity, safe to persist.
 func displayUUIDString(_ id: CGDirectDisplayID) -> String? {
     guard let uuid = CGDisplayCreateUUIDFromDisplayID(id)?.takeRetainedValue() else {
@@ -22,10 +27,10 @@ enum EnhanceLevel: String, CaseIterable {
 
     var label: String {
         switch self {
-        case .off: return "Off"
-        case .subtle: return "Subtle"
-        case .medium: return "Medium"
-        case .strong: return "Strong"
+        case .off: return L("level.off")
+        case .subtle: return L("level.subtle")
+        case .medium: return L("level.medium")
+        case .strong: return L("level.strong")
         }
     }
 
@@ -42,9 +47,9 @@ enum EnhanceLevel: String, CaseIterable {
     var textContrastCost: String? {
         switch self {
         case .off: return nil
-        case .subtle: return "about 13% less text contrast"
-        case .medium: return "about 34% less text contrast"
-        case .strong: return "about 56% less text contrast"
+        case .subtle: return L("cost.13")
+        case .medium: return L("cost.34")
+        case .strong: return L("cost.56")
         }
     }
 }
@@ -59,11 +64,11 @@ enum TextLevel: String, CaseIterable {
 
     var label: String {
         switch self {
-        case .off: return "Off"
-        case .medium: return "Medium"
-        case .strong: return "Strong"
-        case .sharp: return "Sharp"
-        case .solid: return "Solid"
+        case .off: return L("level.off")
+        case .medium: return L("level.medium")
+        case .strong: return L("level.strong")
+        case .sharp: return L("level.sharp")
+        case .solid: return L("level.solid")
         }
     }
 
@@ -80,11 +85,10 @@ enum TextLevel: String, CaseIterable {
     var detail: String? {
         switch self {
         case .off: return nil
-        case .medium: return "Mild darkening of text."
-        case .strong: return "More darkening; faint text still faint."
-        case .sharp: return "Strong. Big gain on secondary and faint text."
-        case .solid: return "Also crushes antialiased edges solid — crisper, "
-                          + "but text may look harder-edged."
+        case .medium: return L("text.detail.medium")
+        case .strong: return L("text.detail.strong")
+        case .sharp: return L("text.detail.sharp")
+        case .solid: return L("text.detail.solid")
         }
     }
 }

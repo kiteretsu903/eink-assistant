@@ -30,10 +30,20 @@ bundle() {  # bundle <name> <bundle-id> <extra-plist>
   <key>CFBundleExecutable</key>      <string>$name</string>
   <key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
   <key>LSMinimumSystemVersion</key>  <string>14.0</string>
+  <key>CFBundleDevelopmentRegion</key><string>en</string>
+  <key>CFBundleLocalizations</key>
+  <array><string>en</string><string>zh-Hans</string></array>
 $extra
 </dict>
 </plist>
 PLIST
+  # Localizations. Copied in by hand because this builds with swiftc rather
+  # than xcodebuild, so nothing assembles Resources for us.
+  if [ -d Resources ]; then
+    mkdir -p "$app/Contents/Resources"
+    cp -R Resources/*.lproj "$app/Contents/Resources/"
+  fi
+
   # Ad-hoc signature so macOS will launch it locally, and so SMAppService
   # accepts it as a login item.
   codesign --force --sign - "$app" 2>/dev/null || \

@@ -14,6 +14,7 @@ import AppKit
 import CoreGraphics
 import ServiceManagement
 
+
 // MARK: - Model
 
 struct PanelState: Identifiable, Equatable {
@@ -147,7 +148,7 @@ final class AssistantModel: ObservableObject {
             try applySaturation(amount, displayID: id, displayName: panels[i].name)
             lastError = nil
         } catch {
-            lastError = "Could not apply saturation to \(panels[i].name)."
+            lastError = String(format: L("error.saturation"), panels[i].name)
         }
     }
 
@@ -190,7 +191,7 @@ final class AssistantModel: ObservableObject {
             }
             lastError = nil
         } catch {
-            lastError = "Could not change launch at login."
+            lastError = L("error.login")
         }
         launchAtLogin = SMAppService.mainApp.status == .enabled
     }
@@ -226,7 +227,7 @@ struct PanelRow: View {
                         .foregroundStyle(.secondary)
                     Text(panel.name).lineLimit(1).truncationMode(.tail)
                     if panel.isBuiltin {
-                        Text("built-in").font(.system(size: 10)).foregroundStyle(.secondary)
+                        Text(L("display.builtin")).font(.system(size: 10)).foregroundStyle(.secondary)
                     }
                 }
             }
@@ -246,7 +247,7 @@ struct PanelRow: View {
     private var saturationSection: some View {
         VStack(alignment: .leading, spacing: 3) {
             HStack {
-                Text("Saturation").font(.system(size: 11, weight: .medium))
+                Text(L("saturation.title")).font(.system(size: 11, weight: .medium))
                 Spacer()
                 Text("\(Int((panel.saturation * 100).rounded()))%")
                     .font(.system(size: 11)).monospacedDigit().foregroundStyle(.secondary)
@@ -269,14 +270,14 @@ struct PanelRow: View {
                     .controlSize(.small)
                 }
             }
-            Text("Compensates for the narrow colour gamut. Persists after quitting.")
+            Text(L("saturation.caption"))
                 .font(.system(size: 9)).foregroundStyle(.secondary)
         }
     }
 
     private var textSection: some View {
         VStack(alignment: .leading, spacing: 3) {
-            Text("Text Contrast").font(.system(size: 11, weight: .medium))
+            Text(L("text.title")).font(.system(size: 11, weight: .medium))
             Picker("", selection: Binding(
                 get: { panel.textLevel },
                 set: { model.setTextLevel($0, for: panel.id) }
@@ -290,7 +291,7 @@ struct PanelRow: View {
             .labelsHidden()
 
             Text(panel.textLevel.detail
-                 ?? "Darkens text so it reads on a low-contrast panel. For reading.")
+                 ?? L("text.caption"))
                 .font(.system(size: 9)).foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -298,7 +299,7 @@ struct PanelRow: View {
 
     private var enhanceSection: some View {
         VStack(alignment: .leading, spacing: 3) {
-            Text("Video Enhance").font(.system(size: 11, weight: .medium))
+            Text(L("video.title")).font(.system(size: 11, weight: .medium))
             Picker("", selection: Binding(
                 get: { panel.enhance },
                 set: { model.setEnhance($0, for: panel.id) }
@@ -312,18 +313,17 @@ struct PanelRow: View {
             .labelsHidden()
 
             if let cost = panel.enhance.textContrastCost {
-                Label("Text is lighter — \(cost). Best turned off for reading.",
+                Label(String(format: L("video.warning"), cost),
                       systemImage: "exclamationmark.triangle.fill")
                     .font(.system(size: 9))
                     .foregroundStyle(.orange)
                     .fixedSize(horizontal: false, vertical: true)
             } else if panel.textLevel != .off {
-                Text("Off while Text Contrast is on — they use the same "
-                     + "hardware table and pull opposite ways.")
+                Text(L("video.blocked"))
                     .font(.system(size: 9)).foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             } else {
-                Text("Brightens dark areas only. Turn on for video and photos.")
+                Text(L("video.caption"))
                     .font(.system(size: 9)).foregroundStyle(.secondary)
             }
         }
@@ -338,31 +338,17 @@ struct HowItWorks: View {
     var body: some View {
         DisclosureGroup(isExpanded: $expanded) {
             VStack(alignment: .leading, spacing: 6) {
-                Text("Saturation rewrites the display's colour profile so macOS "
-                     + "sends more vivid signals to a panel with a narrow gamut. "
-                     + "It is stored in the profile, so it keeps working after "
-                     + "you quit this app or restart.")
-                Text("Video Enhance brightens only the darkest part of the image "
-                     + "and leaves mid-tones and highlights exactly as they were. "
-                     + "Colour e-ink has a low contrast ratio, so dark detail "
-                     + "collapses into an undifferentiated mush; this spreads "
-                     + "those tones apart so they become visible.")
-                Text("The trade-off: it cannot tell dark video from dark text. "
-                     + "Anything dark gets lighter, so body text loses contrast — "
-                     + "noticeably so in Dark Mode, where the background lifts "
-                     + "too. That is why it is recommended for video and photos, "
-                     + "and off while reading.")
-                Text("Video Enhance uses the display's gamma table, which macOS "
-                     + "clears on sleep and when displays change. This app "
-                     + "re-applies it, so it needs to stay running — unlike "
-                     + "saturation.")
+                Text(L("help.saturation"))
+                Text(L("help.video"))
+                Text(L("help.tradeoff"))
+                Text(L("help.volatile"))
             }
             .font(.system(size: 10))
             .foregroundStyle(.secondary)
             .fixedSize(horizontal: false, vertical: true)
             .padding(.top, 4)
         } label: {
-            Text("How this works").font(.system(size: 11, weight: .medium))
+            Text(L("help.title")).font(.system(size: 11, weight: .medium))
         }
     }
 }
@@ -374,12 +360,12 @@ struct AssistantView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("E-Ink Assistant").font(.system(size: 13, weight: .semibold))
+            Text(L("app.title")).font(.system(size: 13, weight: .semibold))
 
             if model.panels.isEmpty {
-                Text("No displays found.").foregroundStyle(.secondary)
+                Text(L("display.none")).foregroundStyle(.secondary)
             } else {
-                Text("Mark your e-ink panels:")
+                Text(L("display.mark"))
                     .font(.system(size: 10)).foregroundStyle(.secondary)
                 ForEach($model.panels) { $panel in
                     PanelRow(model: model, panel: $panel)
@@ -394,7 +380,7 @@ struct AssistantView: View {
 
             Divider()
 
-            Toggle("Launch at Login", isOn: Binding(
+            Toggle(L("login.toggle"), isOn: Binding(
                 get: { model.launchAtLogin },
                 set: { model.setLaunchAtLogin($0) }
             ))
@@ -402,7 +388,7 @@ struct AssistantView: View {
 
             HStack {
                 Spacer()
-                Button("Quit") { NSApp.terminate(nil) }.font(.system(size: 11))
+                Button(L("quit")) { NSApp.terminate(nil) }.font(.system(size: 11))
             }
         }
         .padding(14)
