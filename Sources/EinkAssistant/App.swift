@@ -386,6 +386,22 @@ struct AssistantView: View {
 
             HowItWorks()
 
+            // The settings here were tuned against one specific panel in one
+            // specific configuration. Say so, rather than implying they are
+            // universal.
+            HStack(alignment: .top, spacing: 5) {
+                Image(systemName: "info.circle")
+                    .font(.system(size: 9))
+                    .foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(L("notice.tuned"))
+                    Text(L("notice.risk"))
+                }
+                .font(.system(size: 9))
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            }
+
             Divider()
 
             HStack {

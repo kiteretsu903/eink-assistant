@@ -16,6 +16,18 @@ open "E-Ink Assistant.app"
 Ad-hoc signed rather than notarized, so the first launch may need
 right-click > Open.
 
+## Scope
+
+Every value here was tuned on a **Bigme B251 Pro** (R2, FW V2.0) in a specific
+configuration: **Web Mode, Hardware Gamma Level 3, Contrast 50, Color Restore
+Mode off**. The panel reports itself over EDID as `ICNM 8001H0`.
+
+Nothing in the mechanism is specific to that panel — it works on any display
+macOS can assign a profile to — but the presets were chosen by eye against that
+one screen. Other e-ink monitors may also benefit. **Use at your own risk.**
+
+The app shows this notice in its panel too.
+
 ## What it does
 
 ### Saturation
