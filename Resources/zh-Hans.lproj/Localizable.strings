@@ -53,3 +53,5 @@
 "preset.enhanced" = "增强";
 "preset.vivid"    = "艳丽";
 "preset.anime"    = "动漫";
+
+"curve.title" = "当前曲线";

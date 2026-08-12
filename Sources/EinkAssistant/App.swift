@@ -229,6 +229,17 @@ struct PanelRow: View {
     private let levels: [EnhanceLevel] = [.off, .subtle, .medium, .strong]
     private let textLevels: [TextLevel] = [.off, .medium, .strong, .sharp, .solid]
 
+    /// Text wins over Video, matching effectiveCurve().
+    private var activeCurve: ToneCurve? {
+        panel.textLevel.curve ?? panel.enhance.curve
+    }
+
+    private var activeModeName: String {
+        if panel.textLevel != .off { return L("text.title") }
+        if panel.enhance != .off { return L("video.title") }
+        return ""
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Toggle(isOn: Binding(
@@ -250,6 +261,7 @@ struct PanelRow: View {
                 saturationSection
                 textSection
                 enhanceSection
+                curveSection
             }
         }
         .padding(10)
@@ -287,6 +299,22 @@ struct PanelRow: View {
             }
             Text(L("saturation.caption"))
                 .font(.system(size: 11)).foregroundStyle(.secondary)
+        }
+    }
+
+    /// The tone curve currently applied, drawn the same way the tuning labs
+    /// draw it. Hidden when neither mode is on, since there is no curve then.
+    @ViewBuilder private var curveSection: some View {
+        if let curve = activeCurve {
+            VStack(alignment: .leading, spacing: 3) {
+                HStack {
+                    Text(L("curve.title")).font(.system(size: 12, weight: .medium))
+                    Spacer()
+                    Text(activeModeName)
+                        .font(.system(size: 11)).foregroundStyle(.secondary)
+                }
+                CurvePlot(curve: curve, height: 96)
+            }
         }
     }
 

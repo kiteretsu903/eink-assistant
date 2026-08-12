@@ -7,6 +7,8 @@ import CoreGraphics
 
 struct CurvePlot: View {
     let curve: ToneCurve
+    /// The labs want a large plot; the app panel wants a compact one.
+    var height: CGFloat = 150
 
     var body: some View {
         Canvas { context, size in
@@ -38,7 +40,7 @@ struct CurvePlot: View {
             context.stroke(path, with: .color(.accentColor),
                            style: StrokeStyle(lineWidth: 2, lineJoin: .round))
         }
-        .frame(height: 150)
+        .frame(height: height)
         .background(Color.primary.opacity(0.04))
         .overlay(RoundedRectangle(cornerRadius: 4)
             .stroke(Color.secondary.opacity(0.25), lineWidth: 1))

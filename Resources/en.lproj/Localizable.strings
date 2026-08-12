@@ -54,3 +54,5 @@
 "preset.enhanced" = "Enhanced";
 "preset.vivid"    = "Vivid";
 "preset.anime"    = "Anime";
+
+"curve.title" = "Current curve";
