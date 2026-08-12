@@ -147,7 +147,9 @@ struct PanelRow: View {
     // creation-time value during a drag, so the slider springs back.
     @Binding var panel: PanelState
 
-    private let presets: [Double] = [1.3, 1.5, 2.0]
+    // 100% is the "off" shortcut — it drops the profile override entirely
+    // rather than installing an identity one.
+    private let presets: [Double] = [1.0, 1.3, 1.5, 2.0]
     private let levels: [EnhanceLevel] = [.off, .subtle, .medium, .strong]
 
     var body: some View {

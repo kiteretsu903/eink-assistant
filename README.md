@@ -30,7 +30,8 @@ alone.
 Profile choice made in System Settings, so macOS re-applies it at login whether
 or not this app is running.
 
-Presets at 130% / 150% / 200%, or a slider up to 300%.
+Presets at 100% / 130% / 150% / 200%, or a slider up to 300%. The 100%
+button removes the override and puts the factory profile back.
 
 Un-marking a display as e-ink resets it fully: the tone curve is cleared and the
 factory colour profile is restored, leaving the panel exactly as it was.
