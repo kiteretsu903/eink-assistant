@@ -551,17 +551,49 @@ struct AssistantView: View {
     }
 }
 
+/// Reports how tall the panel content actually is.
+private struct ContentHeightKey: PreferenceKey {
+    static let defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
+    }
+}
+
 /// Wraps the panel so a machine with several displays scrolls instead of
-/// growing a window taller than the screen. maxHeight is what makes the
-/// ScrollView actually scroll: without it, it just sizes to its content.
+/// growing a window taller than the screen.
+///
+/// A ScrollView has no intrinsic height: given only a maxHeight it collapses to
+/// a sliver, because nothing tells it how big its content is. So the content is
+/// measured and the window is sized to that, capped so it starts scrolling
+/// rather than running off the screen.
 struct AssistantScroll: View {
     @ObservedObject var model: AssistantModel
+    @State private var contentHeight: CGFloat = 420
+
+    private static let maxHeight: CGFloat = 640
+    private static let minHeight: CGFloat = 160
+
+    private var clampedHeight: CGFloat {
+        min(max(contentHeight, Self.minHeight), Self.maxHeight)
+    }
 
     var body: some View {
         ScrollView(.vertical) {
             AssistantView(model: model)
+                .background(
+                    GeometryReader { geometry in
+                        Color.clear.preference(key: ContentHeightKey.self,
+                                               value: geometry.size.height)
+                    }
+                )
         }
-        .frame(minWidth: 500, maxHeight: 640)
+        .onPreferenceChange(ContentHeightKey.self) { height in
+            // Guard against a zero measurement collapsing the window again.
+            if height > 1 { contentHeight = height }
+        }
+        // minWidth cannot be combined with a fixed height, so the height is
+        // pinned by giving min and max the same value.
+        .frame(minWidth: 500, minHeight: clampedHeight, maxHeight: clampedHeight)
     }
 }
 
