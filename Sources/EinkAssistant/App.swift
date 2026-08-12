@@ -297,7 +297,14 @@ struct PanelRow: View {
         if panel.advanced { return L("advanced.title") }
         if panel.textLevel != .off { return L("text.title") }
         if panel.enhance != .off { return L("video.title") }
-        return ""
+        return L("level.off")
+    }
+
+    /// What the plot draws. With nothing applied this is the identity curve,
+    /// which is worth showing: a flat diagonal says "no adjustment" more
+    /// clearly than an empty space where a graph used to be.
+    private var displayedCurve: ToneCurve {
+        activeCurve ?? ToneCurve(knee: 0.90, gamma: 1.0)
     }
 
     var body: some View {
@@ -366,18 +373,17 @@ struct PanelRow: View {
     }
 
     /// The tone curve currently applied, drawn the same way the tuning labs
-    /// draw it. Hidden when neither mode is on, since there is no curve then.
-    @ViewBuilder private var curveSection: some View {
-        if let curve = activeCurve {
-            VStack(alignment: .leading, spacing: 3) {
-                HStack {
-                    Text(L("curve.title")).font(.system(size: 12, weight: .medium))
-                    Spacer()
-                    Text(activeModeName)
-                        .font(.system(size: 11)).foregroundStyle(.secondary)
-                }
-                CurvePlot(curve: curve, height: 96)
+    /// draw it. Always shown, so the graph does not vanish when a mode is off
+    /// or the advanced curve is reset.
+    private var curveSection: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            HStack {
+                Text(L("curve.title")).font(.system(size: 12, weight: .medium))
+                Spacer()
+                Text(activeModeName)
+                    .font(.system(size: 11)).foregroundStyle(.secondary)
             }
+            CurvePlot(curve: displayedCurve, height: 96)
         }
     }
 
