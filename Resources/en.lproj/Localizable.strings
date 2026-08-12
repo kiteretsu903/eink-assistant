@@ -70,3 +70,5 @@
 "presets.clear"     = "Clear";
 
 "presets.rename" = "Rename";
+
+"advanced.reset" = "Reset curve";

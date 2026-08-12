@@ -206,6 +206,14 @@ final class AssistantModel: ObservableObject {
         reapplyEnhance(displayID: id)
     }
 
+    /// Returns the custom curve to no adjustment. Identity resolves to no
+    /// curve at all, so the display is left untouched rather than written with
+    /// a pointless table.
+    func resetCustomCurve(for id: CGDirectDisplayID) {
+        setCustomCurve(ToneCurve(knee: 0.90, gamma: 1.0,
+                                 blackPoint: 0.0, whitePoint: 1.0), for: id)
+    }
+
     func savePreset(slot: Int, from id: CGDirectDisplayID) {
         guard let i = index(of: id) else { return }
         CurvePresets.save(panels[i].custom, slot: slot)
@@ -403,6 +411,14 @@ struct PanelRow: View {
                 slider(L("curve.white"), value: panel.custom.whitePoint, range: 0.60...1.00) {
                     var c = panel.custom; c.whitePoint = $0
                     model.setCustomCurve(c, for: panel.id)
+                }
+                HStack {
+                    Spacer()
+                    Button(L("advanced.reset")) {
+                        model.resetCustomCurve(for: panel.id)
+                    }
+                    .controlSize(.small)
+                    .disabled(panel.custom.isIdentity)
                 }
                 presetSlots
             }

@@ -69,3 +69,5 @@
 "presets.clear"     = "清除";
 
 "presets.rename" = "重命名";
+
+"advanced.reset" = "重置曲线";
