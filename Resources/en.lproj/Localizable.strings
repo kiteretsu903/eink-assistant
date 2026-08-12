@@ -36,10 +36,10 @@
 "text.detail.solid"  = "Also crushes antialiased edges solid — crisper, but text may look harder-edged.";
 
 "help.title"      = "How this works";
-"help.saturation" = "Saturation rewrites the display's colour profile so macOS sends more vivid signals to a panel with a narrow gamut.";
-"help.video"      = "Video Enhance brightens only the darkest part of the image and leaves mid-tones and highlights exactly as they were. Colour e-ink has a low contrast ratio, so dark detail collapses into an undifferentiated mush; this spreads those tones apart so they become visible.";
-"help.tradeoff"   = "The trade-off: it cannot tell dark video from dark text. Anything dark gets lighter, so body text loses contrast — noticeably so in Dark Mode, where the background lifts too. That is why it is recommended for video and photos, and off while reading.";
-"help.volatile"   = "Both adjustments need this app running: quitting restores every display to its original state, and launching puts your settings back.";
+"help.saturation" = "Saturation: rewrites the display's colour profile so macOS sends more vivid signals to a narrow-gamut panel.";
+"help.video"      = "Video Enhance: brightens only the darkest tones. Mid-tones and highlights are untouched.";
+"help.tradeoff"   = "It cannot tell dark video from dark text, so text loses contrast — worst in Dark Mode. Use for video, off for reading.";
+"help.volatile"   = "Both need the app running: quitting restores your displays, launching re-applies your settings.";
 
 "error.saturation" = "Could not apply saturation to %@.";
 "error.login"      = "Could not change launch at login.";

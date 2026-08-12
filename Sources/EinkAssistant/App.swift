@@ -351,12 +351,12 @@ struct HowItWorks: View {
                 Text(L("help.tradeoff"))
                 Text(L("help.volatile"))
             }
-            .font(.system(size: 10))
+            .font(.system(size: 11))
             .foregroundStyle(.secondary)
             .fixedSize(horizontal: false, vertical: true)
             .padding(.top, 4)
         } label: {
-            Text(L("help.title")).font(.system(size: 11, weight: .medium))
+            Text(L("help.title")).font(.system(size: 12, weight: .medium))
         }
     }
 }
@@ -391,13 +391,13 @@ struct AssistantView: View {
             // universal.
             HStack(alignment: .top, spacing: 5) {
                 Image(systemName: "info.circle")
-                    .font(.system(size: 9))
+                    .font(.system(size: 11))
                     .foregroundStyle(.secondary)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(L("notice.tuned"))
                     Text(L("notice.risk"))
                 }
-                .font(.system(size: 9))
+                .font(.system(size: 11))
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
             }
