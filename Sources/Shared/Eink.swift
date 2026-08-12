@@ -8,10 +8,6 @@ import Foundation
 import CoreGraphics
 import ApplicationServices
 
-/// Localized string lookup. Keys are stable identifiers rather than English
-/// text, because several UI strings are assembled by concatenation and SwiftUI
-/// only auto-localizes a bare literal.
-func L(_ key: String) -> String { NSLocalizedString(key, comment: "") }
 
 /// Stable per-display identity, safe to persist.
 func displayUUIDString(_ id: CGDirectDisplayID) -> String? {

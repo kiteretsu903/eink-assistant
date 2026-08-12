@@ -5,7 +5,8 @@ e-ink panels, then give each one a saturation boost and an optional shadow-lift
 mode for video.
 
 Public APIs only. No permissions required. English and Simplified Chinese
-(简体中文), following the system language.
+(简体中文) — follows the system language by default, with a picker in the panel
+to override it. Switching applies immediately, without relaunching.
 
 ```
 ./build.sh

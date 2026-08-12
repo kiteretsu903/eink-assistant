@@ -31,6 +31,7 @@ struct PanelState: Identifiable, Equatable {
 final class AssistantModel: ObservableObject {
     @Published var panels: [PanelState] = []
     @Published var launchAtLogin = false
+    @Published var language: AppLanguage = Localization.current
     @Published var lastError: String?
 
     // Writing a gamma table or a colour profile makes macOS post a storm of
@@ -58,6 +59,7 @@ final class AssistantModel: ObservableObject {
     }
 
     init() {
+        Localization.refresh()
         refresh()
         launchAtLogin = SMAppService.mainApp.status == .enabled
 
@@ -177,6 +179,12 @@ final class AssistantModel: ObservableObject {
             EinkSettings.setEnhance(.off, for: id)
         }
         reapplyEnhance(displayID: id)
+    }
+
+    func setLanguage(_ value: AppLanguage) {
+        guard language != value else { return }
+        Localization.set(value)
+        language = value          // republishes, so every L() re-resolves
     }
 
     func setLaunchAtLogin(_ enabled: Bool) {
@@ -379,6 +387,24 @@ struct AssistantView: View {
             HowItWorks()
 
             Divider()
+
+            HStack {
+                Text(L("language.title")).font(.system(size: 11))
+                Spacer()
+                Picker("", selection: Binding(
+                    get: { model.language },
+                    set: { model.setLanguage($0) }
+                )) {
+                    ForEach(0..<AppLanguage.allCases.count, id: \.self) { i in
+                        let lang = AppLanguage.allCases[i]
+                        Text(lang.label).tag(lang)
+                    }
+                }
+                .labelsHidden()
+                .pickerStyle(.menu)
+                .controlSize(.small)
+                .fixedSize()
+            }
 
             Toggle(L("login.toggle"), isOn: Binding(
                 get: { model.launchAtLogin },

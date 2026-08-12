@@ -42,3 +42,6 @@
 
 "error.saturation" = "无法对 %@ 应用饱和度设置。";
 "error.login"      = "无法修改登录启动设置。";
+
+"language.title"  = "语言";
+"language.system" = "跟随系统";

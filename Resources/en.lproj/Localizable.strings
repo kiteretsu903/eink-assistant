@@ -43,3 +43,6 @@
 
 "error.saturation" = "Could not apply saturation to %@.";
 "error.login"      = "Could not change launch at login.";
+
+"language.title"  = "Language";
+"language.system" = "System";
