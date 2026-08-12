@@ -235,11 +235,11 @@ struct PanelRow: View {
                         .foregroundStyle(.secondary)
                     Text(panel.name).lineLimit(1).truncationMode(.tail)
                     if panel.isBuiltin {
-                        Text(L("display.builtin")).font(.system(size: 10)).foregroundStyle(.secondary)
+                        Text(L("display.builtin")).font(.system(size: 12)).foregroundStyle(.secondary)
                     }
                 }
             }
-            .font(.system(size: 12, weight: .medium))
+            .font(.system(size: 14, weight: .medium))
 
             if panel.isEink {
                 saturationSection
@@ -255,15 +255,16 @@ struct PanelRow: View {
     private var saturationSection: some View {
         VStack(alignment: .leading, spacing: 3) {
             HStack {
-                Text(L("saturation.title")).font(.system(size: 11, weight: .medium))
+                Text(L("saturation.title")).font(.system(size: 13, weight: .medium))
                 Spacer()
                 Text("\(Int((panel.saturation * 100).rounded()))%")
-                    .font(.system(size: 11)).monospacedDigit().foregroundStyle(.secondary)
+                    .font(.system(size: 18, weight: .semibold))
+                    .monospacedDigit()
             }
             HStack(spacing: 6) {
                 Slider(
                     value: $panel.saturation,
-                    in: 1.0...3.0,
+                    in: 0.6...3.0,
                     // Each change rewrites a display profile, so commit on release.
                     onEditingChanged: { editing in
                         if !editing { model.setSaturation(panel.saturation, for: panel.id) }
@@ -279,13 +280,13 @@ struct PanelRow: View {
                 }
             }
             Text(L("saturation.caption"))
-                .font(.system(size: 9)).foregroundStyle(.secondary)
+                .font(.system(size: 11)).foregroundStyle(.secondary)
         }
     }
 
     private var textSection: some View {
         VStack(alignment: .leading, spacing: 3) {
-            Text(L("text.title")).font(.system(size: 11, weight: .medium))
+            Text(L("text.title")).font(.system(size: 13, weight: .medium))
             Picker("", selection: Binding(
                 get: { panel.textLevel },
                 set: { model.setTextLevel($0, for: panel.id) }
@@ -300,14 +301,14 @@ struct PanelRow: View {
 
             Text(panel.textLevel.detail
                  ?? L("text.caption"))
-                .font(.system(size: 9)).foregroundStyle(.secondary)
+                .font(.system(size: 11)).foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
     }
 
     private var enhanceSection: some View {
         VStack(alignment: .leading, spacing: 3) {
-            Text(L("video.title")).font(.system(size: 11, weight: .medium))
+            Text(L("video.title")).font(.system(size: 13, weight: .medium))
             Picker("", selection: Binding(
                 get: { panel.enhance },
                 set: { model.setEnhance($0, for: panel.id) }
@@ -323,16 +324,16 @@ struct PanelRow: View {
             if let cost = panel.enhance.textContrastCost {
                 Label(String(format: L("video.warning"), cost),
                       systemImage: "exclamationmark.triangle.fill")
-                    .font(.system(size: 9))
+                    .font(.system(size: 11))
                     .foregroundStyle(.orange)
                     .fixedSize(horizontal: false, vertical: true)
             } else if panel.textLevel != .off {
                 Text(L("video.blocked"))
-                    .font(.system(size: 9)).foregroundStyle(.secondary)
+                    .font(.system(size: 11)).foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             } else {
                 Text(L("video.caption"))
-                    .font(.system(size: 9)).foregroundStyle(.secondary)
+                    .font(.system(size: 11)).foregroundStyle(.secondary)
             }
         }
     }
@@ -351,12 +352,12 @@ struct HowItWorks: View {
                 Text(L("help.tradeoff"))
                 Text(L("help.volatile"))
             }
-            .font(.system(size: 11))
+            .font(.system(size: 13))
             .foregroundStyle(.secondary)
             .fixedSize(horizontal: false, vertical: true)
             .padding(.top, 4)
         } label: {
-            Text(L("help.title")).font(.system(size: 12, weight: .medium))
+            Text(L("help.title")).font(.system(size: 14, weight: .medium))
         }
     }
 }
@@ -368,20 +369,20 @@ struct AssistantView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(L("app.title")).font(.system(size: 13, weight: .semibold))
+            Text(L("app.title")).font(.system(size: 15, weight: .semibold))
 
             if model.panels.isEmpty {
                 Text(L("display.none")).foregroundStyle(.secondary)
             } else {
                 Text(L("display.mark"))
-                    .font(.system(size: 10)).foregroundStyle(.secondary)
+                    .font(.system(size: 12)).foregroundStyle(.secondary)
                 ForEach($model.panels) { $panel in
                     PanelRow(model: model, panel: $panel)
                 }
             }
 
             if let error = model.lastError {
-                Text(error).font(.system(size: 10)).foregroundStyle(.red)
+                Text(error).font(.system(size: 12)).foregroundStyle(.red)
             }
 
             HowItWorks()
@@ -391,13 +392,13 @@ struct AssistantView: View {
             // universal.
             HStack(alignment: .top, spacing: 5) {
                 Image(systemName: "info.circle")
-                    .font(.system(size: 11))
+                    .font(.system(size: 13))
                     .foregroundStyle(.secondary)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(L("notice.tuned"))
                     Text(L("notice.risk"))
                 }
-                .font(.system(size: 11))
+                .font(.system(size: 13))
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
             }
@@ -405,7 +406,7 @@ struct AssistantView: View {
             Divider()
 
             HStack {
-                Text(L("language.title")).font(.system(size: 11))
+                Text(L("language.title")).font(.system(size: 13))
                 Spacer()
                 Picker("", selection: Binding(
                     get: { model.language },
@@ -426,15 +427,15 @@ struct AssistantView: View {
                 get: { model.launchAtLogin },
                 set: { model.setLaunchAtLogin($0) }
             ))
-            .toggleStyle(.switch).controlSize(.small).font(.system(size: 11))
+            .toggleStyle(.switch).controlSize(.small).font(.system(size: 13))
 
             HStack {
                 Spacer()
-                Button(L("quit")) { NSApp.terminate(nil) }.font(.system(size: 11))
+                Button(L("quit")) { NSApp.terminate(nil) }.font(.system(size: 13))
             }
         }
         .padding(14)
-        .frame(minWidth: 420)
+        .frame(minWidth: 500)
     }
 }
 
