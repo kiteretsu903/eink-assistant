@@ -87,6 +87,11 @@ neighbouring pixels) would require capturing and re-rendering the screen.
 
 White stays exactly 1.000 at every level, so the page never greys.
 
+**Advanced** replaces both preset pickers with direct control of the curve:
+knee, gamma, black point and white point, applied live and stored per display.
+Gamma below 1 lifts shadows, above 1 darkens them, so one set of sliders covers
+both directions.
+
 **Text Contrast and Video Enhance are mutually exclusive.** They drive the same
 hardware gamma table and pull in opposite directions, so turning one on turns
 the other off.

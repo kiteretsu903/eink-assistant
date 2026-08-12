@@ -55,3 +55,10 @@
 "preset.anime"    = "动漫";
 
 "curve.title" = "当前曲线";
+
+"advanced.title" = "高级";
+"advanced.note"  = "用自定义曲线替代上方的预设。";
+"curve.knee"     = "拐点";
+"curve.gamma"    = "伽马（小于 1 提亮，大于 1 加深）";
+"curve.black"    = "黑点";
+"curve.white"    = "白点";

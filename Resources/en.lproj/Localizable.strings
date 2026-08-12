@@ -56,3 +56,10 @@
 "preset.anime"    = "Anime";
 
 "curve.title" = "Current curve";
+
+"advanced.title" = "Advanced";
+"advanced.note"  = "Replaces the presets above with a curve you set yourself.";
+"curve.knee"     = "Knee";
+"curve.gamma"    = "Gamma (below 1 lifts, above 1 darkens)";
+"curve.black"    = "Black point";
+"curve.white"    = "White point";

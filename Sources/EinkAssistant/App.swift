@@ -25,6 +25,8 @@ struct PanelState: Identifiable, Equatable {
     var saturation: Double
     var enhance: EnhanceLevel
     var textLevel: TextLevel
+    var advanced: Bool
+    var custom: ToneCurve
 }
 
 @MainActor
@@ -92,7 +94,9 @@ final class AssistantModel: ObservableObject {
                 // quit, so it is absent on a fresh launch.
                 saturation: EinkSettings.saturation(d.id),
                 enhance: EinkSettings.enhance(d.id),
-                textLevel: EinkSettings.textLevel(d.id)
+                textLevel: EinkSettings.textLevel(d.id),
+                advanced: EinkSettings.advanced(d.id),
+                custom: EinkSettings.customCurve(d.id)
             )
         }
     }
@@ -134,8 +138,10 @@ final class AssistantModel: ObservableObject {
         if !value {
             panels[i].enhance = .off
             panels[i].textLevel = .off
+            panels[i].advanced = false
             EinkSettings.setEnhance(.off, for: id)
             EinkSettings.setTextLevel(.off, for: id)
+            EinkSettings.setAdvanced(false, for: id)
             clearToneCurveLive(displayID: id)
             setSaturation(1.0, for: id)
         }
@@ -178,6 +184,22 @@ final class AssistantModel: ObservableObject {
             panels[i].enhance = .off
             EinkSettings.setEnhance(.off, for: id)
         }
+        reapplyEnhance(displayID: id)
+    }
+
+    func setAdvanced(_ value: Bool, for id: CGDirectDisplayID) {
+        guard let i = index(of: id), panels[i].advanced != value else { return }
+        markSelfChange()
+        panels[i].advanced = value
+        EinkSettings.setAdvanced(value, for: id)
+        reapplyEnhance(displayID: id)
+    }
+
+    func setCustomCurve(_ curve: ToneCurve, for id: CGDirectDisplayID) {
+        guard let i = index(of: id), panels[i].custom != curve else { return }
+        markSelfChange()
+        panels[i].custom = curve
+        EinkSettings.setCustomCurve(curve, for: id)
         reapplyEnhance(displayID: id)
     }
 
@@ -229,12 +251,15 @@ struct PanelRow: View {
     private let levels: [EnhanceLevel] = [.off, .subtle, .medium, .strong]
     private let textLevels: [TextLevel] = [.off, .medium, .strong, .sharp, .solid]
 
-    /// Text wins over Video, matching effectiveCurve().
+    /// Advanced overrides the presets, then Text over Video: the same order
+    /// effectiveCurve() uses when writing the gamma table.
     private var activeCurve: ToneCurve? {
-        panel.textLevel.curve ?? panel.enhance.curve
+        if panel.advanced { return panel.custom.isIdentity ? nil : panel.custom }
+        return panel.textLevel.curve ?? panel.enhance.curve
     }
 
     private var activeModeName: String {
+        if panel.advanced { return L("advanced.title") }
         if panel.textLevel != .off { return L("text.title") }
         if panel.enhance != .off { return L("video.title") }
         return ""
@@ -259,8 +284,11 @@ struct PanelRow: View {
 
             if panel.isEink {
                 saturationSection
-                textSection
-                enhanceSection
+                if !panel.advanced {
+                    textSection
+                    enhanceSection
+                }
+                advancedSection
                 curveSection
             }
         }
@@ -315,6 +343,57 @@ struct PanelRow: View {
                 }
                 CurvePlot(curve: curve, height: 96)
             }
+        }
+    }
+
+    /// Full manual control of the curve, replacing the preset pickers.
+    @ViewBuilder private var advancedSection: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Toggle(isOn: Binding(
+                get: { panel.advanced },
+                set: { model.setAdvanced($0, for: panel.id) }
+            )) {
+                Text(L("advanced.title")).font(.system(size: 13, weight: .medium))
+            }
+            .toggleStyle(.switch)
+            .controlSize(.small)
+
+            if panel.advanced {
+                Text(L("advanced.note"))
+                    .font(.system(size: 11)).foregroundStyle(.secondary)
+                slider(L("curve.knee"), value: panel.custom.knee, range: 0.05...1.00) {
+                    var c = panel.custom; c.knee = $0
+                    model.setCustomCurve(c, for: panel.id)
+                }
+                slider(L("curve.gamma"), value: panel.custom.gamma, range: 0.30...6.00) {
+                    var c = panel.custom; c.gamma = $0
+                    model.setCustomCurve(c, for: panel.id)
+                }
+                slider(L("curve.black"), value: panel.custom.blackPoint, range: 0.00...0.40) {
+                    var c = panel.custom; c.blackPoint = $0
+                    model.setCustomCurve(c, for: panel.id)
+                }
+                slider(L("curve.white"), value: panel.custom.whitePoint, range: 0.60...1.00) {
+                    var c = panel.custom; c.whitePoint = $0
+                    model.setCustomCurve(c, for: panel.id)
+                }
+            }
+        }
+    }
+
+    private func slider(_ title: String, value: Double,
+                        range: ClosedRange<Double>,
+                        set: @escaping (Double) -> Void) -> some View {
+        VStack(alignment: .leading, spacing: 1) {
+            HStack {
+                Text(title).font(.system(size: 11))
+                Spacer()
+                Text(String(format: "%.2f", value))
+                    .font(.system(size: 11)).monospacedDigit()
+                    .foregroundStyle(.secondary)
+            }
+            Slider(value: Binding(get: { value }, set: set), in: range)
+                .controlSize(.small)
         }
     }
 
@@ -469,7 +548,20 @@ struct AssistantView: View {
             }
         }
         .padding(14)
-        .frame(minWidth: 500)
+    }
+}
+
+/// Wraps the panel so a machine with several displays scrolls instead of
+/// growing a window taller than the screen. maxHeight is what makes the
+/// ScrollView actually scroll: without it, it just sizes to its content.
+struct AssistantScroll: View {
+    @ObservedObject var model: AssistantModel
+
+    var body: some View {
+        ScrollView(.vertical) {
+            AssistantView(model: model)
+        }
+        .frame(minWidth: 500, maxHeight: 640)
     }
 }
 
@@ -506,7 +598,7 @@ struct EinkAssistantApp: App {
 
     var body: some Scene {
         MenuBarExtra("E-Ink Assistant", systemImage: "book.pages") {
-            AssistantView(model: model)
+            AssistantScroll(model: model)
                 .onAppear { delegate.model = model }
         }
         .menuBarExtraStyle(.window)

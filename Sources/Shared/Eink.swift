@@ -142,6 +142,11 @@ enum EinkSettings {
 /// directions, so they are mutually exclusive; Text wins if both are somehow set.
 func effectiveCurve(displayID: CGDirectDisplayID) -> ToneCurve? {
     guard EinkSettings.isEink(displayID) else { return nil }
+    // A custom curve takes precedence over the presets it replaces.
+    if EinkSettings.advanced(displayID) {
+        let custom = EinkSettings.customCurve(displayID)
+        return custom.isIdentity ? nil : custom
+    }
     if let text = EinkSettings.textLevel(displayID).curve { return text }
     return EinkSettings.enhance(displayID).curve
 }
@@ -195,5 +200,33 @@ func restoreAllDisplaysSaturation() {
     CGGetActiveDisplayList(count, &ids, &count)
     for id in ids where installedSaturation(displayID: id) != nil {
         restoreProfile(displayID: id)
+    }
+}
+
+// MARK: - Advanced (fully custom) curve
+
+extension EinkSettings {
+    static func advanced(_ id: CGDirectDisplayID) -> Bool {
+        guard let uuid = displayUUIDString(id) else { return false }
+        return defaults.bool(forKey: "advanced-\(uuid)")
+    }
+
+    static func setAdvanced(_ value: Bool, for id: CGDirectDisplayID) {
+        guard let uuid = displayUUIDString(id) else { return }
+        defaults.set(value, forKey: "advanced-\(uuid)")
+    }
+
+    static func customCurve(_ id: CGDirectDisplayID) -> ToneCurve {
+        guard let uuid = displayUUIDString(id),
+              let raw = defaults.array(forKey: "curve-\(uuid)") as? [Double],
+              raw.count == 4
+        else { return ToneCurve(knee: 0.90, gamma: 3.00) }
+        return ToneCurve(knee: raw[0], gamma: raw[1],
+                         blackPoint: raw[2], whitePoint: raw[3])
+    }
+
+    static func setCustomCurve(_ c: ToneCurve, for id: CGDirectDisplayID) {
+        guard let uuid = displayUUIDString(id) else { return }
+        defaults.set([c.knee, c.gamma, c.blackPoint, c.whitePoint], forKey: "curve-\(uuid)")
     }
 }
