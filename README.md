@@ -18,7 +18,7 @@ right-click > Open.
 
 ## Scope
 
-Every value here was tuned on a **Bigme B251 Pro** (R2, FW V2.0) in a specific
+Every value here was tuned on a **Bigme B251 Pro** (R2 FW V2.0) in a specific
 configuration: **Web Mode, Hardware Gamma Level 3, Contrast 50, Color Restore
 Mode off**. The panel reports itself over EDID as `ICNM 8001H0`.
 
