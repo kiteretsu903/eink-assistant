@@ -1,7 +1,7 @@
 /* E-Ink Assistant — English */
 
 "app.title"        = "E-Ink Assistant";
-"display.mark"     = "Mark your e-ink panels:";
+"display.mark"     = "Select your e-ink displays to enable tuning.";
 "display.none"     = "No displays found.";
 "display.builtin"  = "built-in";
 "quit"             = "Quit";
