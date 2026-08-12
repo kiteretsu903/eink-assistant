@@ -5,7 +5,7 @@ e-ink panels, then give each one a saturation boost and an optional shadow-lift
 mode for video.
 
 Public APIs only. No permissions required. English and Simplified Chinese
-(简体中文) — follows the system language by default, with a picker in the panel
+(简体中文). Follows the system language by default, with a picker in the panel
 to override it. Switching applies immediately, without relaunching.
 
 ```
@@ -22,8 +22,8 @@ Every value here was tuned on a **Bigme B251 Pro** (R2 FW V2.0) in a specific
 configuration: **Web Mode, Hardware Gamma Level 3, Contrast 50, Color Restore
 Mode off**. The panel reports itself over EDID as `ICNM 8001H0`.
 
-Nothing in the mechanism is specific to that panel — it works on any display
-macOS can assign a profile to — but the presets were chosen by eye against that
+Nothing in the mechanism is specific to that panel: it works on any display
+macOS can assign a profile to. But the presets were chosen by eye against that
 one screen. Other e-ink monitors may also benefit. **Use at your own risk.**
 
 The app shows this notice in its panel too.
@@ -33,17 +33,17 @@ The app shows this notice in its panel too.
 ### Saturation
 
 Colour e-ink puts a colour filter array over a monochrome panel, which costs a
-lot of gamut — everything looks washed out. This rewrites the display's ICC
+lot of gamut, so everything looks washed out. This rewrites the display's ICC
 profile so macOS sends more vivid signals to compensate.
 
 It is applied by the system colour pipeline, so it covers the whole desktop on
-that display — apps, video, fullscreen, every Space — and leaves other displays
+that display: apps, video, fullscreen, every Space. Other displays are left
 alone.
 
-**Quitting resets it.** Both adjustments are app-managed: quitting the app (or
-logging out) returns every display to its original state, and launching puts
-your stored settings back. So the app needs to be running for saturation to
-apply — Launch at Login is the intended setup.
+**Quitting resets it.** Every setting in the app is app-managed: quitting (or
+logging out) returns each display to its original state, and launching puts
+your stored settings back. So the app needs to be running for anything here to
+apply. Launch at Login is the intended setup.
 
 The quit-time cleanup only removes profiles this app installed. A calibration
 profile you set yourself is recognised as foreign and left untouched.
@@ -61,14 +61,14 @@ pushing text toward the panel's floor. For reading.
 
 | level | knee | γ | black point | body | secondary | tertiary |
 |---|---|---|---|---|---|---|
-| Medium | 0.55 | 1.70 | — | 19.1:1 | 5.1:1 | 2.8:1 |
-| Strong | 0.65 | 2.10 | — | 19.9:1 | 6.0:1 | 2.9:1 |
-| Sharp | 0.90 | 3.00 | — | 20.5:1 | 9.6:1 | 4.0:1 |
+| Medium | 0.55 | 1.70 | 0 | 19.1:1 | 5.1:1 | 2.8:1 |
+| Strong | 0.65 | 2.10 | 0 | 19.9:1 | 6.0:1 | 2.9:1 |
+| Sharp | 0.90 | 3.00 | 0 | 20.5:1 | 9.6:1 | 4.0:1 |
 | Solid | 0.90 | 3.00 | 0.16 | 21.0:1 | 15.5:1 | 6.2:1 |
 
 (contrast against white, unadjusted is 15.1 / 4.8 / 2.8)
 
-Body text saturates quickly — the real gains are in **secondary and faint
+Body text saturates quickly. The real gains are in **secondary and faint
 text**, which is where a low-contrast panel struggles. `Solid` additionally
 crushes antialiased glyph edges to black, making stems solid at the cost of
 harder edges.
@@ -76,14 +76,14 @@ harder edges.
 ReadingLab also exposes a **white point**, the counterpart to the black point.
 In practice it turned out **not to be worth promoting to a level**: with macOS
 font smoothing doing stem darkening, glyph fringe pixels sit mostly on the dark
-side of the edge, which the black point already handles — so there is little
+side of the edge, which the black point already handles, so there is little
 light halo left to crush. It only helps with grey text on a dark background,
 which is a layout to avoid on a reflective panel anyway. Kept in the lab for
 completeness.
 
 That is roughly the ceiling for this approach. A display transform only ever
-sees one pixel at a time, so real sharpening or outlining — which need
-neighbouring pixels — would require capturing and re-rendering the screen.
+sees one pixel at a time, so real sharpening or outlining (which need
+neighbouring pixels) would require capturing and re-rendering the screen.
 
 White stays exactly 1.000 at every level, so the page never greys.
 
@@ -112,7 +112,7 @@ Both endpoints are pinned, so pure black stays pure black and white stays white.
 | Strong | 0.45 | 0.45 | 5.1× | 3.2× |
 
 **The trade-off, stated plainly:** this is a global tone curve. It cannot tell
-dark video from dark text, so anything dark gets lighter — including body text.
+dark video from dark text, so anything dark gets lighter, including body text.
 Measured contrast cost:
 
 | level | light-mode body text | dark mode (all text) |
@@ -123,7 +123,7 @@ Measured contrast cost:
 
 Dark mode suffers most because the *background* lifts too, which drags down
 contrast for every font regardless of colour. At Medium, dark-mode secondary
-text falls to 3.9:1 — below the WCAG AA threshold of 4.5:1.
+text falls to 3.9:1, below the WCAG AA threshold of 4.5:1.
 
 Dark coloured text also desaturates, because the curve runs per channel: dark
 channels get lifted while bright ones do not, narrowing the gap between them. A
@@ -139,27 +139,27 @@ contrast and are where Video Enhance does the most damage to text.
 
 **It does not persist.** Video Enhance drives the display's gamma table, which
 macOS clears on sleep and on display changes. The app re-applies it on wake and
-reconfiguration, so it needs to keep running — unlike saturation.
+reconfiguration, so it needs to keep running.
 
 Quitting the app clears the tone curve from every display, and so does logging
-out or shutting down — as it does for saturation.
+out or shutting down, as it does for saturation.
 
 ## Tuning labs
 
 Two tools for finding your own curve rather than using the presets. Both drive
-the gamma table live, so nothing persists — quitting restores the display.
+the gamma table live, so nothing persists: quitting restores the display.
 
-**ToneLab** (`open ToneLab.app`) — shadow lift, for video. Knee and γ sliders,
+**ToneLab** (`open ToneLab.app`): shadow lift, for video. Knee and γ sliders,
 a curve plot, the lift factor at each level, and dark step-wedge and ramp
 patterns for judging tone separation and banding by eye.
 
-**ReadingLab** (`open ReadingLab.app`) — text contrast, the mirror image. Uses
+**ReadingLab** (`open ReadingLab.app`): text contrast, the mirror image. Uses
 γ **above** 1 to darken the low end while pinning white, pushing text toward the
 panel's floor. Shows live WCAG contrast ratios before and after, and renders real
 text specimens at the greys macOS actually uses (body, secondary, tertiary,
 headings, regular and bold) on a white page.
 
-Reading mode is **tone-only** — it does not touch saturation, so whatever the
+Reading mode is **tone-only**: it does not touch saturation, so whatever the
 colour profile is doing stays as it is.
 
 | preset | knee | γ | body text | secondary |
@@ -186,8 +186,8 @@ build.sh                  builds both
 
 ## Related
 
-The ICC saturation mechanism, and the investigation behind it — including what
-does *not* work on modern macOS — is documented in
+The ICC saturation mechanism, and the investigation behind it (including what
+does *not* work on modern macOS), is documented in
 [mac-saturation](https://github.com/kiteretsu903/mac-saturation), which also has
 a CLI for exporting profiles. The relevant source files are vendored here so
 this repo stands alone.
