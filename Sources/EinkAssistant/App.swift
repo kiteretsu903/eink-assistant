@@ -23,6 +23,7 @@ struct PanelState: Identifiable, Equatable {
     var isEink: Bool
     var saturation: Double
     var enhance: EnhanceLevel
+    var textLevel: TextLevel
 }
 
 @MainActor
@@ -63,7 +64,8 @@ final class AssistantModel: ObservableObject {
                 // Stored value is authoritative now: the profile is removed on
                 // quit, so it is absent on a fresh launch.
                 saturation: EinkSettings.saturation(d.id),
-                enhance: EinkSettings.enhance(d.id)
+                enhance: EinkSettings.enhance(d.id),
+                textLevel: EinkSettings.textLevel(d.id)
             )
         }
     }
@@ -102,7 +104,9 @@ final class AssistantModel: ObservableObject {
         // longer reach this path.
         if !value {
             panels[i].enhance = .off
+            panels[i].textLevel = .off
             EinkSettings.setEnhance(.off, for: id)
+            EinkSettings.setTextLevel(.off, for: id)
             clearToneCurveLive(displayID: id)
             setSaturation(1.0, for: id)
         }
@@ -125,6 +129,23 @@ final class AssistantModel: ObservableObject {
         guard panels[i].enhance != level else { return }   // ignore phantom writes
         panels[i].enhance = level
         EinkSettings.setEnhance(level, for: id)
+        // One gamma table, and these two pull in opposite directions.
+        if level != .off {
+            panels[i].textLevel = .off
+            EinkSettings.setTextLevel(.off, for: id)
+        }
+        reapplyEnhance(displayID: id)
+    }
+
+    func setTextLevel(_ level: TextLevel, for id: CGDirectDisplayID) {
+        guard let i = index(of: id) else { return }
+        guard panels[i].textLevel != level else { return }
+        panels[i].textLevel = level
+        EinkSettings.setTextLevel(level, for: id)
+        if level != .off {
+            panels[i].enhance = .off
+            EinkSettings.setEnhance(.off, for: id)
+        }
         reapplyEnhance(displayID: id)
     }
 
@@ -163,6 +184,7 @@ struct PanelRow: View {
     // rather than installing an identity one.
     private let presets: [Double] = [1.0, 1.3, 1.5, 2.0]
     private let levels: [EnhanceLevel] = [.off, .subtle, .medium, .strong]
+    private let textLevels: [TextLevel] = [.off, .medium, .strong, .sharp, .solid]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -183,6 +205,7 @@ struct PanelRow: View {
 
             if panel.isEink {
                 saturationSection
+                textSection
                 enhanceSection
             }
         }
@@ -222,6 +245,27 @@ struct PanelRow: View {
         }
     }
 
+    private var textSection: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text("Text Contrast").font(.system(size: 11, weight: .medium))
+            Picker("", selection: Binding(
+                get: { panel.textLevel },
+                set: { model.setTextLevel($0, for: panel.id) }
+            )) {
+                ForEach(0..<textLevels.count, id: \.self) { i in
+                    Text(textLevels[i].label).tag(textLevels[i])
+                }
+            }
+            .pickerStyle(.segmented)
+            .labelsHidden()
+
+            Text(panel.textLevel.detail
+                 ?? "Darkens text so it reads on a low-contrast panel. For reading.")
+                .font(.system(size: 9)).foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
     private var enhanceSection: some View {
         VStack(alignment: .leading, spacing: 3) {
             Text("Video Enhance").font(.system(size: 11, weight: .medium))
@@ -241,6 +285,11 @@ struct PanelRow: View {
                       systemImage: "exclamationmark.triangle.fill")
                     .font(.system(size: 9))
                     .foregroundStyle(.orange)
+                    .fixedSize(horizontal: false, vertical: true)
+            } else if panel.textLevel != .off {
+                Text("Off while Text Contrast is on — they use the same "
+                     + "hardware table and pull opposite ways.")
+                    .font(.system(size: 9)).foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             } else {
                 Text("Brightens dark areas only. Turn on for video and photos.")

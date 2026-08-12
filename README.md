@@ -40,6 +40,31 @@ button removes the override and puts the factory profile back.
 Un-marking a display as e-ink resets it fully: the tone curve is cleared and the
 factory colour profile is restored, leaving the panel exactly as it was.
 
+### Text Contrast
+
+The mirror of Video Enhance: γ above 1 darkens the low end while pinning white,
+pushing text toward the panel's floor. For reading.
+
+| level | knee | γ | black point | body | secondary | tertiary |
+|---|---|---|---|---|---|---|
+| Medium | 0.55 | 1.70 | — | 19.1:1 | 5.1:1 | 2.8:1 |
+| Strong | 0.65 | 2.10 | — | 19.9:1 | 6.0:1 | 2.9:1 |
+| Sharp | 0.90 | 3.00 | — | 20.5:1 | 9.6:1 | 4.0:1 |
+| Solid | 0.90 | 3.00 | 0.16 | 21.0:1 | 15.5:1 | 6.2:1 |
+
+(contrast against white, unadjusted is 15.1 / 4.8 / 2.8)
+
+Body text saturates quickly — the real gains are in **secondary and faint
+text**, which is where a low-contrast panel struggles. `Solid` additionally
+crushes antialiased glyph edges to black, making stems solid at the cost of
+harder edges.
+
+White stays exactly 1.000 at every level, so the page never greys.
+
+**Text Contrast and Video Enhance are mutually exclusive.** They drive the same
+hardware gamma table and pull in opposite directions, so turning one on turns
+the other off.
+
 ### Video Enhance
 
 Colour e-ink has a very low contrast ratio, so dark detail collapses into an

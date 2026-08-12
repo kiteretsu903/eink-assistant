@@ -139,18 +139,17 @@ struct ContrastReadout: View {
 
 struct ReadingPresets: View {
     @ObservedObject var model: ReadingModel
-    // "text" is the value tuned by eye on the Bigme; the rest bracket it.
-    private let presets: [(String, Double, Double)] = [
-        ("off", 0.55, 1.00), ("medium", 0.55, 1.70),
-        ("strong", 0.65, 2.10), ("text", 0.90, 3.00),
-    ]
+    // Same definitions the app ships, so the lab and the app cannot drift.
+    private let levels: [TextLevel] = [.off, .medium, .strong, .sharp, .solid]
 
     var body: some View {
         HStack(spacing: 6) {
-            ForEach(0..<presets.count, id: \.self) { i in
-                let p = presets[i]
-                Button(p.0) { model.curve = ToneCurve(knee: p.1, gamma: p.2) }
-                    .controlSize(.small)
+            ForEach(0..<levels.count, id: \.self) { i in
+                let level = levels[i]
+                Button(level.label) {
+                    model.curve = level.curve ?? ToneCurve(knee: 0.90, gamma: 1.0)
+                }
+                .controlSize(.small)
             }
         }
     }

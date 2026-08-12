@@ -49,6 +49,46 @@ enum EnhanceLevel: String, CaseIterable {
     }
 }
 
+/// Text contrast strength — the mirror of EnhanceLevel. Gamma above 1 darkens
+/// the low end while pinning white, pushing text toward the panel's floor.
+///
+/// The four levels were tuned by eye on a Bigme B251 Pro. `solid` adds a
+/// black-point crush that turns antialiased glyph edges into solid black.
+enum TextLevel: String, CaseIterable {
+    case off, medium, strong, sharp, solid
+
+    var label: String {
+        switch self {
+        case .off: return "Off"
+        case .medium: return "Medium"
+        case .strong: return "Strong"
+        case .sharp: return "Sharp"
+        case .solid: return "Solid"
+        }
+    }
+
+    var curve: ToneCurve? {
+        switch self {
+        case .off:    return nil
+        case .medium: return ToneCurve(knee: 0.55, gamma: 1.70)
+        case .strong: return ToneCurve(knee: 0.65, gamma: 2.10)
+        case .sharp:  return ToneCurve(knee: 0.90, gamma: 3.00)
+        case .solid:  return ToneCurve(knee: 0.90, gamma: 3.00, blackPoint: 0.16)
+        }
+    }
+
+    var detail: String? {
+        switch self {
+        case .off: return nil
+        case .medium: return "Mild darkening of text."
+        case .strong: return "More darkening; faint text still faint."
+        case .sharp: return "Strong. Big gain on secondary and faint text."
+        case .solid: return "Also crushes antialiased edges solid — crisper, "
+                          + "but text may look harder-edged."
+        }
+    }
+}
+
 // MARK: - Persistence
 
 enum EinkSettings {
@@ -76,6 +116,19 @@ enum EinkSettings {
         guard let uuid = displayUUIDString(id) else { return }
         defaults.set(level.rawValue, forKey: "enhance-\(uuid)")
     }
+
+    static func textLevel(_ id: CGDirectDisplayID) -> TextLevel {
+        guard let uuid = displayUUIDString(id),
+              let raw = defaults.string(forKey: "text-\(uuid)"),
+              let level = TextLevel(rawValue: raw)
+        else { return .off }
+        return level
+    }
+
+    static func setTextLevel(_ level: TextLevel, for id: CGDirectDisplayID) {
+        guard let uuid = displayUUIDString(id) else { return }
+        defaults.set(level.rawValue, forKey: "text-\(uuid)")
+    }
 }
 
 /// Pushes a display's stored enhance level to the hardware.
@@ -83,9 +136,18 @@ enum EinkSettings {
 /// The gamma table this uses is volatile — macOS resets it on sleep, display
 /// reconfiguration and logout — so this has to be re-run on those events. That
 /// is why Video Enhance needs the app running, while saturation does not.
+/// The curve a display should currently be showing.
+///
+/// Text and Video Enhance both drive the one gamma table and pull in opposite
+/// directions, so they are mutually exclusive; Text wins if both are somehow set.
+func effectiveCurve(displayID: CGDirectDisplayID) -> ToneCurve? {
+    guard EinkSettings.isEink(displayID) else { return nil }
+    if let text = EinkSettings.textLevel(displayID).curve { return text }
+    return EinkSettings.enhance(displayID).curve
+}
+
 func reapplyEnhance(displayID: CGDirectDisplayID) {
-    let level = EinkSettings.isEink(displayID) ? EinkSettings.enhance(displayID) : .off
-    if let curve = level.curve {
+    if let curve = effectiveCurve(displayID: displayID) {
         applyToneCurveLive(curve, displayID: displayID)
     } else {
         clearToneCurveLive(displayID: displayID)
