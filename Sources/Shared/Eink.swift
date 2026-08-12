@@ -230,3 +230,68 @@ extension EinkSettings {
         defaults.set([c.knee, c.gamma, c.blackPoint, c.whitePoint], forKey: "curve-\(uuid)")
     }
 }
+
+// MARK: - Saved custom curves
+
+/// Up to five curves the user can store and re-apply. Deliberately global
+/// rather than per display, so a curve tuned on one panel can be applied to
+/// another.
+enum CurvePresets {
+    static let slotCount = 5
+
+    private static func key(_ slot: Int) -> String { "preset-slot-\(slot)" }
+    private static func nameKey(_ slot: Int) -> String { "preset-name-\(slot)" }
+
+    static func name(slot: Int) -> String? {
+        guard (0..<slotCount).contains(slot),
+              let n = UserDefaults.standard.string(forKey: nameKey(slot)),
+              !n.trimmingCharacters(in: .whitespaces).isEmpty
+        else { return nil }
+        return n
+    }
+
+    static func setName(_ name: String, slot: Int) {
+        guard (0..<slotCount).contains(slot) else { return }
+        let trimmed = name.trimmingCharacters(in: .whitespaces)
+        if trimmed.isEmpty {
+            UserDefaults.standard.removeObject(forKey: nameKey(slot))
+        } else {
+            UserDefaults.standard.set(trimmed, forKey: nameKey(slot))
+        }
+    }
+
+    /// The label to show on a slot: its name, or its number if unnamed.
+    static func label(slot: Int) -> String { name(slot: slot) ?? "\(slot + 1)" }
+
+    static func curve(slot: Int) -> ToneCurve? {
+        guard (0..<slotCount).contains(slot),
+              let raw = UserDefaults.standard.array(forKey: key(slot)) as? [Double],
+              raw.count == 4
+        else { return nil }
+        return ToneCurve(knee: raw[0], gamma: raw[1],
+                         blackPoint: raw[2], whitePoint: raw[3])
+    }
+
+    static func all() -> [ToneCurve?] {
+        (0..<slotCount).map { curve(slot: $0) }
+    }
+
+    static func save(_ c: ToneCurve, slot: Int) {
+        guard (0..<slotCount).contains(slot) else { return }
+        UserDefaults.standard.set([c.knee, c.gamma, c.blackPoint, c.whitePoint],
+                                  forKey: key(slot))
+    }
+
+    static func clear(slot: Int) {
+        guard (0..<slotCount).contains(slot) else { return }
+        UserDefaults.standard.removeObject(forKey: key(slot))
+        UserDefaults.standard.removeObject(forKey: nameKey(slot))
+    }
+
+    /// A compact description for tooltips, so a slot is identifiable without
+    /// applying it.
+    static func summary(_ c: ToneCurve) -> String {
+        String(format: "knee %.2f  γ %.2f  black %.2f  white %.2f",
+               c.knee, c.gamma, c.blackPoint, c.whitePoint)
+    }
+}

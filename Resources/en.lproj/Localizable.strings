@@ -63,3 +63,10 @@
 "curve.gamma"    = "Gamma (below 1 lifts, above 1 darkens)";
 "curve.black"    = "Black point";
 "curve.white"    = "White point";
+
+"presets.title"     = "Saved curves";
+"presets.hint"      = "Click an empty slot to save the current curve, a saved one to apply it. Right-click to overwrite or clear.";
+"presets.overwrite" = "Overwrite";
+"presets.clear"     = "Clear";
+
+"presets.rename" = "Rename";

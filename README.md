@@ -92,6 +92,11 @@ knee, gamma, black point and white point, applied live and stored per display.
 Gamma below 1 lifts shadows, above 1 darkens them, so one set of sliders covers
 both directions.
 
+Advanced also has **five slots** for saving curves. Click an empty slot to
+store the current curve, a saved one to apply it; right-click to rename,
+overwrite or clear. Slots are global rather than per display, so a curve tuned
+on one panel can be applied to another.
+
 **Text Contrast and Video Enhance are mutually exclusive.** They drive the same
 hardware gamma table and pull in opposite directions, so turning one on turns
 the other off.

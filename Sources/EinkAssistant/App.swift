@@ -34,6 +34,9 @@ final class AssistantModel: ObservableObject {
     @Published var panels: [PanelState] = []
     @Published var launchAtLogin = false
     @Published var language: AppLanguage = Localization.current
+    @Published var presets: [ToneCurve?] = CurvePresets.all()
+    /// Bumped on rename so rows redraw; names live in CurvePresets.
+    @Published var presetNamesVersion = 0
     @Published var lastError: String?
 
     // Writing a gamma table or a colour profile makes macOS post a storm of
@@ -203,6 +206,28 @@ final class AssistantModel: ObservableObject {
         reapplyEnhance(displayID: id)
     }
 
+    func savePreset(slot: Int, from id: CGDirectDisplayID) {
+        guard let i = index(of: id) else { return }
+        CurvePresets.save(panels[i].custom, slot: slot)
+        presets = CurvePresets.all()
+    }
+
+    func applyPreset(slot: Int, to id: CGDirectDisplayID) {
+        guard let curve = CurvePresets.curve(slot: slot) else { return }
+        setCustomCurve(curve, for: id)
+    }
+
+    func renamePreset(slot: Int, to name: String) {
+        CurvePresets.setName(name, slot: slot)
+        presetNamesVersion += 1
+    }
+
+    func clearPreset(slot: Int) {
+        CurvePresets.clear(slot: slot)
+        presets = CurvePresets.all()
+        presetNamesVersion += 1
+    }
+
     func setLanguage(_ value: AppLanguage) {
         guard language != value else { return }
         Localization.set(value)
@@ -239,6 +264,8 @@ struct PanelRow: View {
     // A binding, not a copy. A captured struct keeps reporting its
     // creation-time value during a drag, so the slider springs back.
     @Binding var panel: PanelState
+    @State private var renamingSlot: Int?
+    @State private var renameDraft = ""
 
     // 100% is the "off" shortcut — it drops the profile override entirely
     // rather than installing an identity one.
@@ -376,6 +403,67 @@ struct PanelRow: View {
                 slider(L("curve.white"), value: panel.custom.whitePoint, range: 0.60...1.00) {
                     var c = panel.custom; c.whitePoint = $0
                     model.setCustomCurve(c, for: panel.id)
+                }
+                presetSlots
+            }
+        }
+    }
+
+    /// Five slots for storing curves. Empty slots save, filled slots apply,
+    /// and a context menu renames, overwrites or clears. Renaming happens
+    /// inline: a sheet or alert would be heavy inside a menu bar panel.
+    private var presetSlots: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(L("presets.title")).font(.system(size: 11, weight: .medium))
+            HStack(spacing: 5) {
+                ForEach(0..<CurvePresets.slotCount, id: \.self) { slot in
+                    slotView(slot)
+                }
+            }
+            Text(L("presets.hint"))
+                .font(.system(size: 10)).foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    @ViewBuilder private func slotView(_ slot: Int) -> some View {
+        let saved = model.presets[slot]
+        if renamingSlot == slot {
+            TextField("", text: $renameDraft)
+                .textFieldStyle(.roundedBorder)
+                .font(.system(size: 11))
+                .frame(width: 76)
+                .onSubmit {
+                    model.renamePreset(slot: slot, to: renameDraft)
+                    renamingSlot = nil
+                }
+        } else {
+            Button {
+                if saved == nil {
+                    model.savePreset(slot: slot, from: panel.id)
+                } else {
+                    model.applyPreset(slot: slot, to: panel.id)
+                }
+            } label: {
+                Text(saved == nil ? "+" : CurvePresets.label(slot: slot))
+                    .font(.system(size: 11, weight: saved == nil ? .regular : .semibold))
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                    .frame(minWidth: 22, maxWidth: 76)
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.small)
+            .help(saved.map { CurvePresets.summary($0) } ?? L("presets.hint"))
+            .contextMenu {
+                if saved != nil {
+                    Button(L("presets.rename")) {
+                        renameDraft = CurvePresets.name(slot: slot) ?? ""
+                        renamingSlot = slot
+                    }
+                    Button(L("presets.overwrite")) {
+                        model.savePreset(slot: slot, from: panel.id)
+                    }
+                    Button(L("presets.clear")) { model.clearPreset(slot: slot) }
                 }
             }
         }

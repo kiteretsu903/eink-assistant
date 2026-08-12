@@ -62,3 +62,10 @@
 "curve.gamma"    = "伽马（小于 1 提亮，大于 1 加深）";
 "curve.black"    = "黑点";
 "curve.white"    = "白点";
+
+"presets.title"     = "已保存曲线";
+"presets.hint"      = "点击空位保存当前曲线，点击已保存的位置以应用。右键可覆盖或清除。";
+"presets.overwrite" = "覆盖";
+"presets.clear"     = "清除";
+
+"presets.rename" = "重命名";
