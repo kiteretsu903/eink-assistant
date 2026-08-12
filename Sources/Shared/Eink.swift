@@ -104,3 +104,34 @@ func restoreAllDisplaysToneCurves() {
     CGGetActiveDisplayList(count, &ids, &count)
     for id in ids { clearToneCurveLive(displayID: id) }
 }
+
+// MARK: - Saturation as app-managed state
+
+extension EinkSettings {
+    static func saturation(_ id: CGDirectDisplayID) -> Double {
+        guard let uuid = displayUUIDString(id),
+              let v = UserDefaults.standard.object(forKey: "saturation-\(uuid)") as? Double
+        else { return 1.0 }
+        return v
+    }
+
+    static func setSaturation(_ value: Double, for id: CGDirectDisplayID) {
+        guard let uuid = displayUUIDString(id) else { return }
+        UserDefaults.standard.set(value, forKey: "saturation-\(uuid)")
+    }
+}
+
+/// Removes saturation profiles this app installed, leaving anything else alone.
+///
+/// Used on quit, so the display goes back to how it was found. Only profiles we
+/// recognise as ours are dropped — `installedSaturation` returns nil for a
+/// user's own calibration, which must not be disturbed.
+func restoreAllDisplaysSaturation() {
+    var count: UInt32 = 0
+    CGGetActiveDisplayList(0, nil, &count)
+    var ids = [CGDirectDisplayID](repeating: 0, count: Int(count))
+    CGGetActiveDisplayList(count, &ids, &count)
+    for id in ids where installedSaturation(displayID: id) != nil {
+        restoreProfile(displayID: id)
+    }
+}

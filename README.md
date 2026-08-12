@@ -26,9 +26,13 @@ It is applied by the system colour pipeline, so it covers the whole desktop on
 that display — apps, video, fullscreen, every Space — and leaves other displays
 alone.
 
-**It persists.** The setting lives in the display profile, exactly like a Colour
-Profile choice made in System Settings, so macOS re-applies it at login whether
-or not this app is running.
+**Quitting resets it.** Both adjustments are app-managed: quitting the app (or
+logging out) returns every display to its original state, and launching puts
+your stored settings back. So the app needs to be running for saturation to
+apply — Launch at Login is the intended setup.
+
+The quit-time cleanup only removes profiles this app installed. A calibration
+profile you set yourself is recognised as foreign and left untouched.
 
 Presets at 100% / 130% / 150% / 200%, or a slider up to 300%. The 100%
 button removes the override and puts the factory profile back.
@@ -83,9 +87,7 @@ macOS clears on sleep and on display changes. The app re-applies it on wake and
 reconfiguration, so it needs to keep running — unlike saturation.
 
 Quitting the app clears the tone curve from every display, and so does logging
-out or shutting down. Saturation is not cleared on quit: it lives in the colour
-profile and is meant to persist, exactly like a Colour Profile choice made in
-System Settings. To remove it, use the 100% button or un-mark the display.
+out or shutting down — as it does for saturation.
 
 ## Tuning labs
 

@@ -60,15 +60,26 @@ final class AssistantModel: ObservableObject {
                 name: d.name,
                 isBuiltin: d.isBuiltin,
                 isEink: EinkSettings.isEink(d.id),
-                // The profile is authoritative for saturation, not a stored value.
-                saturation: installedSaturation(displayID: d.id) ?? 1.0,
+                // Stored value is authoritative now: the profile is removed on
+                // quit, so it is absent on a fresh launch.
+                saturation: EinkSettings.saturation(d.id),
                 enhance: EinkSettings.enhance(d.id)
             )
         }
     }
 
+    /// Re-asserts everything this app owns. Both adjustments are now
+    /// app-managed: quitting returns displays to their original state, so
+    /// launching has to put the stored settings back.
     func reapplyAll() {
-        for panel in panels { reapplyEnhance(displayID: panel.id) }
+        for panel in panels {
+            reapplyEnhance(displayID: panel.id)
+            guard panel.isEink else { continue }
+            let stored = EinkSettings.saturation(panel.id)
+            if abs(stored - 1.0) > 0.001 {
+                try? applySaturation(stored, displayID: panel.id, displayName: panel.name)
+            }
+        }
     }
 
     private func index(of id: CGDirectDisplayID) -> Int? {
@@ -100,6 +111,7 @@ final class AssistantModel: ObservableObject {
     func setSaturation(_ amount: Double, for id: CGDirectDisplayID) {
         guard let i = index(of: id) else { return }
         panels[i].saturation = amount
+        EinkSettings.setSaturation(amount, for: id)
         do {
             try applySaturation(amount, displayID: id, displayName: panels[i].name)
             lastError = nil
@@ -328,7 +340,10 @@ final class AssistantDelegate: NSObject, NSApplicationDelegate {
         NSWorkspace.shared.notificationCenter.addObserver(
             forName: NSWorkspace.willPowerOffNotification,
             object: nil, queue: .main
-        ) { _ in restoreAllDisplaysToneCurves() }
+        ) { _ in
+            restoreAllDisplaysToneCurves()
+            restoreAllDisplaysSaturation()
+        }
     }
 
     // Video Enhance lives in a volatile gamma table; don't leave it applied
@@ -337,6 +352,7 @@ final class AssistantDelegate: NSObject, NSApplicationDelegate {
     // quitting without opening it used to leave the curve in place.
     func applicationWillTerminate(_ note: Notification) {
         restoreAllDisplaysToneCurves()
+        restoreAllDisplaysSaturation()
     }
 }
 
