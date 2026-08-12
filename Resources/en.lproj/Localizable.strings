@@ -49,3 +49,8 @@
 
 "notice.tuned" = "Tuned for Bigme B251 Pro (R2 FW V2.0): Web Mode, Hardware Gamma Level 3, Contrast 50, Color Restore Mode off.";
 "notice.risk"  = "Other e-ink monitors may also benefit. Use at your own risk.";
+
+"preset.factory"  = "Factory";
+"preset.enhanced" = "Enhanced";
+"preset.vivid"    = "Vivid";
+"preset.anime"    = "Anime";

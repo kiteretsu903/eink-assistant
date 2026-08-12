@@ -48,3 +48,8 @@
 
 "notice.tuned" = "针对 Bigme B251 Pro（固件版本 R2 FW V2.0）调校：网页模式、硬件伽马“等级3”、对比度 50、色彩还原模式关闭。";
 "notice.risk"  = "其他墨水屏显示器可能同样受益，请自行斟酌使用，风险自负。";
+
+"preset.factory"  = "原厂";
+"preset.enhanced" = "增强";
+"preset.vivid"    = "艳丽";
+"preset.anime"    = "动漫";

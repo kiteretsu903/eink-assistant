@@ -220,7 +220,12 @@ struct PanelRow: View {
 
     // 100% is the "off" shortcut — it drops the profile override entirely
     // rather than installing an identity one.
-    private let presets: [Double] = [1.0, 1.3, 1.5, 2.0]
+    // Named presets. 100% is the "off" shortcut: it drops the profile override
+    // rather than installing an identity one.
+    private let presets: [(value: Double, key: String)] = [
+        (1.0, "preset.factory"), (1.3, "preset.enhanced"),
+        (1.5, "preset.vivid"),   (2.0, "preset.anime"),
+    ]
     private let levels: [EnhanceLevel] = [.off, .subtle, .medium, .strong]
     private let textLevels: [TextLevel] = [.off, .medium, .strong, .sharp, .solid]
 
@@ -261,8 +266,7 @@ struct PanelRow: View {
                     .font(.system(size: 18, weight: .semibold))
                     .monospacedDigit()
             }
-            HStack(spacing: 6) {
-                Slider(
+            Slider(
                     value: $panel.saturation,
                     in: 0.6...3.0,
                     // Each change rewrites a display profile, so commit on release.
@@ -270,13 +274,15 @@ struct PanelRow: View {
                         if !editing { model.setSaturation(panel.saturation, for: panel.id) }
                     }
                 )
+            HStack(spacing: 6) {
                 ForEach(0..<presets.count, id: \.self) { i in
-                    let value = presets[i]
-                    Button("\(Int(value * 100))") {
-                        model.setSaturation(value, for: panel.id)
+                    let preset = presets[i]
+                    Button(L(preset.key)) {
+                        model.setSaturation(preset.value, for: panel.id)
                     }
                     .buttonStyle(.bordered)
                     .controlSize(.small)
+                    .font(.system(size: 12))
                 }
             }
             Text(L("saturation.caption"))
