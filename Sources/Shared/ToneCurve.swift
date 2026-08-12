@@ -16,20 +16,36 @@ import CoreGraphics
 struct ToneCurve: Equatable {
     /// Above this input level the curve is exactly identity.
     var knee: Double = 0.35
-    /// Shadow strength. Below 1 lifts; 1.0 is a no-op.
+    /// Shadow strength. Below 1 lifts shadows; above 1 darkens them; 1.0 is off.
     var gamma: Double = 0.60
+
+    /// Everything below this input is crushed to pure black, and the remaining
+    /// range is rescaled so white still lands on white.
+    ///
+    /// Aimed at text: antialiased glyph edges render as mid-greys, which a
+    /// panel with few grey levels turns into fuzz rather than a smooth edge.
+    /// Crushing them makes stems solid. It is the display-side equivalent of
+    /// turning font smoothing down, but per display and without touching any
+    /// system-wide setting.
+    var blackPoint: Double = 0.0
 
     static let identity = ToneCurve(knee: 0.35, gamma: 1.0)
 
-    var isIdentity: Bool { abs(gamma - 1.0) < 0.001 || knee <= 0.0 }
+    var isIdentity: Bool {
+        (abs(gamma - 1.0) < 0.001 || knee <= 0.0) && blackPoint <= 0.0
+    }
 
     func value(_ x: Double) -> Double {
-        guard knee > 0, x > 0 else { return max(0, min(x, 1)) }
-        guard x < knee else { return min(x, 1) }
-        let u = min(max(x / knee, 0), 1)
+        // Black-point crush first, so the tone curve shapes what survives it.
+        var v = max(0, min(x, 1))
+        if blackPoint > 0 {
+            v = blackPoint >= 1 ? 0 : max(0, (v - blackPoint) / (1 - blackPoint))
+        }
+        guard knee > 0, v > 0 else { return v }
+        guard v < knee else { return min(v, 1) }
+        let u = min(max(v / knee, 0), 1)
         let w = 1 - (u * u * (3 - 2 * u))   // 1 - smoothstep
-        let lifted = pow(x, gamma)
-        return min(max((1 - w) * x + w * lifted, 0), 1)
+        return min(max((1 - w) * v + w * pow(v, gamma), 0), 1)
     }
 
     /// Sampled curve for a display transfer table.

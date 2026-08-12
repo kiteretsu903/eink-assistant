@@ -17,7 +17,7 @@ import CoreGraphics
 final class ReadingModel: ObservableObject {
     @Published var displays: [Display] = []
     @Published var selected: CGDirectDisplayID = 0
-    @Published var curve = ToneCurve(knee: 0.55, gamma: 1.70) { didSet { push() } }
+    @Published var curve = ToneCurve(knee: 0.90, gamma: 3.00) { didSet { push() } }
     @Published var live = true { didSet { push() } }
 
     init() {
@@ -139,9 +139,10 @@ struct ContrastReadout: View {
 
 struct ReadingPresets: View {
     @ObservedObject var model: ReadingModel
+    // "text" is the value tuned by eye on the Bigme; the rest bracket it.
     private let presets: [(String, Double, Double)] = [
-        ("off", 0.55, 1.00), ("light", 0.45, 1.35),
-        ("medium", 0.55, 1.70), ("strong", 0.65, 2.10),
+        ("off", 0.55, 1.00), ("medium", 0.55, 1.70),
+        ("strong", 0.65, 2.10), ("text", 0.90, 3.00),
     ]
 
     var body: some View {
@@ -188,7 +189,7 @@ struct ReadingLabView: View {
                             Text(String(format: "%.2f", model.curve.knee))
                                 .monospacedDigit().foregroundStyle(.secondary)
                         }
-                        Slider(value: $model.curve.knee, in: 0.20...0.90)
+                        Slider(value: $model.curve.knee, in: 0.20...1.00)
                         Text("Below this level text is darkened; above it, untouched.")
                             .font(.system(size: 9)).foregroundStyle(.secondary)
                     }
@@ -199,8 +200,19 @@ struct ReadingLabView: View {
                             Text(String(format: "%.2f", model.curve.gamma))
                                 .monospacedDigit().foregroundStyle(.secondary)
                         }
-                        Slider(value: $model.curve.gamma, in: 1.00...3.00)
+                        Slider(value: $model.curve.gamma, in: 1.00...6.00)
                         Text("Higher pushes text toward the panel's floor. 1.00 is off.")
+                            .font(.system(size: 9)).foregroundStyle(.secondary)
+                    }
+                    VStack(alignment: .leading, spacing: 2) {
+                        HStack {
+                            Text("Black point").font(.system(size: 12, weight: .medium))
+                            Spacer()
+                            Text(String(format: "%.2f", model.curve.blackPoint))
+                                .monospacedDigit().foregroundStyle(.secondary)
+                        }
+                        Slider(value: $model.curve.blackPoint, in: 0.00...0.40)
+                        Text("Crushes antialiased edges to solid black. 0 is off.")
                             .font(.system(size: 9)).foregroundStyle(.secondary)
                     }
                     ReadingPresets(model: model)
