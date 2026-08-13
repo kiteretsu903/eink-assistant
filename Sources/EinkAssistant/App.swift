@@ -158,6 +158,14 @@ final class AssistantModel: ObservableObject {
         panels[i].isEink = value
         EinkSettings.setEink(value, for: id)
 
+        // Dithering shimmer is the first thing people notice on e-ink, so
+        // marking a display turns this on rather than making them find it.
+        if value {
+            panels[i].reduceShaking = true
+            EinkSettings.setReduceShaking(true, for: id)
+            Dither.setDisabled(true, displayID: id)
+        }
+
         // Un-marking a display restores it completely: no tone curve, and the
         // factory colour profile back in place. Safe to do unconditionally
         // because of the transition guard above — an accidental write can no
@@ -363,12 +371,12 @@ struct PanelRow: View {
             .font(.system(size: 14, weight: .medium))
 
             if panel.isEink {
+                shakingSection
                 saturationSection
                 if !panel.advanced {
                     textSection
                     enhanceSection
                 }
-                shakingSection
                 advancedSection
                 curveSection
             }
@@ -439,10 +447,14 @@ struct PanelRow: View {
                 }
                 .toggleStyle(.switch)
                 .controlSize(.small)
-                Image(systemName: "info.circle")
-                    .font(.system(size: 12))
-                    .foregroundStyle(.secondary)
-                    .help(L("shaking.info"))
+                Button { } label: {
+                    Image(systemName: "info.circle")
+                        .font(.system(size: 12))
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+                .contentShape(Rectangle())
+                .help(L("shaking.info"))
                 Spacer()
             }
         }
