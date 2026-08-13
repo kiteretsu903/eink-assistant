@@ -7,6 +7,9 @@
   override for the chosen display. Existing override keys, such as custom
   scaled resolutions, are preserved.
 
+  It affects that display alone: other screens keep Night Shift and True Tone,
+  since this is a per-display override rather than the system-wide switch.
+
   Unlike everything else in the app this needs an administrator password, takes
   effect only after a restart, and is **not** undone when you quit. The app
   shows a reminder while a restart is still pending.

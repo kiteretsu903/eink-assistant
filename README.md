@@ -35,6 +35,10 @@ Both shift colour and tone in ways that fight the adjustments below. macOS
 withholds them from displays it treats as televisions, so this marks the chosen
 display as one.
 
+**It applies to that display alone.** Your laptop screen and any other monitors
+keep Night Shift and True Tone exactly as they were: this is a per-display
+override, not the system-wide switch in System Settings.
+
 Needs an administrator password, and a **restart** to take effect. It is the one
 setting here that is *not* undone when you quit, since undoing it would mean
 another password and another restart. Existing display overrides, including
