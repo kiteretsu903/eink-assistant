@@ -83,3 +83,21 @@
 "role.note"    = "This display only; other screens are unaffected. Needs an admin password. Not undone on quit.";
 "role.restart" = "Restart your Mac for this to take effect.";
 "role.error"   = "Could not change the display role.";
+
+"welcome.title"       = "Welcome to E-Ink Assistant";
+"welcome.menubar"     = "The app lives in your **menu bar**, with no Dock icon. **Click the icon up there** to open it.";
+"welcome.bigme.title" = "Using a Bigme B251 Pro?";
+"welcome.bigme.body"  = "Set the monitor itself to **Web Mode, Hardware Gamma Level 3, Contrast 50, Color Restore Mode off**. The presets were tuned against firmware **R2 FW V2.0**; other Bigme firmware may behave differently, so judge the result yourself.";
+"welcome.other.title" = "Using another monitor?";
+"welcome.other.body"  = "Set it to a **balanced hardware baseline**, with neutral contrast and gamma, so the software tuning has room to work. **Advanced mode** lets you dial in your own curve.";
+"welcome.hide"        = "Do not show this tip again";
+"welcome.done"        = "Got it";
+
+"welcome.title"       = "Welcome to E-Ink Assistant";
+"welcome.menubar"     = "The app lives in your **menu bar**, with no Dock icon. **Click the icon up there** to open it.";
+"welcome.bigme.title" = "Using a Bigme B251 Pro?";
+"welcome.bigme.body"  = "Set the monitor itself to **Web Mode, Hardware Gamma Level 3, Contrast 50, Color Restore Mode off**. The presets were tuned against firmware **R2 FW V2.0**; other Bigme firmware may behave differently, so judge the result yourself.";
+"welcome.other.title" = "Using another monitor?";
+"welcome.other.body"  = "Set it to a **balanced hardware baseline**, with neutral contrast and gamma, so the software tuning has room to work. **Advanced mode** lets you dial in your own curve.";
+"welcome.hide"        = "Do not show this tip again";
+"welcome.done"        = "Got it";

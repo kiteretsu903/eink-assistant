@@ -907,6 +907,8 @@ final class AssistantDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ note: Notification) {
         NSApp.setActivationPolicy(.accessory)
+        // After the menu bar item exists, so the tip's arrow points at something.
+        DispatchQueue.main.async { WelcomeWindow.showIfNeeded() }
         NSWorkspace.shared.notificationCenter.addObserver(
             forName: NSWorkspace.willPowerOffNotification,
             object: nil, queue: .main

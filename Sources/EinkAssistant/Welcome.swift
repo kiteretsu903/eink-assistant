@@ -1,0 +1,115 @@
+// First-run tip window.
+//
+// A menu bar app with no Dock icon is easy to launch and then lose, so this
+// says where to find it. It also carries the one thing the app cannot do for
+// you: the monitor's own hardware settings have to be right before any of the
+// software tuning means much.
+//
+// Shown on every launch until the user opts out, since the hardware advice is
+// worth repeating while someone is still setting up.
+
+import SwiftUI
+import AppKit
+
+enum WelcomeWindow {
+    private static let suppressKey = "hide-welcome"
+    private static var window: NSWindow?
+
+    static var isSuppressed: Bool {
+        UserDefaults.standard.bool(forKey: suppressKey)
+    }
+
+    static func setSuppressed(_ value: Bool) {
+        UserDefaults.standard.set(value, forKey: suppressKey)
+    }
+
+    static func showIfNeeded() {
+        guard !isSuppressed else { return }
+        show()
+    }
+
+    static func show() {
+        // Reuse the window if it is already up rather than stacking copies.
+        if let existing = window {
+            existing.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return
+        }
+        let hosting = NSHostingController(rootView: WelcomeView(close: close))
+        let panel = NSWindow(contentViewController: hosting)
+        panel.title = ""
+        panel.styleMask = [.titled, .closable]
+        panel.isReleasedWhenClosed = false
+        panel.center()
+        window = panel
+        panel.makeKeyAndOrderFront(nil)
+        // An accessory app does not come forward on its own.
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
+    static func close() {
+        window?.close()
+        window = nil
+    }
+}
+
+/// Renders **bold** from the localized string. Text(String) is verbatim, so the
+/// markup has to be parsed rather than passed through.
+private func md(_ text: String) -> AttributedString {
+    (try? AttributedString(markdown: text)) ?? AttributedString(text)
+}
+
+struct WelcomeView: View {
+    let close: () -> Void
+    @State private var suppress = WelcomeWindow.isSuppressed
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text(L("welcome.title"))
+                .font(.system(size: 20, weight: .semibold))
+
+            HStack(alignment: .top, spacing: 8) {
+                Image(systemName: "menubar.arrow.up.rectangle")
+                    .font(.system(size: 17))
+                    .foregroundStyle(Color.accentColor)
+                Text(md(L("welcome.menubar")))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Divider()
+
+            tip("display", L("welcome.bigme.title"), L("welcome.bigme.body"))
+            tip("display.2", L("welcome.other.title"), L("welcome.other.body"))
+
+            Divider()
+
+            HStack {
+                Toggle(L("welcome.hide"), isOn: Binding(
+                    get: { suppress },
+                    set: { suppress = $0; WelcomeWindow.setSuppressed($0) }
+                ))
+                Spacer()
+                Button(L("welcome.done")) { close() }
+                    .keyboardShortcut(.defaultAction)
+            }
+        }
+        .font(.system(size: 14))
+        .padding(24)
+        .frame(width: 540)
+    }
+
+    private func tip(_ symbol: String, _ title: String, _ body: String) -> some View {
+        HStack(alignment: .top, spacing: 8) {
+            Image(systemName: symbol)
+                .font(.system(size: 17))
+                .foregroundStyle(.secondary)
+                .frame(width: 20)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title).font(.system(size: 15, weight: .semibold))
+                Text(md(body))
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+}

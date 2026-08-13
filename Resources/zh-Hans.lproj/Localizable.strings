@@ -81,3 +81,21 @@
 "role.note"    = "仅对此显示器生效，其他屏幕不受影响。需要管理员密码。退出时不还原。";
 "role.restart" = "需要重启 Mac 后生效。";
 "role.error"   = "无法修改显示器类型。";
+
+"welcome.title"       = "欢迎使用墨水屏助手";
+"welcome.menubar"     = "本应用运行在**菜单栏**，没有程序坞图标。**点击上方菜单栏的图标**即可打开。";
+"welcome.bigme.title" = "使用 Bigme B251 Pro？";
+"welcome.bigme.body"  = "请先把显示器本身设为：**网页模式、硬件伽马“等级3”、对比度 50、色彩还原模式关闭**。预设是针对固件版本 **R2 FW V2.0** 调校的，其他 Bigme 固件版本表现可能不同，请自行判断效果。";
+"welcome.other.title" = "使用其他显示器？";
+"welcome.other.body"  = "请把硬件设置调到**较为中性的状态**（对比度、伽马等保持均衡），让软件层面的调校有发挥空间。**高级模式**可以自行调整曲线。";
+"welcome.hide"        = "不再显示此提示";
+"welcome.done"        = "知道了";
+
+"welcome.title"       = "欢迎使用墨水屏助手";
+"welcome.menubar"     = "本应用运行在**菜单栏**，没有程序坞图标。**点击上方菜单栏的图标**即可打开。";
+"welcome.bigme.title" = "使用 Bigme B251 Pro？";
+"welcome.bigme.body"  = "请先把显示器本身设为：**网页模式、硬件伽马“等级3”、对比度 50、色彩还原模式关闭**。预设是针对固件版本 **R2 FW V2.0** 调校的，其他 Bigme 固件版本表现可能不同，请自行判断效果。";
+"welcome.other.title" = "使用其他显示器？";
+"welcome.other.body"  = "请把硬件设置调到**较为中性的状态**（对比度、伽马等保持均衡），让软件层面的调校有发挥空间。**高级模式**可以自行调整曲线。";
+"welcome.hide"        = "不再显示此提示";
+"welcome.done"        = "知道了";
