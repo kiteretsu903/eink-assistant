@@ -56,6 +56,13 @@ private struct Bubble: View {
     }
 }
 
+/// A borderless window cannot become key by default, which leaves every control
+/// drawn in its inactive grey state.
+private final class KeyablePanel: NSPanel {
+    override var canBecomeKey: Bool { true }
+    override var canBecomeMain: Bool { true }
+}
+
 @MainActor
 final class BubbleWindow {
     private var panel: NSPanel?
@@ -113,11 +120,14 @@ final class BubbleWindow {
         }
         hosting.rootView = Bubble(arrowX: arrowX, content: wrapped)
 
-        // Non-activating, so showing it never brings the app forward or
-        // disturbs whatever the user is working in.
-        let window = NSPanel(contentRect: CGRect(origin: origin, size: size),
-                             styleMask: [.borderless, .nonactivatingPanel],
-                             backing: .buffered, defer: false)
+        // .nonactivatingPanel prevents the app becoming active at all, which is
+        // what kept the controls grey. The panel the user just clicked open
+        // takes focus; the tip, which appears by itself, does not.
+        var style: NSWindow.StyleMask = [.borderless]
+        if !activatesApp { style.insert(.nonactivatingPanel) }
+        let window = KeyablePanel(contentRect: CGRect(origin: origin, size: size),
+                                  styleMask: style,
+                                  backing: .buffered, defer: false)
         window.contentViewController = hosting
         window.isFloatingPanel = true
         window.level = .floating
@@ -129,10 +139,11 @@ final class BubbleWindow {
         // A non-activating panel can be key without bringing the app forward.
         window.becomesKeyOnlyIfNeeded = false
         window.setFrame(CGRect(origin: origin, size: size), display: true)
-        window.orderFrontRegardless()
         if activatesApp {
             NSApp.activate(ignoringOtherApps: true)
             window.makeKeyAndOrderFront(nil)
+        } else {
+            window.orderFrontRegardless()
         }
         panel = window
 
