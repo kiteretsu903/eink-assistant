@@ -46,8 +46,8 @@
 "language.title"  = "语言";
 "language.system" = "跟随系统";
 
-"notice.tuned" = "针对 Bigme B251 Pro（固件版本 R2 FW V2.0）调校：网页模式、硬件伽马“等级3”、对比度 50、色彩还原模式关闭。";
-"notice.risk"  = "其他墨水屏显示器可能同样受益，请自行斟酌使用，风险自负。";
+"notice.tuned" = "预设的前提是显示器本身已设为：网页模式、硬件伽马“等级3”、对比度 50、色彩还原模式关闭（Bigme B251 Pro，固件版本 R2 FW V2.0）。请先设置好这些。";
+"notice.risk"  = "其他墨水屏显示器可以用高级模式自行调校。请自行斟酌使用，风险自负。";
 
 "preset.factory"  = "原厂";
 "preset.enhanced" = "增强";

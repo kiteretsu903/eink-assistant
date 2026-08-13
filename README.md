@@ -145,13 +145,16 @@ have that happen automatically.
 
 ## Scope
 
-Every value was tuned on a **Bigme B251 Pro** (R2 FW V2.0) in one
-configuration: **Web Mode, Hardware Gamma Level 3, Contrast 50, Color Restore
-Mode off**.
+**Set the monitor up first, then use the app.** The presets assume the display's
+own hardware settings are already in place. On a **Bigme B251 Pro** (R2 FW V2.0)
+that means **Web Mode, Hardware Gamma Level 3, Contrast 50, Color Restore Mode
+off**, set in the monitor's own menu. Every value here was tuned by eye against
+that combination, so a different hardware setup wants different numbers.
 
-Nothing in the mechanism is specific to that panel: it works on any display
-macOS can assign a profile to, but the presets were chosen by eye against that
-one screen. Other e-ink monitors may also benefit. **Use at your own risk.**
+**Other colour e-ink monitors should benefit too.** Nothing in the mechanism is
+panel-specific, and **Advanced mode exposes the whole curve**, so another panel
+can be dialled in directly rather than being stuck with these presets. You are
+tuning it yourself at that point, so use at your own risk.
 
 Reduce Shaking is Apple Silicon only, and hides itself where unsupported.
 
