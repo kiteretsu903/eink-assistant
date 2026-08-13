@@ -15,6 +15,7 @@ enum WelcomeWindow {
     private static let suppressKey = "hide-welcome"
     private static var window: NSWindow?
     private static var popover: NSPopover?
+    private static var panelWatch: Timer?
 
     static var isSuppressed: Bool {
         UserDefaults.standard.bool(forKey: suppressKey)
@@ -71,7 +72,10 @@ enum WelcomeWindow {
             // also makes SwiftUI present the MenuBarExtra panel, which sits at
             // a higher window level and covers the tip. Dismiss just that.
             NSApp.activate(ignoringOtherApps: true)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { dismissMenuBarPanel() }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                dismissMenuBarPanel()
+                watchForPanel()
+            }
             return
         }
 
@@ -92,6 +96,25 @@ enum WelcomeWindow {
         panel.makeKeyAndOrderFront(nil)
     }
 
+    /// Once the panel is open the user has found the app, and the tip is only
+    /// in the way: it sits at a lower window level and ends up buried. So the
+    /// tip closes itself as soon as the panel appears.
+    private static func watchForPanel() {
+        panelWatch?.invalidate()
+        panelWatch = Timer.scheduledTimer(withTimeInterval: 0.4, repeats: true) { timer in
+            Task { @MainActor in
+                guard popover?.isShown == true else { timer.invalidate(); return }
+                if menuBarPanelIsVisible() { close() }
+            }
+        }
+    }
+
+    private static func menuBarPanelIsVisible() -> Bool {
+        NSApp.windows.contains {
+            NSStringFromClass(type(of: $0)).contains("MenuBarExtraWindow") && $0.isVisible
+        }
+    }
+
     /// Hides SwiftUI's MenuBarExtra panel without touching the status item.
     private static func dismissMenuBarPanel() {
         for window in NSApp.windows
@@ -101,6 +124,8 @@ enum WelcomeWindow {
     }
 
     static func close() {
+        panelWatch?.invalidate()
+        panelWatch = nil
         popover?.performClose(nil)
         popover = nil
         window?.close()
