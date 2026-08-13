@@ -53,14 +53,25 @@ final class AssistantModel: ObservableObject {
         selfChangeUntil = Date().addingTimeInterval(1.5)
     }
 
-    func scheduleReapply() {
+    /// `force` skips the self-change guard and re-applies everything
+    /// unconditionally. Only safe for wake events: those cannot be caused by
+    /// our own writes, so there is no feedback loop to start. Reconfiguration
+    /// events *are* triggered by our writes, and must stay guarded.
+    func scheduleReapply(force: Bool = false) {
         reapplyTask?.cancel()
         reapplyTask = Task { @MainActor [weak self] in
             try? await Task.sleep(nanoseconds: 700_000_000)
             guard !Task.isCancelled, let self else { return }
             self.refresh()
             // A change we caused ourselves needs no response.
-            guard Date() >= self.selfChangeUntil else { return }
+            guard force || Date() >= self.selfChangeUntil else { return }
+            self.reapplyAll()
+
+            // Displays can come back progressively after a wake, so assert a
+            // second time once things have settled.
+            guard force else { return }
+            try? await Task.sleep(nanoseconds: 3_000_000_000)
+            guard !Task.isCancelled else { return }
             self.reapplyAll()
         }
     }
@@ -82,7 +93,7 @@ final class AssistantModel: ObservableObject {
             forName: NSWorkspace.didWakeNotification,
             object: nil, queue: .main
         ) { [weak self] _ in
-            Task { @MainActor in self?.scheduleReapply() }
+            Task { @MainActor in self?.scheduleReapply(force: true) }
         }
         // Display-only sleep, the common case, posts screensDidWake rather than
         // didWake, which covers system sleep. Both are needed.
@@ -90,7 +101,7 @@ final class AssistantModel: ObservableObject {
             forName: NSWorkspace.screensDidWakeNotification,
             object: nil, queue: .main
         ) { [weak self] _ in
-            Task { @MainActor in self?.scheduleReapply() }
+            Task { @MainActor in self?.scheduleReapply(force: true) }
         }
         registerDisplayReconfigurationCallback()
 
@@ -797,6 +808,10 @@ struct AssistantScroll: View {
             // scrolling away with the content.
             HStack {
                 Text(L("app.title")).font(.system(size: 15, weight: .semibold))
+                Text("v" + (Bundle.main.object(forInfoDictionaryKey:
+                        "CFBundleShortVersionString") as? String ?? "?"))
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
                 Spacer()
                 Button(L("quit")) { NSApp.terminate(nil) }
                     .font(.system(size: 13))
