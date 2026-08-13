@@ -109,13 +109,28 @@ final class AssistantModel: ObservableObject {
     /// launching has to put the stored settings back.
     func reapplyAll() {
         markSelfChange()
-        for panel in panels {
-            reapplyEnhance(displayID: panel.id)
-            guard panel.isEink else { continue }
+        // Saturation first, then curves. Installing a colour profile clears the
+        // display's gamma table, so a curve applied before it is silently wiped
+        // — which is why settings appeared not to reload at launch.
+        for panel in panels where panel.isEink {
             let stored = EinkSettings.saturation(panel.id)
             if abs(stored - 1.0) > 0.001 {
                 try? applySaturation(stored, displayID: panel.id, displayName: panel.name)
             }
+        }
+        for panel in panels { reapplyEnhance(displayID: panel.id) }
+        reassertCurvesSoon()
+    }
+
+    /// The gamma-table wipe caused by a profile write can land slightly after
+    /// the call returns, so the curve is asserted again a moment later rather
+    /// than relying on ordering alone.
+    private func reassertCurvesSoon() {
+        Task { @MainActor [weak self] in
+            try? await Task.sleep(nanoseconds: 1_200_000_000)
+            guard let self else { return }
+            self.markSelfChange()
+            for panel in self.panels { reapplyEnhance(displayID: panel.id) }
         }
     }
 
@@ -161,6 +176,10 @@ final class AssistantModel: ObservableObject {
         } catch {
             lastError = String(format: L("error.saturation"), panels[i].name)
         }
+        // The profile write just cleared this display's gamma table; put any
+        // active curve back.
+        reapplyEnhance(displayID: id)
+        reassertCurvesSoon()
     }
 
     func setEnhance(_ level: EnhanceLevel, for id: CGDirectDisplayID) {
