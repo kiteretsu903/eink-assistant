@@ -318,6 +318,7 @@ struct PanelRow: View {
     // A binding, not a copy. A captured struct keeps reporting its
     // creation-time value during a drag, so the slider springs back.
     @Binding var panel: PanelState
+    @State private var showShakingInfo = false
     @State private var renamingSlot: Int?
     @State private var renameDraft = ""
 
@@ -447,14 +448,23 @@ struct PanelRow: View {
                 }
                 .toggleStyle(.switch)
                 .controlSize(.small)
-                Button { } label: {
+                // A hover tooltip never fires here: .help() relies on
+                // NSView.toolTip, which needs an active window, and a menu bar
+                // panel is non-activating. A popover works in a panel.
+                Button { showShakingInfo.toggle() } label: {
                     Image(systemName: "info.circle")
-                        .font(.system(size: 12))
+                        .font(.system(size: 13))
                         .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)
                 .contentShape(Rectangle())
-                .help(L("shaking.info"))
+                .popover(isPresented: $showShakingInfo, arrowEdge: .bottom) {
+                    Text(L("shaking.info"))
+                        .font(.system(size: 12))
+                        .fixedSize(horizontal: false, vertical: true)
+                        .frame(width: 280)
+                        .padding(14)
+                }
                 Spacer()
             }
         }
