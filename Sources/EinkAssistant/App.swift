@@ -29,6 +29,8 @@ struct PanelState: Identifiable, Equatable {
     var custom: ToneCurve
     var reduceShaking: Bool
     var shakingSupported: Bool
+    var isTelevision: Bool
+    var roleNeedsRestart: Bool
 }
 
 @MainActor
@@ -123,7 +125,9 @@ final class AssistantModel: ObservableObject {
                 advanced: EinkSettings.advanced(d.id),
                 custom: EinkSettings.customCurve(d.id),
                 reduceShaking: EinkSettings.reduceShaking(d.id),
-                shakingSupported: Dither.isSupported(displayID: d.id)
+                shakingSupported: Dither.isSupported(displayID: d.id),
+                isTelevision: DisplayRole.isTelevision(displayID: d.id),
+                roleNeedsRestart: DisplayRole.needsRestart(displayID: d.id)
             )
         }
     }
@@ -271,6 +275,33 @@ final class AssistantModel: ObservableObject {
         Dither.setDisabled(value, displayID: id)
     }
 
+    /// Writes the display role override. Unlike everything else here this needs
+    /// an administrator password and a restart, so it runs off the main thread
+    /// and is never applied implicitly.
+    func setTelevision(_ value: Bool, for id: CGDirectDisplayID) {
+        guard let i = index(of: id), panels[i].isTelevision != value else { return }
+        let previous = panels[i].isTelevision
+        panels[i].isTelevision = value          // optimistic, reverted on failure
+        Task.detached {
+            do {
+                try DisplayRole.setTelevision(value, displayID: id)
+                await MainActor.run { self.refreshRole(for: id) }
+            } catch {
+                await MainActor.run {
+                    if let j = self.index(of: id) { self.panels[j].isTelevision = previous }
+                    self.lastError = L("role.error")
+                }
+            }
+        }
+    }
+
+    private func refreshRole(for id: CGDirectDisplayID) {
+        guard let i = index(of: id) else { return }
+        panels[i].isTelevision = DisplayRole.isTelevision(displayID: id)
+        panels[i].roleNeedsRestart = DisplayRole.needsRestart(displayID: id)
+        lastError = nil
+    }
+
     func setAdvanced(_ value: Bool, for id: CGDirectDisplayID) {
         guard let i = index(of: id), panels[i].advanced != value else { return }
         markSelfChange()
@@ -408,6 +439,7 @@ struct PanelRow: View {
 
             if panel.isEink {
                 shakingSection
+                roleSection
                 saturationSection
                 if !panel.advanced {
                     textSection
@@ -467,6 +499,32 @@ struct PanelRow: View {
                     .font(.system(size: 11)).foregroundStyle(.secondary)
             }
             CurvePlot(curve: displayedCurve, height: 96)
+        }
+    }
+
+    /// Night Shift and True Tone are withheld by macOS from displays it treats
+    /// as televisions, so the role override is how they get turned off for one
+    /// display. Separate from everything else because it needs a password and a
+    /// restart, and is not undone on quit.
+    private var roleSection: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Toggle(isOn: Binding(
+                get: { panel.isTelevision },
+                set: { model.setTelevision($0, for: panel.id) }
+            )) {
+                Text(L("role.title")).font(.system(size: 13, weight: .medium))
+            }
+            .toggleStyle(.switch)
+            .controlSize(.small)
+
+            if panel.roleNeedsRestart {
+                Label(L("role.restart"), systemImage: "arrow.clockwise.circle")
+                    .font(.system(size: 11))
+                    .foregroundStyle(Color.orange)
+            }
+            Text(L("role.note"))
+                .font(.system(size: 11)).foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 

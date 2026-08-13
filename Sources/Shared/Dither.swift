@@ -94,6 +94,14 @@ enum Dither {
         } ?? false
     }
 
+    /// What the system currently reports for this display's role. The override
+    /// on disk may differ until the machine is restarted.
+    static func reportedIsTelevision(displayID: CGDirectDisplayID) -> Bool {
+        withFramebuffer(for: displayID) { service in
+            (property("DisplayIsTV", service) as? Bool) ?? false
+        } ?? false
+    }
+
     /// Whether a framebuffer could be matched at all. Used to hide the control
     /// on hardware where this does not apply, rather than offering a dead toggle.
     static func isSupported(displayID: CGDirectDisplayID) -> Bool {

@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.1
+
+- **Disable Night Shift & True Tone** per display. macOS withholds both from
+  displays it classifies as televisions, so this writes a `DisplayIsTV` display
+  override for the chosen display. Existing override keys, such as custom
+  scaled resolutions, are preserved.
+
+  Unlike everything else in the app this needs an administrator password, takes
+  effect only after a restart, and is **not** undone when you quit. The app
+  shows a reminder while a restart is still pending.
+
+  Same mechanism as
+  [macos-display-role-switcher](https://github.com/kiteretsu903/macos-display-role-switcher).
+
 ## v1.0
 
 First release. Per-display tuning for colour e-ink panels on macOS.

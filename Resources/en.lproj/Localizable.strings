@@ -78,3 +78,8 @@
 
 "shaking.title" = "Reduce Shaking";
 "shaking.info"  = "Disables display dithering for this display. macOS dithers output to smooth gradients; an e-ink panel holds each pixel, so the pattern shows up as a constant shimmer. Same effect as Stillcolor, but applied to one display rather than all of them.";
+
+"role.title"   = "Disable Night Shift & True Tone";
+"role.note"    = "Marks this display as a television, which is how macOS withholds those two features from it. Needs an administrator password. Not undone when you quit.";
+"role.restart" = "Restart your Mac for this to take effect.";
+"role.error"   = "Could not change the display role.";

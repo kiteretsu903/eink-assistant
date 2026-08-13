@@ -29,6 +29,17 @@ makes the picture sit still.
 On by default when you mark a display as e-ink, because it is usually the first
 thing people notice.
 
+### Disable Night Shift & True Tone
+
+Both shift colour and tone in ways that fight the adjustments below. macOS
+withholds them from displays it treats as televisions, so this marks the chosen
+display as one.
+
+Needs an administrator password, and a **restart** to take effect. It is the one
+setting here that is *not* undone when you quit, since undoing it would mean
+another password and another restart. Existing display overrides, including
+custom scaled resolutions, are preserved.
+
 ### Saturation
 
 A colour e-ink panel puts a colour filter over a monochrome screen, which costs
