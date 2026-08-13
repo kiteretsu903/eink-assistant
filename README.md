@@ -1,12 +1,14 @@
 # E-Ink Assistant
 
+<p align="center">
+  <b>English</b> &nbsp;·&nbsp; <a href="README.zh-Hans.md">简体中文介绍</a>
+</p>
+
 **Make a colour e-ink monitor look right on macOS.**
 
 Colour e-ink panels are washed out, low contrast, and shimmer under macOS's
 dithering. This is a small menu bar app that fixes all three, per display, so
 your laptop screen is left alone.
-
-**English** · [简体中文](README.zh-Hans.md)
 
 No permissions. No background service beyond the app itself. MIT licensed.
 
