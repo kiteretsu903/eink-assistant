@@ -6,6 +6,8 @@ Colour e-ink panels are washed out, low contrast, and shimmer under macOS's
 dithering. This is a small menu bar app that fixes all three, per display, so
 your laptop screen is left alone.
 
+**English** · [简体中文](README.zh-Hans.md)
+
 No permissions. No background service beyond the app itself. MIT licensed.
 English and 简体中文.
 
@@ -62,9 +64,11 @@ level is active, and it and Text Contrast are mutually exclusive.
 Full control of the curve (knee, gamma, black point, white point) with a live
 plot and five saveable, renameable slots.
 
-> The comparison images above are simulations of each transform, rendered on an
-> LCD. They show what the adjustment does to the signal; how much of it you see
-> depends on your panel.
+> The comparison images are generated from the app's real transforms and
+> rendered on an LCD. The text and video images additionally simulate a
+> low-contrast e-ink panel, since that is the situation those adjustments
+> address; the saturation image shows the transform directly. What you actually
+> see depends on your panel.
 
 ---
 
