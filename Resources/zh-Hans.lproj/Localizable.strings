@@ -105,3 +105,10 @@
 
 "help.more" = "展开";
 "help.less" = "收起";
+
+"system.title"   = "减少透明度与动态效果";
+"system.hint"    = "两项在墨水屏上都有帮助：半透明会让文字发糊，动画在刷新慢的屏幕上也没有意义。macOS 只允许在系统设置中修改这两项。";
+"system.open"    = "打开设置";
+"system.on"      = "已开启";
+"system.off"     = "未开启";
+"system.partial" = "部分开启";

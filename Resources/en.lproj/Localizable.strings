@@ -107,3 +107,10 @@
 
 "help.more" = "Show more";
 "help.less" = "Show less";
+
+"system.title"   = "Reduce Transparency & Motion";
+"system.hint"    = "Both help on e-ink: translucency muddies text, and animation is wasted on a slow panel. macOS only allows these to be changed in System Settings.";
+"system.open"    = "Open Settings";
+"system.on"      = "On";
+"system.off"     = "Off";
+"system.partial" = "Partly on";

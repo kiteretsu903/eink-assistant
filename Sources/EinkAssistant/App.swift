@@ -43,6 +43,10 @@ final class AssistantModel: ObservableObject {
     @Published var presets: [ToneCurve?] = CurvePresets.all()
     /// Bumped on rename so rows redraw; names live in CurvePresets.
     @Published var presetNamesVersion = 0
+    /// macOS refuses writes to com.apple.universalaccess, so these can only be
+    /// read and surfaced; changing them has to happen in System Settings.
+    @Published var reduceTransparency = false
+    @Published var reduceMotion = false
     @Published var lastError: String?
 
     // Writing a gamma table or a colour profile makes macOS post a storm of
@@ -348,6 +352,19 @@ final class AssistantModel: ObservableObject {
         CurvePresets.clear(slot: slot)
         presets = CurvePresets.all()
         presetNamesVersion += 1
+    }
+
+    func refreshAccessibility() {
+        let workspace = NSWorkspace.shared
+        reduceTransparency = workspace.accessibilityDisplayShouldReduceTransparency
+        reduceMotion = workspace.accessibilityDisplayShouldReduceMotion
+    }
+
+    /// Opens Accessibility > Display, where the two settings actually live.
+    func openAccessibilitySettings() {
+        let url = URL(string:
+            "x-apple.systempreferences:com.apple.preference.universalaccess?Seeing_Display")
+        if let url { NSWorkspace.shared.open(url) }
     }
 
     func setLanguage(_ value: AppLanguage) {
@@ -775,6 +792,37 @@ struct HowItWorks: View {
     }
 }
 
+/// System-wide accessibility settings that help on e-ink, shown above the
+/// per-display controls because they apply to the whole Mac.
+struct SystemDisplayRow: View {
+    @ObservedObject var model: AssistantModel
+
+    private var bothOn: Bool { model.reduceTransparency && model.reduceMotion }
+    private var status: String {
+        if bothOn { return L("system.on") }
+        if model.reduceTransparency || model.reduceMotion { return L("system.partial") }
+        return L("system.off")
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 8) {
+                Image(systemName: bothOn ? "checkmark.circle.fill" : "circle.dashed")
+                    .font(.system(size: 14))
+                    .foregroundStyle(bothOn ? Color.green : Color.secondary)
+                Text(L("system.title")).font(.system(size: 13, weight: .medium))
+                Text(status).font(.system(size: 12)).foregroundStyle(.secondary)
+                Spacer()
+                Button(L("system.open")) { model.openAccessibilitySettings() }
+                    .controlSize(.small)
+            }
+            Text(L("system.hint"))
+                .font(.system(size: 11)).foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+}
+
 // MARK: - Main view
 
 struct AssistantView: View {
@@ -782,6 +830,10 @@ struct AssistantView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
+            SystemDisplayRow(model: model)
+
+            Divider()
+
             if model.panels.isEmpty {
                 Text(L("display.none")).foregroundStyle(.secondary)
             } else {
