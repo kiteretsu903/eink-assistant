@@ -101,6 +101,26 @@ on one panel can be applied to another.
 hardware gamma table and pull in opposite directions, so turning one on turns
 the other off.
 
+### Reduce Shaking
+
+macOS dithers display output to smooth gradients. An LCD refreshes the pattern
+away; a colour e-ink panel holds each pixel, so the dither shows up as a
+constant shimmer. Turning it off makes the image sit still.
+
+This works by setting `enableDither` on the display's `IOMobileFramebufferAP`
+I/O Registry entry. No root or special permissions needed, and the toggle is
+hidden on hardware where no framebuffer can be matched rather than sitting there
+doing nothing.
+
+**Per display**, unlike Stillcolor, which applies to all displays or to
+embedded/external as a group. Each framebuffer is matched to a
+`CGDirectDisplayID` by product id and vendor (decoding the EISA manufacturer
+code, so `CPO` and `3599` are recognised as the same vendor), which lets an
+e-ink panel run without dithering while the built-in screen keeps it.
+
+Dithering is hardware state that outlives the process, so it is re-asserted
+after display changes and turned back on when the app quits.
+
 ### Video Enhance
 
 Colour e-ink has a very low contrast ratio, so dark detail collapses into an
@@ -193,6 +213,18 @@ Sources/EinkAssistant/    the menu bar app
 Sources/ToneLab/          the curve tuning tool
 build.sh                  builds both
 ```
+
+## License and credits
+
+MIT, see [LICENSE](LICENSE).
+
+**Reduce Shaking is based on [Stillcolor](https://github.com/aiaf/Stillcolor) by
+Abdullah Arif** (MIT). Stillcolor worked out that display dithering can be
+disabled through the `enableDither` I/O Registry property, which is the whole
+basis of that feature here. This project reimplements the idea narrowed to a
+single display; the credit for finding it belongs to Stillcolor. Thank you.
+
+Full notices in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 
 ## Related
 

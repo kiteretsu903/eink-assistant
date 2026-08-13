@@ -75,3 +75,6 @@
 
 /* Short form, for the compact label beside the curve plot. */
 "video.short" = "Video Enhance";
+
+"shaking.title" = "Reduce Shaking";
+"shaking.info"  = "Disables display dithering for this display. macOS dithers output to smooth gradients; an e-ink panel holds each pixel, so the pattern shows up as a constant shimmer. Same effect as Stillcolor, but applied to one display rather than all of them.";

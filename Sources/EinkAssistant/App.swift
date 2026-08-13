@@ -27,6 +27,8 @@ struct PanelState: Identifiable, Equatable {
     var textLevel: TextLevel
     var advanced: Bool
     var custom: ToneCurve
+    var reduceShaking: Bool
+    var shakingSupported: Bool
 }
 
 @MainActor
@@ -99,7 +101,9 @@ final class AssistantModel: ObservableObject {
                 enhance: EinkSettings.enhance(d.id),
                 textLevel: EinkSettings.textLevel(d.id),
                 advanced: EinkSettings.advanced(d.id),
-                custom: EinkSettings.customCurve(d.id)
+                custom: EinkSettings.customCurve(d.id),
+                reduceShaking: EinkSettings.reduceShaking(d.id),
+                shakingSupported: Dither.isSupported(displayID: d.id)
             )
         }
     }
@@ -119,6 +123,11 @@ final class AssistantModel: ObservableObject {
             }
         }
         for panel in panels { reapplyEnhance(displayID: panel.id) }
+        // Dithering is hardware state that survives across processes and is
+        // reset by display reconfiguration, so it is re-asserted here too.
+        for panel in panels {
+            Dither.setDisabled(panel.isEink && panel.reduceShaking, displayID: panel.id)
+        }
         reassertCurvesSoon()
     }
 
@@ -157,6 +166,9 @@ final class AssistantModel: ObservableObject {
             panels[i].enhance = .off
             panels[i].textLevel = .off
             panels[i].advanced = false
+            panels[i].reduceShaking = false
+            EinkSettings.setReduceShaking(false, for: id)
+            Dither.setDisabled(false, displayID: id)
             EinkSettings.setEnhance(.off, for: id)
             EinkSettings.setTextLevel(.off, for: id)
             EinkSettings.setAdvanced(false, for: id)
@@ -207,6 +219,13 @@ final class AssistantModel: ObservableObject {
             EinkSettings.setEnhance(.off, for: id)
         }
         reapplyEnhance(displayID: id)
+    }
+
+    func setReduceShaking(_ value: Bool, for id: CGDirectDisplayID) {
+        guard let i = index(of: id), panels[i].reduceShaking != value else { return }
+        panels[i].reduceShaking = value
+        EinkSettings.setReduceShaking(value, for: id)
+        Dither.setDisabled(value, displayID: id)
     }
 
     func setAdvanced(_ value: Bool, for id: CGDirectDisplayID) {
@@ -349,6 +368,7 @@ struct PanelRow: View {
                     textSection
                     enhanceSection
                 }
+                shakingSection
                 advancedSection
                 curveSection
             }
@@ -403,6 +423,28 @@ struct PanelRow: View {
                     .font(.system(size: 11)).foregroundStyle(.secondary)
             }
             CurvePlot(curve: displayedCurve, height: 96)
+        }
+    }
+
+    /// Dithering control. Hidden when no framebuffer could be matched, rather
+    /// than offering a toggle that would do nothing.
+    @ViewBuilder private var shakingSection: some View {
+        if panel.shakingSupported {
+            HStack(spacing: 6) {
+                Toggle(isOn: Binding(
+                    get: { panel.reduceShaking },
+                    set: { model.setReduceShaking($0, for: panel.id) }
+                )) {
+                    Text(L("shaking.title")).font(.system(size: 13, weight: .medium))
+                }
+                .toggleStyle(.switch)
+                .controlSize(.small)
+                Image(systemName: "info.circle")
+                    .font(.system(size: 12))
+                    .foregroundStyle(.secondary)
+                    .help(L("shaking.info"))
+                Spacer()
+            }
         }
     }
 
@@ -752,6 +794,7 @@ final class AssistantDelegate: NSObject, NSApplicationDelegate {
         ) { _ in
             restoreAllDisplaysToneCurves()
             restoreAllDisplaysSaturation()
+            Dither.restoreAll()
         }
     }
 
@@ -762,6 +805,7 @@ final class AssistantDelegate: NSObject, NSApplicationDelegate {
     func applicationWillTerminate(_ note: Notification) {
         restoreAllDisplaysToneCurves()
         restoreAllDisplaysSaturation()
+        Dither.restoreAll()
     }
 }
 

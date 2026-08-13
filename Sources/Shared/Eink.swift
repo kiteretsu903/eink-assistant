@@ -203,6 +203,18 @@ func restoreAllDisplaysSaturation() {
     }
 }
 
+extension EinkSettings {
+    static func reduceShaking(_ id: CGDirectDisplayID) -> Bool {
+        guard let uuid = displayUUIDString(id) else { return false }
+        return defaults.bool(forKey: "shaking-\(uuid)")
+    }
+
+    static func setReduceShaking(_ value: Bool, for id: CGDirectDisplayID) {
+        guard let uuid = displayUUIDString(id) else { return }
+        defaults.set(value, forKey: "shaking-\(uuid)")
+    }
+}
+
 // MARK: - Advanced (fully custom) curve
 
 extension EinkSettings {

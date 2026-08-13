@@ -73,3 +73,6 @@
 "advanced.reset" = "重置曲线";
 
 "video.short" = "视频暗部增强";
+
+"shaking.title" = "减少抖动";
+"shaking.info"  = "为此显示器关闭抖动（dithering）。macOS 会用抖动让渐变更平滑，而墨水屏会保持每个像素，因此这种图案会表现为持续的闪烁。效果与 Stillcolor 相同，但只作用于单个显示器，而非全部。";
