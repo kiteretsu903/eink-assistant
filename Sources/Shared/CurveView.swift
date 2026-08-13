@@ -19,7 +19,7 @@ struct CurvePlot: View {
             var identity = Path()
             identity.move(to: point(0, 0))
             identity.addLine(to: point(1, 1))
-            context.stroke(identity, with: .color(.secondary.opacity(0.35)),
+            context.stroke(identity, with: .color(.primary.opacity(0.45)),
                            style: StrokeStyle(lineWidth: 1, dash: [3, 3]))
 
             // Knee marker: everything right of this line is untouched.
@@ -41,10 +41,6 @@ struct CurvePlot: View {
                            style: StrokeStyle(lineWidth: 2, lineJoin: .round))
         }
         .frame(height: height)
-        .background(Color.primary.opacity(0.04))
-        .overlay(RoundedRectangle(cornerRadius: 4)
-            .stroke(Color.secondary.opacity(0.25), lineWidth: 1))
-        .clipShape(RoundedRectangle(cornerRadius: 4))
+        .einkOutlinedArea(cornerRadius: 4)
     }
 }
-

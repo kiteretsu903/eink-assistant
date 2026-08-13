@@ -11,6 +11,8 @@ enum AppLanguage: String, CaseIterable {
     case system
     case english = "en"
     case simplifiedChinese = "zh-Hans"
+    case traditionalChinese = "zh-Hant"
+    case japanese = "ja"
 
     /// Shown in the picker. Deliberately in each language's own name, so the
     /// options stay recognisable whichever language is currently active.
@@ -19,6 +21,8 @@ enum AppLanguage: String, CaseIterable {
         case .system: return L("language.system")
         case .english: return "English"
         case .simplifiedChinese: return "简体中文"
+        case .traditionalChinese: return "繁體中文"
+        case .japanese: return "日本語"
         }
     }
 }
@@ -40,17 +44,40 @@ enum Localization {
         refresh()
     }
 
-    /// Resolves the stored preference to a bundle. Falls back to the system
-    /// bundle if the requested .lproj is missing rather than showing raw keys.
+    /// Resolves the stored preference to a concrete supported localization.
+    /// If the Mac's primary language is unsupported, System deliberately uses
+    /// English instead of relying on Bundle.main's implicit fallback rules.
     static func refresh() {
-        guard current != .system,
-              let path = Bundle.main.path(forResource: current.rawValue, ofType: "lproj"),
+        let resource = current == .system ? systemResource : current.rawValue
+        guard let path = Bundle.main.path(forResource: resource, ofType: "lproj"),
               let localized = Bundle(path: path)
         else {
-            bundle = .main
+            bundle = englishBundle ?? .main
             return
         }
         bundle = localized
+    }
+
+    private static var englishBundle: Bundle? {
+        Bundle.main.path(forResource: "en", ofType: "lproj").flatMap(Bundle.init(path:))
+    }
+
+    /// Only the primary system language decides System mode. This makes the
+    /// fallback predictable: French, Korean, or any other unsupported primary
+    /// language shows English even if a secondary preferred language happens
+    /// to be supported.
+    private static var systemResource: String {
+        let primary = Locale.preferredLanguages.first?.lowercased() ?? "en"
+        if primary.hasPrefix("ja") { return "ja" }
+        if primary.hasPrefix("zh") {
+            if primary.contains("hant") || primary.hasPrefix("zh-tw")
+                || primary.hasPrefix("zh-hk") || primary.hasPrefix("zh-mo") {
+                return "zh-Hant"
+            }
+            return "zh-Hans"
+        }
+        if primary.hasPrefix("en") { return "en" }
+        return "en"
     }
 }
 

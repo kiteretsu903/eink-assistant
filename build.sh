@@ -24,15 +24,18 @@ bundle() {  # bundle <name> <bundle-id> <extra-plist>
   <key>CFBundleName</key>            <string>$name</string>
   <key>CFBundleDisplayName</key>     <string>$name</string>
   <key>CFBundleIdentifier</key>      <string>$ident</string>
-  <key>CFBundleVersion</key>         <string>1.1</string>
-  <key>CFBundleShortVersionString</key><string>1.1</string>
+  <key>CFBundleVersion</key>         <string>2.0</string>
+  <key>CFBundleShortVersionString</key><string>2.0</string>
   <key>CFBundlePackageType</key>     <string>APPL</string>
   <key>CFBundleExecutable</key>      <string>$name</string>
   <key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
   <key>LSMinimumSystemVersion</key>  <string>14.0</string>
   <key>CFBundleDevelopmentRegion</key><string>en</string>
   <key>CFBundleLocalizations</key>
-  <array><string>en</string><string>zh-Hans</string></array>
+  <array>
+    <string>en</string><string>zh-Hans</string>
+    <string>zh-Hant</string><string>ja</string>
+  </array>
 $extra
 </dict>
 </plist>
@@ -42,6 +45,15 @@ PLIST
   if [ -d Resources ]; then
     mkdir -p "$app/Contents/Resources"
     cp -R Resources/*.lproj "$app/Contents/Resources/"
+    if [ -d Resources/Shortcuts ]; then
+      cp Resources/Shortcuts/*.shortcut "$app/Contents/Resources/"
+    fi
+    if [ "$name" = "E-Ink Assistant" ] && [ -f Resources/AppIcon.icns ]; then
+      cp Resources/AppIcon.icns "$app/Contents/Resources/"
+      if [ -f Resources/Assets.car ]; then
+        cp Resources/Assets.car "$app/Contents/Resources/"
+      fi
+    fi
   fi
 
   # Ad-hoc signature so macOS will launch it locally, and so SMAppService
@@ -53,8 +65,11 @@ PLIST
 echo "building E-Ink Assistant…"
 swiftc -O -parse-as-library -target "$TARGET" \
   Sources/Shared/*.swift Sources/EinkAssistant/*.swift -o "E-Ink Assistant.bin"
-# LSUIElement: menu bar only, no Dock icon.
-bundle "E-Ink Assistant" "local.eink.Assistant" "  <key>LSUIElement</key>         <true/>"
+# LSUIElement: menu bar only, no Dock icon. The app icon remains visible in
+# Finder, Login Items, permission prompts, and other system UI.
+bundle "E-Ink Assistant" "local.eink.Assistant" "  <key>LSUIElement</key>         <true/>
+  <key>CFBundleIconFile</key>    <string>AppIcon</string>
+  <key>CFBundleIconName</key>    <string>AppIcon</string>"
 
 echo "building ToneLab…"
 swiftc -O -parse-as-library -target "$TARGET" \

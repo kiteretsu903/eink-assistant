@@ -172,7 +172,7 @@ func restoreAllDisplaysToneCurves() {
     for id in ids { clearToneCurveLive(displayID: id) }
 }
 
-// MARK: - Saturation as app-managed state
+// MARK: - Color profile adjustments as app-managed state
 
 extension EinkSettings {
     static func saturation(_ id: CGDirectDisplayID) -> Double {
@@ -186,12 +186,43 @@ extension EinkSettings {
         guard let uuid = displayUUIDString(id) else { return }
         UserDefaults.standard.set(value, forKey: "saturation-\(uuid)")
     }
+
+    static func rgbBalance(_ id: CGDirectDisplayID) -> RGBBalance {
+        guard let uuid = displayUUIDString(id),
+              let raw = defaults.array(forKey: "rgb-\(uuid)") as? [Double],
+              raw.count == 3
+        else { return .identity }
+        return RGBBalance(red: raw[0], green: raw[1], blue: raw[2]).clamped
+    }
+
+    static func setRGBBalance(_ balance: RGBBalance, for id: CGDirectDisplayID) {
+        guard let uuid = displayUUIDString(id) else { return }
+        let value = balance.clamped
+        defaults.set([value.red, value.green, value.blue], forKey: "rgb-\(uuid)")
+    }
+
+    /// The selected preset is stored separately from the numeric saturation.
+    /// A manual slider adjustment writes -1 so landing on a preset's exact
+    /// value does not incorrectly make that preset look selected again.
+    static func saturationPreset(_ id: CGDirectDisplayID) -> Int? {
+        guard let uuid = displayUUIDString(id),
+              UserDefaults.standard.object(forKey: "saturation-preset-\(uuid)") != nil
+        else { return nil }
+        let index = UserDefaults.standard.integer(forKey: "saturation-preset-\(uuid)")
+        return index >= 0 ? index : nil
+    }
+
+    static func setSaturationPreset(_ index: Int?, for id: CGDirectDisplayID) {
+        guard let uuid = displayUUIDString(id) else { return }
+        UserDefaults.standard.set(index ?? -1,
+                                  forKey: "saturation-preset-\(uuid)")
+    }
 }
 
-/// Removes saturation profiles this app installed, leaving anything else alone.
+/// Removes color profiles this app installed, leaving anything else alone.
 ///
 /// Used on quit, so the display goes back to how it was found. Only profiles we
-/// recognise as ours are dropped — `installedSaturation` returns nil for a
+/// recognize as ours are dropped — `installedSaturation` returns nil for a
 /// user's own calibration, which must not be disturbed.
 func restoreAllDisplaysSaturation() {
     var count: UInt32 = 0

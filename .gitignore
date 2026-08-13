@@ -1,4 +1,5 @@
 *.bin
 *.app/
+*.dmg
 *.o
 .DS_Store

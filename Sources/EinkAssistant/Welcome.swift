@@ -99,11 +99,11 @@ struct WelcomeView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text(L("welcome.title"))
-                .font(.system(size: 20, weight: .semibold))
+                .font(.system(size: 22, weight: .semibold))
 
             HStack(alignment: .top, spacing: 8) {
                 Image(systemName: "menubar.arrow.up.rectangle")
-                    .font(.system(size: 17))
+                    .font(.system(size: 19))
                     .foregroundStyle(Color.accentColor)
                 Text(md(L("welcome.menubar")))
                     .fixedSize(horizontal: false, vertical: true)
@@ -121,26 +121,29 @@ struct WelcomeView: View {
                     get: { suppress },
                     set: { suppress = $0; WelcomeWindow.setSuppressed($0) }
                 ))
+                .toggleStyle(EinkCheckboxToggleStyle())
                 Spacer()
                 Button(L("welcome.done")) { close() }
+                    .buttonStyle(EinkOutlinedButtonStyle(
+                        foreground: .accentColor))
                     .keyboardShortcut(.defaultAction)
             }
         }
-        .font(.system(size: 14))
+        .font(.system(size: 16))
         .padding(24)
-        .frame(width: 380)
+        .frame(width: 430)
     }
 
     private func tip(_ symbol: String, _ title: String, _ body: String) -> some View {
         HStack(alignment: .top, spacing: 8) {
             Image(systemName: symbol)
-                .font(.system(size: 17))
-                .foregroundStyle(.secondary)
+                .font(.system(size: 19))
+                .foregroundStyle(EinkPalette.secondaryText)
                 .frame(width: 20)
             VStack(alignment: .leading, spacing: 4) {
-                Text(title).font(.system(size: 15, weight: .semibold))
+                Text(title).font(.system(size: 17, weight: .semibold))
                 Text(md(body))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(EinkPalette.secondaryText)
                     .fixedSize(horizontal: false, vertical: true)
             }
         }

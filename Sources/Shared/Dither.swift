@@ -1,6 +1,6 @@
 // Per-display dithering control.
 //
-// macOS dithers display output to smooth gradients. On a colour e-ink panel the
+// macOS dithers display output to smooth gradients. On a color e-ink panel the
 // dither pattern is visible as a constant shimmer, because the panel holds each
 // pixel rather than refreshing it away.
 //
@@ -91,14 +91,6 @@ enum Dither {
     static func isDisabled(displayID: CGDirectDisplayID) -> Bool {
         withFramebuffer(for: displayID) { service in
             (property(key, service) as? Bool) == false
-        } ?? false
-    }
-
-    /// What the system currently reports for this display's role. The override
-    /// on disk may differ until the machine is restarted.
-    static func reportedIsTelevision(displayID: CGDirectDisplayID) -> Bool {
-        withFramebuffer(for: displayID) { service in
-            (property("DisplayIsTV", service) as? Bool) ?? false
         } ?? false
     }
 

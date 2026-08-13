@@ -1,92 +1,168 @@
 # E-Ink Assistant
 
 <p align="center">
-  <b>English</b> &nbsp;·&nbsp; <a href="README.zh-Hans.md">简体中文介绍</a>
+  <b>English</b> &nbsp;·&nbsp;
+  <a href="README.zh-Hans.md">简体中文</a> &nbsp;·&nbsp;
+  <a href="README.zh-Hant.md">繁體中文</a> &nbsp;·&nbsp;
+  <a href="README.ja.md">日本語</a>
 </p>
 
-**Make a colour e-ink monitor look right on macOS.**
+<p align="center">
+  <img src="Resources/AppIcon.png" alt="E-Ink Assistant app icon" width="128">
+</p>
 
-Colour e-ink panels are washed out, low contrast, and shimmer under macOS's
-dithering. This is a small menu bar app that fixes all three, per display, so
-your laptop screen is left alone.
+**Tune black-and-white and color e-ink displays for macOS.**
 
-No permissions. No background service beyond the app itself. MIT licensed.
+Both B&W and color e-ink share the problems of slow refresh, limited contrast,
+crushed shadow detail, and visible macOS dithering. E-Ink Assistant is a small
+menu bar app that addresses those problems per display, leaving your laptop
+screen alone. Color panels additionally get saturation and direct RGB controls.
+
+No permissions for the core display controls. No background service beyond the
+app itself. MIT licensed.
+
+## Latest release
+
+**v2.0 — August 13, 2026**
+
+- Expanded and reframed for both B&W and color e-ink displays.
+- Added direct per-display RGB controls from 0%–200% per channel.
+- Added a safe On/Off accessibility helper with optional display-connection
+  automation and automatic shutdown cleanup.
+- Redesigned the interface with larger text, hard outlines, stronger controls,
+  and clearer selected states for reflective displays.
+- Added Traditional Chinese and Japanese, refreshed all screenshots, and added
+  a native macOS app icon.
+- Added a standard DMG installer that guides users to drag the app into
+  Applications.
+
+[Download the latest release](../../releases/latest) · [Read the full changelog](CHANGELOG.md)
 
 <p align="center">
   <img src="docs/app-main.png" alt="E-Ink Assistant" width="440">
 </p>
 
+## Key features
+
+- **For B&W and color e-ink:** reduce dithering shimmer, deepen text, recover
+  dark detail in video and photos, and reduce system transparency and motion.
+- **For color e-ink:** compensate for a narrow color gamut with saturation,
+  then correct color casts with direct Red, Green, and Blue controls.
+- **Reading and media modes:** Text Contrast and Video Enhance are separate,
+  mutually exclusive tools for opposite jobs.
+- **Per-display control:** tune only marked e-ink panels; other displays remain
+  untouched.
+- **Safe lifecycle:** display adjustments restore on quit and reapply on launch.
+  The optional accessibility helper turns off when the app exits.
+- **Advanced tuning:** edit the complete tone curve and save five named presets.
+
+### What color e-ink displays benefit from
+
+- Everything listed for B&W e-ink below.
+- **Saturation compensation** to strengthen a narrow color gamut, with six
+  presets and a 0%–300% slider.
+- **Direct RGB correction** from 0%–200% per channel to remove red, green, or
+  blue color casts. RGB values are saved separately for each display.
+- **Per-display Night Shift and True Tone control** so macOS color-temperature
+  processing does not fight deliberate color tuning.
+
+### What B&W e-ink displays benefit from
+
+- **Reduce Shaking** to stop visible macOS dithering shimmer on supported
+  displays.
+- **Text Contrast** to make faint and secondary text darker and easier to read.
+- **Video Enhance** to recover shadow detail in videos and photos.
+- **Reduce Transparency & Motion** to simplify system visuals and avoid
+  slow-refresh animation.
+- **Advanced tone-curve tuning** for the panel's specific contrast response.
+- **Optional Night Shift and True Tone control** when macOS tone shifting
+  visibly affects grayscale output.
+
 ---
 
-## What it does
+## Feature details
 
-### Reduce Shaking
+### Reduce Shaking — B&W and color
 
 macOS dithers display output to smooth gradients. An LCD refreshes the pattern
-away; e-ink holds every pixel, so it becomes a constant shimmer. Turning it off
-makes the picture sit still.
+away; e-ink holds every pixel, so the pattern can become a constant shimmer.
+Disabling it makes the picture sit still. This turns on automatically when you
+mark a supported display as e-ink.
 
-On by default when you mark a display as e-ink, because it is usually the first
-thing people notice.
+### Text Contrast — B&W and color
 
-### Disable Night Shift & True Tone
-
-Both shift colour and tone, fighting the adjustments below. macOS withholds them
-from displays it treats as televisions, so this marks the chosen display as one.
-
-**This display only** — other screens keep Night Shift and True Tone. Needs an
-administrator password and a **restart**, and is the one setting not undone when
-you quit. Existing overrides, including custom scaled resolutions, are kept.
-
-### Saturation
-
-A colour e-ink panel puts a colour filter over a monochrome screen, which costs
-most of the gamut. Boosting saturation compensates.
-
-![Saturation before and after](docs/en/saturation.png)
-
-Presets **B&W / Faded / Factory / Enhanced / Vivid / Anime**, or a slider from
-0% to 300%.
-
-### Text Contrast
-
-Darkens text so it separates from the page on a panel with very little contrast
-to spend. Faint and secondary text gains the most: at the strongest level its
-contrast roughly triples.
+Darkens text so it separates from the page on a low-contrast panel. Faint and
+secondary text gains the most: at the strongest level its signal contrast
+roughly triples.
 
 ![Text contrast before and after](docs/en/text-contrast.png)
 
 Four levels: **Medium, Strong, Sharp, Solid**. Solid also crushes antialiased
 edges to solid black, which looks crisper but harder-edged.
 
-### Video Enhance (Brighten Dark Areas)
+### Video Enhance — B&W and color
 
-Brightens only the darkest tones and leaves mid-tones and highlights exactly as
-they were, so shadow detail that e-ink normally crushes into mush becomes
-visible again.
+Brightens only the darkest tones while leaving mid-tones and highlights alone,
+so shadow detail that e-ink normally crushes becomes visible again.
 
 ![Video enhance before and after](docs/en/video-enhance.png)
 
-Three levels: **Subtle, Medium, Strong**.
+Three levels: **Subtle, Medium, Strong**. It cannot distinguish dark imagery
+from dark text, so it lightens text too. **Use it for video and photos, and turn
+it off for reading.** Video Enhance and Text Contrast are mutually exclusive.
 
-It cannot tell dark video from dark text, so it lightens text too. **Use it for
-video and photos, and turn it off for reading.** The app says so whenever a
-level is active, and it and Text Contrast are mutually exclusive.
+### Saturation — color e-ink
 
-### Advanced
+Color e-ink places a color filter over a monochrome panel, which costs much of
+the gamut. Saturation compensation restores stronger color signals. B&W panels
+can simply leave this at 100%.
 
-Full control of the curve (knee, gamma, black point, white point) with a live
-plot and five saveable, renameable slots.
+![Saturation before and after](docs/en/saturation.png)
+
+Presets **B&W / Faded / Factory / Enhanced / Vivid / Anime**, or a slider from
+0% to 300%.
+
+### RGB — color e-ink
+
+Adjust **Red, Green, and Blue directly from 0% to 200%** to correct a panel's
+color cast. The controls are collapsed by default; select **RGB** to reveal the
+three sliders. The compact row always shows the current values. Each display
+keeps its own RGB values. **Reset RGB** returns all three channels to the
+neutral 100% setting.
+
+RGB and Saturation share one per-display color profile, so they work together
+without interfering with Text Contrast or Video Enhance.
+
+### Disable Night Shift & True Tone — primarily color e-ink
+
+Both features shift color and tone, which can fight deliberate display tuning.
+E-Ink Assistant can mark only the selected display as a television so macOS
+withholds them from that panel. This may also help a B&W panel affected by tone
+shifting.
+
+Other screens keep Night Shift and True Tone. This requires an administrator
+password and **disconnecting and reconnecting that display**, and is the one setting not undone on quit. Existing
+overrides, including custom scaled resolutions, are preserved.
+
+### Reduce Transparency & Motion — B&W and color
+
+These system accessibility settings improve legibility and avoid animation that
+slow-refresh panels cannot display well. A one-time, user-confirmed Shortcuts
+helper gives the app a safe On/Off control and optional connection automation.
+
+### Advanced — B&W and color
+
+Full control of knee, gamma, black point, and white point, with a live plot and
+five saveable, renameable slots.
 
 <p align="center">
   <img src="docs/app-advanced.png" alt="Advanced mode" width="440">
 </p>
 
-> The comparison images are generated from the app's real transforms and
-> rendered on an LCD. The text and video images additionally simulate a
-> low-contrast e-ink panel, since that is the situation those adjustments
-> address; the saturation image shows the transform directly. What you actually
-> see depends on your panel.
+> The comparison images use the app's real transforms and are rendered on an
+> LCD. Text and video examples additionally simulate a low-contrast e-ink panel;
+> saturation shows the color transform directly. Actual results depend on the
+> panel.
 
 ---
 
@@ -101,29 +177,27 @@ cd eink-assistant
 open "E-Ink Assistant.app"
 ```
 
-Or download the app from [Releases](../../releases).
+Recommended: download the `.dmg` from [Releases](../../releases), open it, and
+drag **E-Ink Assistant** onto the **Applications** folder shown in the installer.
 
 ### First launch: getting past Gatekeeper
 
 The app is **ad-hoc signed, not notarized**, so macOS refuses to open a
-downloaded copy the first time.
+downloaded copy the first time. On **macOS 15 and later, right-click → Open no
+longer works.**
 
-On **macOS 15 and later, right-click → Open no longer works.** Do this instead:
-
-1. Try to open the app once, and dismiss the warning.
+1. Try to open the app once, then dismiss the warning.
 2. Open **System Settings → Privacy & Security**.
-3. Scroll down to a line saying the app was blocked, with an **Open Anyway**
-   button.
-4. Click it and confirm.
+3. Find the message that the app was blocked and click **Open Anyway**.
+4. Confirm.
 
-If that button does not appear, clear the quarantine flag directly:
+If the button does not appear, clear the quarantine flag directly:
 
 ```
 xattr -dr com.apple.quarantine "/path/to/E-Ink Assistant.app"
 ```
 
-Building from source avoids this entirely: locally built apps are never
-quarantined.
+Building from source avoids quarantine entirely.
 
 ---
 
@@ -134,49 +208,59 @@ quarantined.
 </p>
 
 1. Open the app from the menu bar.
-2. Tick your e-ink display. Controls appear only for ticked displays.
-3. Reduce Shaking comes on automatically. Adjust saturation to taste.
-4. Turn on Text Contrast for reading, or Video Enhance for video. Not both.
+2. Mark each B&W or color e-ink display you want to tune.
+3. Reduce Shaking comes on automatically where supported.
+4. On color e-ink, adjust Saturation and RGB. On B&W, leave them at 100%.
+5. Choose Text Contrast for reading or Video Enhance for media—not both.
 
-**Everything is restored when you quit** and re-applied when you launch, so the
-app has to be running for its settings to apply. Turn on **Launch at Login** to
-have that happen automatically.
+The system-wide **Reduce Transparency & Motion** row has a one-time **Install &
+Enable** setup. Confirm **Add Shortcut** in Apple's Shortcuts app. The bundled
+helper accepts Text only, recognizes exact `on` and `off` commands, ignores
+everything else, and ends with `Nothing` so it produces no output. It is not
+exposed in Share Sheet, Spotlight, Quick Actions, or while locked, and the app
+does not list or inspect your other shortcuts.
+
+Automatic mode turns both settings on when a marked e-ink display connects and
+off only after the last marked e-ink display disconnects. Quitting the app also
+turns them off.
+
+**Display adjustments restore when you quit** and reapply when you launch. Turn
+on **Launch at Login** for automatic startup.
 
 ---
 
-## Scope
+## Display scope and presets
 
-**Set the monitor up first, then use the app.** The presets assume the display's
-own hardware settings are already in place. On a **Bigme B251 Pro** (R2 FW V2.0)
-that means **Web Mode, Hardware Gamma Level 3, Contrast 50, Color Restore Mode
-off**, set in the monitor's own menu. Every value here was tuned by eye against
-that combination, so a different hardware setup wants different numbers.
+The core tools—Reduce Shaking, Text Contrast, Video Enhance, accessibility
+controls, and Advanced curves—can benefit **both B&W and color e-ink**.
+Saturation and RGB correction are specifically for color panels.
 
-**Other colour e-ink monitors should benefit too.** Nothing in the mechanism is
-panel-specific, and **Advanced mode exposes the whole curve**, so another panel
-can be dialled in directly rather than being stuck with these presets. You are
-tuning it yourself at that point, so use at your own risk.
+Set the monitor hardware first. The bundled presets were tuned by eye on a
+**Bigme B251 Pro** (R2 FW V2.0) using **Web Mode, Hardware Gamma Level 3,
+Contrast 50, Color Restore Mode off**. A B&W panel or another color model will
+need its own values; Advanced mode exposes the complete curve for that purpose.
+Use custom tuning at your own risk.
 
-Reduce Shaking is Apple Silicon only, and hides itself where unsupported.
+Reduce Shaking is Apple Silicon only and hides itself where unsupported.
 
 ---
 
 ## More
 
 - [CHANGELOG.md](CHANGELOG.md): what changed in each version
-- [TECHNICAL.md](TECHNICAL.md): how it works, what was measured, and what does
-  *not* work on modern macOS
-- [mac-saturation](https://github.com/kiteretsu903/mac-saturation): the
-  investigation behind the colour mechanism, plus a CLI for exporting profiles
+- [TECHNICAL.md](TECHNICAL.md): implementation, measurements, and approaches
+  that do *not* work on modern macOS
+- [mac-saturation](https://github.com/kiteretsu903/mac-saturation): the color
+  mechanism investigation and a profile-export CLI
 
 ## License and credits
 
 MIT, see [LICENSE](LICENSE).
 
 **Reduce Shaking is based on [Stillcolor](https://github.com/aiaf/Stillcolor) by
-Abdullah Arif** (MIT). Stillcolor worked out that display dithering can be
-disabled through the `enableDither` I/O Registry property, which is the whole
-basis of that feature here. This project reimplements the idea narrowed to a
-single display; the credit for finding it belongs to Stillcolor. Thank you.
+Abdullah Arif** (MIT). Stillcolor discovered that display dithering can be
+disabled through the `enableDither` I/O Registry property. This project
+reimplements that idea per display; credit for the discovery belongs to
+Stillcolor. Thank you.
 
 Full notices in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).

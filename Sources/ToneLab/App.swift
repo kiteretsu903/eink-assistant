@@ -60,8 +60,8 @@ struct StepWedge: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 3) {
             Text(label)
-                .font(.system(size: 10))
-                .foregroundStyle(.secondary)
+                .font(.system(size: 12))
+                .foregroundStyle(EinkPalette.secondaryText)
             HStack(spacing: 1) {
                 ForEach(0..<steps, id: \.self) { i in
                     let v = from + (to - from) * Double(i) / Double(steps - 1)
@@ -82,8 +82,8 @@ struct Ramp: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 3) {
             Text(label)
-                .font(.system(size: 10))
-                .foregroundStyle(.secondary)
+                .font(.system(size: 12))
+                .foregroundStyle(EinkPalette.secondaryText)
             LinearGradient(
                 colors: stride(from: 0.0, through: 1.0, by: 0.02)
                     .map { Color(white: from + (to - from) * $0) },
@@ -107,17 +107,17 @@ struct ReadoutRow: View {
                 let x = levels[i]
                 VStack(spacing: 1) {
                     Text(String(format: "%.2f", x))
-                        .font(.system(size: 10)).foregroundStyle(.secondary)
+                        .font(.system(size: 12)).foregroundStyle(EinkPalette.secondaryText)
                     Text(String(format: "%.2f", curve.value(x)))
-                        .font(.system(size: 11, weight: .medium)).monospacedDigit()
+                        .font(.system(size: 13, weight: .medium)).monospacedDigit()
                     Text(String(format: "%.1f×", curve.lift(at: x)))
-                        .font(.system(size: 9)).foregroundStyle(Color.accentColor)
+                        .font(.system(size: 11)).foregroundStyle(Color.accentColor)
                 }
             }
             Spacer()
             if !curve.isMonotonic() {
                 Label("not monotonic", systemImage: "exclamationmark.triangle.fill")
-                    .font(.system(size: 10)).foregroundStyle(.orange)
+                    .font(.system(size: 12)).foregroundStyle(.orange)
             }
         }
     }
@@ -176,26 +176,30 @@ struct ToneLabView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     VStack(alignment: .leading, spacing: 2) {
                         HStack {
-                            Text("Knee").font(.system(size: 12, weight: .medium))
+                            Text("Knee").font(.system(size: 14, weight: .medium))
                             Spacer()
                             Text(String(format: "%.2f", model.curve.knee))
-                                .monospacedDigit().foregroundStyle(.secondary)
+                                .monospacedDigit().foregroundStyle(EinkPalette.secondaryText)
                         }
-                        Slider(value: $model.curve.knee, in: 0.05...0.80)
+                        EinkSlider(value: $model.curve.knee,
+                                   in: 0.05...0.80,
+                                   accessibilityLabel: "Knee")
                         Text("Above this level the image is untouched.")
-                            .font(.system(size: 10)).foregroundStyle(.secondary)
+                            .font(.system(size: 12)).foregroundStyle(EinkPalette.secondaryText)
                     }
                     VStack(alignment: .leading, spacing: 2) {
                         HStack {
                             Text("Shadow strength (γ)")
-                                .font(.system(size: 12, weight: .medium))
+                                .font(.system(size: 14, weight: .medium))
                             Spacer()
                             Text(String(format: "%.2f", model.curve.gamma))
-                                .monospacedDigit().foregroundStyle(.secondary)
+                                .monospacedDigit().foregroundStyle(EinkPalette.secondaryText)
                         }
-                        Slider(value: $model.curve.gamma, in: 0.30...1.00)
+                        EinkSlider(value: $model.curve.gamma,
+                                   in: 0.30...1.00,
+                                   accessibilityLabel: "Shadow strength")
                         Text("Lower lifts shadows harder. 1.00 is off.")
-                            .font(.system(size: 10)).foregroundStyle(.secondary)
+                            .font(.system(size: 12)).foregroundStyle(EinkPalette.secondaryText)
                     }
                 }
             }
@@ -219,11 +223,12 @@ struct ToneLabView: View {
             Text("Live tuning only — the gamma table is reset by sleep, display "
                  + "changes and logout. Once you settle on values, they get baked "
                  + "into an ICC profile to persist.")
-                .font(.system(size: 10)).foregroundStyle(.secondary)
+                .font(.system(size: 12)).foregroundStyle(EinkPalette.secondaryText)
                 .fixedSize(horizontal: false, vertical: true)
         }
+        .font(.system(size: 15))
         .padding(18)
-        .frame(width: 620)
+        .frame(width: 680)
     }
 }
 

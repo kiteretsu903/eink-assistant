@@ -9,7 +9,15 @@
 
 "saturation.title"   = "Saturation";
 /* Saturation is cleared on quit and re-applied on launch. */
-"saturation.caption" = "Compensates for the narrow colour gamut. Restored when the app quits.";
+"saturation.caption" = "For color e-ink: compensates for the narrow color gamut. Restored when the app quits.";
+
+"rgb.title" = "RGB";
+"rgb.red"   = "Red";
+"rgb.green" = "Green";
+"rgb.blue"  = "Blue";
+"rgb.reset" = "Reset RGB";
+"rgb.expand" = "Expand RGB controls";
+"rgb.collapse" = "Collapse RGB controls";
 
 "text.title"   = "Text Contrast";
 "text.caption" = "Darkens text so it reads on a low-contrast panel. For reading.";
@@ -36,19 +44,20 @@
 "text.detail.solid"  = "Also crushes antialiased edges solid: crisper, but text may look harder-edged.";
 
 "help.title"      = "How this works";
-"help.saturation" = "Saturation: rewrites the display's colour profile so macOS sends more vivid signals to a narrow-gamut panel.";
+"help.saturation" = "Saturation and RGB (color e-ink): rewrite the display's color profile to compensate for a narrow gamut and color cast. B&W panels can leave them at 100%.";
 "help.video"      = "Video Enhance: brightens only the darkest tones. Mid-tones and highlights are untouched.";
 "help.tradeoff"   = "It cannot tell dark video from dark text, so text loses contrast. Worst in Dark Mode. Use for video, off for reading.";
 "help.volatile"   = "All settings here need the app running: quitting restores your displays, launching re-applies your settings.";
 
 "error.saturation" = "Could not apply saturation to %@.";
+"error.color"      = "Could not apply color adjustments to %@.";
 "error.login"      = "Could not change launch at login.";
 
 "language.title"  = "Language";
 "language.system" = "System";
 
 "notice.tuned" = "Presets assume the monitor itself is set to: Web Mode, Hardware Gamma Level 3, Contrast 50, Color Restore Mode off (Bigme B251 Pro, R2 FW V2.0). Set those first.";
-"notice.risk"  = "Other e-ink monitors can find their own values in Advanced mode. Use at your own risk.";
+"notice.risk"  = "B&W and other color e-ink displays can use the relevant controls and tune their own values in Advanced mode. Use at your own risk.";
 
 "preset.factory"  = "Factory";
 "preset.enhanced" = "Enhanced";
@@ -79,26 +88,17 @@
 "shaking.title" = "Reduce Shaking";
 "shaking.info"  = "Disables display dithering for this display. macOS dithers output to smooth gradients; an e-ink panel holds each pixel, so the pattern shows up as a constant shimmer. Same effect as Stillcolor, but applied to one display rather than all of them.";
 
-"role.title"   = "Disable Night Shift & True Tone";
-"role.note"    = "This display only; other screens are unaffected. Needs an admin password. Not undone on quit.";
-"role.restart" = "Restart your Mac for this to take effect.";
+"role.title"   = "Disable Night Shift & True Tone for %@ only";
+"role.note"    = "Requires an admin password. The change is not undone when the app quits.";
+"role.restart" = "Disconnect and reconnect this display to apply the change.";
 "role.error"   = "Could not change the display role.";
 
 "welcome.title"       = "Welcome to E-Ink Assistant";
 "welcome.menubar"     = "The app lives in your **menu bar**, with no Dock icon. **Click the icon up there** to open it.";
 "welcome.bigme.title" = "Using a Bigme B251 Pro?";
 "welcome.bigme.body"  = "Set the monitor itself to **Web Mode, Hardware Gamma Level 3, Contrast 50, Color Restore Mode off**. The presets were tuned against firmware **R2 FW V2.0**; other Bigme firmware may behave differently, so judge the result yourself.";
-"welcome.other.title" = "Using another monitor?";
-"welcome.other.body"  = "Set it to a **balanced hardware baseline**, with neutral contrast and gamma, so the software tuning has room to work. **Advanced mode** lets you dial in your own curve.";
-"welcome.hide"        = "Do not show this tip again";
-"welcome.done"        = "Got it";
-
-"welcome.title"       = "Welcome to E-Ink Assistant";
-"welcome.menubar"     = "The app lives in your **menu bar**, with no Dock icon. **Click the icon up there** to open it.";
-"welcome.bigme.title" = "Using a Bigme B251 Pro?";
-"welcome.bigme.body"  = "Set the monitor itself to **Web Mode, Hardware Gamma Level 3, Contrast 50, Color Restore Mode off**. The presets were tuned against firmware **R2 FW V2.0**; other Bigme firmware may behave differently, so judge the result yourself.";
-"welcome.other.title" = "Using another monitor?";
-"welcome.other.body"  = "Set it to a **balanced hardware baseline**, with neutral contrast and gamma, so the software tuning has room to work. **Advanced mode** lets you dial in your own curve.";
+"welcome.other.title" = "Using B&W or another color e-ink display?";
+"welcome.other.body"  = "Both types can benefit from **Reduce Shaking, Text Contrast, Video Enhance**, and the system accessibility controls. Color panels can also tune **Saturation and RGB**. Start from a balanced hardware baseline; **Advanced mode** lets you dial in your own curve.";
 "welcome.hide"        = "Do not show this tip again";
 "welcome.done"        = "Got it";
 
@@ -108,15 +108,31 @@
 "help.more" = "Show more";
 "help.less" = "Show less";
 
-"system.title"   = "Reduce Transparency & Motion";
-"system.hint"    = "Both help on e-ink: translucency muddies text, and animation is wasted on a slow panel. macOS only allows these to be changed in System Settings.";
-"system.open"    = "Open Settings";
-"system.on"      = "On";
-"system.off"     = "Off";
-"system.partial" = "Partly on";
+"system.title"      = "Reduce Transparency & Motion";
+"system.hint"       = "Both help on e-ink: translucency muddies text, and animation is wasted on a slow panel.";
+"system.open"       = "Open Settings";
+"system.on"         = "On";
+"system.off"        = "Off";
+"system.partial"    = "Partly on";
+"system.install"    = "Install & Enable";
+"system.toggle"     = "Reduce Transparency and Motion";
+"system.more"       = "Options";
+"system.reinstall"  = "Reinstall Helper";
+"system.guide"      = "Install the E-Ink Assistant helper to control both settings together.";
+"system.ready"      = "Use the switch to turn both settings on or off.";
+"system.installing" = "Waiting for the Add Shortcut confirmation in Shortcuts…";
+"system.running"    = "Changing both settings…";
+"system.failed"     = "The helper was not available. Confirm its import, or choose Reinstall Helper under Options.";
+"system.auto"       = "Automatically follow e-ink displays";
+"system.auto.note"  = "Turns on when a marked e-ink display connects, and turns off only after the last marked e-ink display disconnects.";
 
-"system.run"          = "Run";
-"system.more"         = "Options";
-"system.clear"        = "Stop using a shortcut";
-"system.noshortcuts"  = "No shortcuts found";
-"system.using"        = "Runs your shortcut \"%@\". macOS does not let an app change these directly, but a shortcut built from the Reduce Motion and Reduce Transparency actions can.";
+"system.install.title"    = "Install the accessibility helper?";
+"system.install.intro"    = "Reduce Transparency and Reduce Motion are system-wide macOS settings. Apple requires one confirmation before E-Ink Assistant can control them through Shortcuts.";
+"system.install.step1"    = "E-Ink Assistant opens its bundled helper in Apple's Shortcuts app.";
+"system.install.step2"    = "Review its exact off/on branches and final Nothing action, then click Add Shortcut once.";
+"system.install.future"   = "After installation, this row becomes an On/Off switch. Repeated use is safe; it never blindly toggles a setting.";
+"system.install.auto"     = "You may optionally follow connected e-ink displays. With several panels, Off runs only after all marked e-ink displays disconnect.";
+"system.install.quit"     = "Quitting E-Ink Assistant always turns both settings off.";
+"system.install.scope"    = "The helper accepts Text only, recognizes exact “on” and “off” commands, ignores everything else, and provides no output. It is not exposed in Share Sheet, Spotlight, Quick Actions, or while locked. E-Ink Assistant does not list, inspect, or run your other shortcuts.";
+"system.install.cancel"   = "Not Now";
+"system.install.continue" = "Continue to Shortcuts";

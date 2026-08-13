@@ -2,7 +2,7 @@
 //
 // Why this works where compositor filters do not:
 //
-// macOS colour-manages every pixel from its source colour space into the
+// macOS color-manages every pixel from its source color space into the
 // *display's* profile, per display, at the scanout stage. That conversion is a
 // full 3x3 matrix operation, so it can express the cross-channel mixing that a
 // 1D gamma LUT cannot.
@@ -22,6 +22,38 @@ import ApplicationServices
 struct Chromaticity {
     var x: Double
     var y: Double
+}
+
+/// Per-channel output gain. Values above 1 send more of that channel to the
+/// panel; values below 1 send less. This is composed into the same ICC matrix
+/// as saturation so it remains independent of the gamma table used by Text
+/// Contrast and Video Enhance.
+struct RGBBalance: Equatable {
+    var red: Double = 1.0
+    var green: Double = 1.0
+    var blue: Double = 1.0
+
+    static let identity = RGBBalance()
+
+    var isIdentity: Bool {
+        abs(red - 1.0) < 0.001
+            && abs(green - 1.0) < 0.001
+            && abs(blue - 1.0) < 0.001
+    }
+
+    var clamped: RGBBalance {
+        RGBBalance(red: min(max(red, 0.0), 2.0),
+                   green: min(max(green, 0.0), 2.0),
+                   blue: min(max(blue, 0.0), 2.0))
+    }
+
+    fileprivate var values: [Double] {
+        let value = clamped
+        // A zero diagonal gain makes D singular and therefore has no finite
+        // inverse ICC matrix. Treat the UI's 0% endpoint as effectively off,
+        // using the same near-zero floor as the B&W saturation preset.
+        return [value.red, value.green, value.blue].map { max($0, 0.001) }
+    }
 }
 
 /// sRGB / Rec.709 primaries and D65 white, the reference we bend away from.
@@ -95,14 +127,15 @@ func inverseSaturationMatrix(_ s: Double) -> [Double] {
     ]
 }
 
-/// Builds an ICC profile that makes the compositor apply an exact saturation
-/// transform.
+/// Builds an ICC profile that makes the compositor apply exact saturation and
+/// per-channel RGB gain transforms.
 ///
 /// macOS renders `displayRGB = M⁻¹ · XYZ`, and content arrives as
-/// `XYZ = M_sRGB · srcRGB`. We want `displayRGB = S · srcRGB`, so we need
-/// `M⁻¹ · M_sRGB = S`, i.e. the profile matrix is `M = M_sRGB · S⁻¹`.
+/// `XYZ = M_sRGB · srcRGB`. We want `displayRGB = D · S · srcRGB`, so the
+/// profile matrix is `M = M_sRGB · S⁻¹ · D⁻¹`.
 /// That is an exact 3x3 cross-channel mix — the thing a 1D gamma LUT cannot do.
-func makeSaturationProfileData(saturation: Double, gamma: Double = 2.2) -> Data? {
+func makeSaturationProfileData(saturation: Double, gamma: Double = 2.2,
+                               rgbBalance: RGBBalance = .identity) -> Data? {
     // s = 0 makes S singular (rank 1); clamp just above.
     let s = max(0.001, min(saturation, 4.0))
     let w = SRGB.white
@@ -116,13 +149,18 @@ func makeSaturationProfileData(saturation: Double, gamma: Double = 2.2) -> Data?
         Double(base[2]), Double(base[5]), Double(base[8]),
     ]
     let sInv = inverseSaturationMatrix(s)
+    let gains = rgbBalance.values
 
-    // M = M_sRGB · S⁻¹  (row-major multiply)
+    // Desired output is D · S · input, where D is the diagonal RGB gain
+    // matrix. Therefore M = M_sRGB · (D · S)⁻¹
+    //                    = M_sRGB · S⁻¹ · D⁻¹.
+    // Right-multiplying by D⁻¹ divides each column by its channel gain.
     var m = [Double](repeating: 0, count: 9)
     for row in 0..<3 {
         for col in 0..<3 {
             m[row * 3 + col] = (0..<3).reduce(0.0) {
-                $0 + mSRGB[row * 3 + $1] * sInv[$1 * 3 + col]
+                $0 + mSRGB[row * 3 + $1]
+                    * (sInv[$1 * 3 + col] / gains[col])
             }
         }
     }
@@ -183,7 +221,7 @@ func restoreProfile(displayID: CGDirectDisplayID) {
     // earlier version did, a key constant — just reassigns it, leaving the
     // custom profile in place and "reset" doing nothing.
     let info: [CFString: Any] = [
-        kColorSyncDeviceDefaultProfileID.takeUnretainedValue(): kCFNull
+        kColorSyncDeviceDefaultProfileID.takeUnretainedValue(): kCFNull!
     ]
     _ = ColorSyncDeviceSetCustomProfiles(
         kColorSyncDisplayDeviceClass.takeUnretainedValue(), uuid, info as CFDictionary)
@@ -367,17 +405,21 @@ func factoryBaseProfile(displayID: CGDirectDisplayID) -> BaseProfile? {
     return nil
 }
 
-/// Applies saturation on top of an existing display characterization, keeping
-/// its primaries, white point and tone curve intact. `M_new = M_display · S⁻¹`.
-func makeSaturationProfileData(saturation: Double, base: BaseProfile) -> Data? {
+/// Applies saturation and RGB balance on top of an existing display
+/// characterization, keeping its tone curve intact.
+/// `M_new = M_display · S⁻¹ · D⁻¹`.
+func makeSaturationProfileData(saturation: Double, base: BaseProfile,
+                               rgbBalance: RGBBalance = .identity) -> Data? {
     let s = max(0.001, min(saturation, 4.0))
     let sInv = inverseSaturationMatrix(s)
+    let gains = rgbBalance.values
 
     var m = [Double](repeating: 0, count: 9)
     for row in 0..<3 {
         for col in 0..<3 {
             m[row * 3 + col] = (0..<3).reduce(0.0) {
-                $0 + base.matrix[row * 3 + $1] * sInv[$1 * 3 + col]
+                $0 + base.matrix[row * 3 + $1]
+                    * (sInv[$1 * 3 + col] / gains[col])
             }
         }
     }
@@ -400,26 +442,32 @@ func makeSaturationProfileData(saturation: Double, base: BaseProfile) -> Data? {
 
 // MARK: - The one apply path
 
-/// Applies a saturation factor to one display, shared by the CLI and the menu
-/// bar app so both behave identically. Returns the installed profile's name, or
-/// nil when the adjustment was removed rather than installed.
+/// Applies saturation and RGB gains to one display. Returns the installed
+/// profile's name, or nil when the adjustment was removed rather than installed.
 @discardableResult
-func applySaturation(_ amount: Double, displayID: CGDirectDisplayID,
+func applySaturation(_ amount: Double, rgbBalance: RGBBalance = .identity,
+                     displayID: CGDirectDisplayID,
                      displayName: String) throws -> String? {
-    // Exactly 1.0 means "no adjustment" — drop the override rather than leave
-    // an identity profile sitting over the display's real calibration.
-    guard abs(amount - 1.0) > 0.001 else {
+    let balance = rgbBalance.clamped
+    // Fully neutral means "no adjustment" — drop the override rather than
+    // leave an identity profile sitting over the display's real calibration.
+    guard abs(amount - 1.0) > 0.001 || !balance.isIdentity else {
         restoreProfile(displayID: displayID)
         return nil
     }
     // Prefer the panel's own characterization so we add saturation on top of
     // its real primaries and tone curve instead of imposing sRGB assumptions.
     let base = factoryBaseProfile(displayID: displayID)
-    let built = base.flatMap { makeSaturationProfileData(saturation: amount, base: $0) }
-        ?? makeSaturationProfileData(saturation: amount)
+    let built = base.flatMap {
+        makeSaturationProfileData(saturation: amount, base: $0,
+                                  rgbBalance: balance)
+    } ?? makeSaturationProfileData(saturation: amount, rgbBalance: balance)
     guard let raw = built else { throw SatError.profileBuildFailed }
 
-    let label = "\(displayName) — Saturation \(Int((amount * 100).rounded()))%"
+    let r = Int((balance.red * 100).rounded())
+    let g = Int((balance.green * 100).rounded())
+    let b = Int((balance.blue * 100).rounded())
+    let label = "\(displayName) — Saturation \(Int((amount * 100).rounded()))% — RGB \(r)/\(g)/\(b)%"
     let data = setProfileDescription(raw, to: label) ?? raw
     _ = try installProfile(data, displayID: displayID, tag: "\(displayID)")
     return label

@@ -22,8 +22,8 @@ struct ToneCurve: Equatable {
     /// Everything below this input is crushed to pure black, and the remaining
     /// range is rescaled so white still lands on white.
     ///
-    /// Aimed at text: antialiased glyph edges render as mid-greys, which a
-    /// panel with few grey levels turns into fuzz rather than a smooth edge.
+    /// Aimed at text: antialiased glyph edges render as mid-grays, which a
+    /// panel with few gray levels turns into fuzz rather than a smooth edge.
     /// Crushing them makes stems solid. It is the display-side equivalent of
     /// turning font smoothing down, but per display and without touching any
     /// system-wide setting.
@@ -31,11 +31,11 @@ struct ToneCurve: Equatable {
 
     /// Everything above this input is pushed to pure white.
     ///
-    /// The counterpart to `blackPoint`. Antialiasing leaves a faint grey halo
+    /// The counterpart to `blackPoint`. Antialiasing leaves a faint gray halo
     /// on the *background* side of every glyph; crushing it makes the page pure
     /// white. Together the two are a levels adjustment, and they harden both
     /// sides of a text edge — the closest this pipeline gets to sharpening,
-    /// which would otherwise need to look at neighbouring pixels.
+    /// which would otherwise need to look at neighboring pixels.
     var whitePoint: Double = 1.0
 
     static let identity = ToneCurve(knee: 0.35, gamma: 1.0)

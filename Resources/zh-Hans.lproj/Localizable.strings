@@ -8,7 +8,15 @@
 "login.toggle"     = "登录时启动";
 
 "saturation.title"   = "饱和度";
-"saturation.caption" = "补偿墨水屏偏窄的色域。退出应用后会恢复原状。";
+"saturation.caption" = "适用于彩色墨水屏：补偿偏窄的色域。退出应用后会恢复原状。";
+
+"rgb.title" = "RGB";
+"rgb.red"   = "红";
+"rgb.green" = "绿";
+"rgb.blue"  = "蓝";
+"rgb.reset" = "重置 RGB";
+"rgb.expand" = "展开 RGB 控制";
+"rgb.collapse" = "收起 RGB 控制";
 
 "text.title"   = "文字对比度";
 "text.caption" = "加深文字，让低对比度的屏幕更易阅读。适合看文字时使用。";
@@ -35,19 +43,20 @@
 "text.detail.solid"  = "同时把抗锯齿边缘压成纯黑：更清晰，但文字边缘可能显得偏硬。";
 
 "help.title"      = "工作原理";
-"help.saturation" = "饱和度：改写显示器的颜色配置文件，补偿墨水屏偏窄的色域。";
+"help.saturation" = "饱和度与 RGB（彩色墨水屏）：改写显示器的颜色配置文件，补偿偏窄的色域与偏色。黑白墨水屏可保持 100%。";
 "help.video"      = "视频暗部增强：只提亮最暗的部分，中间调和高光保持不变。";
 "help.tradeoff"   = "它无法区分暗部画面和深色文字，文字会变浅（深色模式下最明显）。看视频时开，阅读时关。";
 "help.volatile"   = "应用内所有设置都需要保持应用运行：退出时恢复原状，启动时重新应用。";
 
 "error.saturation" = "无法对 %@ 应用饱和度设置。";
+"error.color"      = "无法对 %@ 应用色彩调校。";
 "error.login"      = "无法修改登录启动设置。";
 
 "language.title"  = "语言";
 "language.system" = "跟随系统";
 
 "notice.tuned" = "预设的前提是显示器本身已设为：网页模式、硬件伽马“等级3”、对比度 50、色彩还原模式关闭（Bigme B251 Pro，固件版本 R2 FW V2.0）。请先设置好这些。";
-"notice.risk"  = "其他墨水屏显示器可以用高级模式自行调校。请自行斟酌使用，风险自负。";
+"notice.risk"  = "黑白墨水屏及其他彩色墨水屏都可以使用适合自己的功能，并在高级模式中自行调校。请自行斟酌使用，风险自负。";
 
 "preset.factory"  = "原厂";
 "preset.enhanced" = "增强";
@@ -77,26 +86,17 @@
 "shaking.title" = "减少抖动";
 "shaking.info"  = "为此显示器关闭抖动（dithering）。macOS 会用抖动让渐变更平滑，而墨水屏会保持每个像素，因此这种图案会表现为持续的闪烁。效果与 Stillcolor 相同，但只作用于单个显示器，而非全部。";
 
-"role.title"   = "关闭 Night Shift 与原彩显示";
-"role.note"    = "仅对此显示器生效，其他屏幕不受影响。需要管理员密码。退出时不还原。";
-"role.restart" = "需要重启 Mac 后生效。";
+"role.title"   = "仅为 %@ 关闭 Night Shift 与原彩显示";
+"role.note"    = "需要管理员密码。退出应用时不会还原此更改。";
+"role.restart" = "断开并重新连接此显示器后生效。";
 "role.error"   = "无法修改显示器类型。";
 
 "welcome.title"       = "欢迎使用墨水屏助手";
 "welcome.menubar"     = "本应用运行在**菜单栏**，没有程序坞图标。**点击上方菜单栏的图标**即可打开。";
 "welcome.bigme.title" = "使用 Bigme B251 Pro？";
 "welcome.bigme.body"  = "请先把显示器本身设为：**网页模式、硬件伽马“等级3”、对比度 50、色彩还原模式关闭**。预设是针对固件版本 **R2 FW V2.0** 调校的，其他 Bigme 固件版本表现可能不同，请自行判断效果。";
-"welcome.other.title" = "使用其他显示器？";
-"welcome.other.body"  = "请把硬件设置调到**较为中性的状态**（对比度、伽马等保持均衡），让软件层面的调校有发挥空间。**高级模式**可以自行调整曲线。";
-"welcome.hide"        = "不再显示此提示";
-"welcome.done"        = "知道了";
-
-"welcome.title"       = "欢迎使用墨水屏助手";
-"welcome.menubar"     = "本应用运行在**菜单栏**，没有程序坞图标。**点击上方菜单栏的图标**即可打开。";
-"welcome.bigme.title" = "使用 Bigme B251 Pro？";
-"welcome.bigme.body"  = "请先把显示器本身设为：**网页模式、硬件伽马“等级3”、对比度 50、色彩还原模式关闭**。预设是针对固件版本 **R2 FW V2.0** 调校的，其他 Bigme 固件版本表现可能不同，请自行判断效果。";
-"welcome.other.title" = "使用其他显示器？";
-"welcome.other.body"  = "请把硬件设置调到**较为中性的状态**（对比度、伽马等保持均衡），让软件层面的调校有发挥空间。**高级模式**可以自行调整曲线。";
+"welcome.other.title" = "使用黑白或其他彩色墨水屏？";
+"welcome.other.body"  = "两类屏幕都可以受益于**减少抖动、文字对比度、视频暗部增强**和系统辅助功能；彩色屏还可以调整**饱和度与 RGB**。请先采用较为中性的硬件设置，**高级模式**可进一步自行调整曲线。";
 "welcome.hide"        = "不再显示此提示";
 "welcome.done"        = "知道了";
 
@@ -106,15 +106,31 @@
 "help.more" = "展开";
 "help.less" = "收起";
 
-"system.title"   = "减少透明度与动态效果";
-"system.hint"    = "两项在墨水屏上都有帮助：半透明会让文字发糊，动画在刷新慢的屏幕上也没有意义。macOS 只允许在系统设置中修改这两项。";
-"system.open"    = "打开设置";
-"system.on"      = "已开启";
-"system.off"     = "未开启";
-"system.partial" = "部分开启";
+"system.title"      = "减少透明度与动态效果";
+"system.hint"       = "两项在墨水屏上都有帮助：半透明会让文字发糊，动画在刷新慢的屏幕上也没有意义。";
+"system.open"       = "打开设置";
+"system.on"         = "已开启";
+"system.off"        = "未开启";
+"system.partial"    = "部分开启";
+"system.install"    = "安装并开启";
+"system.toggle"     = "减少透明度与动态效果";
+"system.more"       = "选项";
+"system.reinstall"  = "重新安装辅助指令";
+"system.guide"      = "安装墨水屏助手的辅助指令，即可同时控制这两项设置。";
+"system.ready"      = "使用开关即可同时开启或关闭这两项设置。";
+"system.installing" = "正在等待你在“快捷指令”中确认添加…";
+"system.running"    = "正在更改这两项设置…";
+"system.failed"     = "辅助指令不可用。请确认已导入，或在“选项”中选择“重新安装辅助指令”。";
+"system.auto"       = "自动跟随墨水屏连接状态";
+"system.auto.note"  = "标记的墨水屏连接时自动开启；只有最后一台标记的墨水屏断开后才会关闭。";
 
-"system.run"          = "运行";
-"system.more"         = "选项";
-"system.clear"        = "不再使用快捷指令";
-"system.noshortcuts"  = "未找到快捷指令";
-"system.using"        = "将运行你的快捷指令“%@”。macOS 不允许应用直接修改这两项，但用「减少动态效果」和「减少透明度」两个操作做成的快捷指令可以。";
+"system.install.title"    = "安装辅助指令？";
+"system.install.intro"    = "“减少透明度”和“减少动态效果”是 macOS 的全局设置。Apple 要求你先确认一次，墨水屏助手才能通过“快捷指令”控制它们。";
+"system.install.step1"    = "墨水屏助手会在 Apple 的“快捷指令”中打开随应用附带的辅助指令。";
+"system.install.step2"    = "查看其中严格区分 off／on 的两个分支以及末尾的“无”操作，然后确认一次“添加快捷指令”。";
+"system.install.future"   = "安装后，此处会变成开／关开关。重复使用是安全的，不会盲目反转现有设置。";
+"system.install.auto"     = "你可以选择自动跟随墨水屏。连接多台时，只有全部标记的墨水屏断开后才会关闭。";
+"system.install.quit"     = "退出墨水屏助手时一定会关闭这两项设置。";
+"system.install.scope"    = "辅助指令只接受文本，并且只识别完全一致的“on”和“off”；缺少输入或其他内容都不会执行任何操作，也不会产生输出。它不会出现在共享表单、聚焦搜索、快速操作或锁定状态中。墨水屏助手不会列出、查看或运行你的其他快捷指令。";
+"system.install.cancel"   = "暂不安装";
+"system.install.continue" = "继续前往快捷指令";

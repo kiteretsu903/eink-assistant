@@ -2,24 +2,26 @@
 //
 // macOS withholds Night Shift and True Tone from displays it classifies as
 // televisions. Marking an e-ink panel as a television is therefore a way to
-// keep those colour features off it, which matters because both of them shift
-// the very tone and colour this app is trying to control.
+// keep those color features off it, which matters because both of them shift
+// the very tone and color this app is trying to control.
 //
 // Same mechanism as the standalone script:
 //     https://github.com/kiteretsu903/macos-display-role-switcher
 //
 // Unlike everything else in this app, this writes a system file, needs an
-// administrator password, and only takes effect after a restart. It therefore
-// also survives quitting, and is deliberately excluded from the quit cleanup:
-// there would be no way to undo it without another password prompt and another
-// restart.
+// administrator password, and takes effect after the display is disconnected
+// and reconnected. It survives quitting and is deliberately excluded from quit
+// cleanup: undoing it also needs a password and another display reconnect.
 
 import Foundation
 import CoreGraphics
+import IOKit
 
 enum DisplayRole {
     private static let overridesRoot =
         "/Library/Displays/Contents/Resources/Overrides"
+    private static let pendingPrefix = "role-reconnect-pending-"
+    private static let displayIDPrefix = "role-reconnect-display-id-"
 
     /// Overrides are keyed by lowercase hex vendor and product ids.
     static func overridePath(for displayID: CGDirectDisplayID) -> String {
@@ -41,23 +43,57 @@ enum DisplayRole {
 
     /// Whether this display is currently marked as a television.
     ///
-    /// An installed override wins, because that is the pending state the user
-    /// will get after restarting. Otherwise fall back to what the system
-    /// currently reports.
+    /// An installed override wins because it is the user's chosen state.
+    /// Otherwise fall back to the current display-mode classification.
     static func isTelevision(displayID: CGDirectDisplayID) -> Bool {
         if let override = existingOverride(for: displayID),
            let value = override["DisplayIsTV"] as? Bool {
             return value
         }
-        return Dither.reportedIsTelevision(displayID: displayID)
+        return liveIsTelevision(displayID: displayID) ?? false
     }
 
-    /// True when a restart is still needed for the stored setting to apply.
-    static func needsRestart(displayID: CGDirectDisplayID) -> Bool {
-        guard let override = existingOverride(for: displayID),
-              let wanted = override["DisplayIsTV"] as? Bool
-        else { return false }
-        return wanted != Dither.reportedIsTelevision(displayID: displayID)
+    /// The active mode's television-output classification. This is useful as a
+    /// fallback when no override exists, but it is not an applied-state signal:
+    /// on Apple Silicon macOS can consume `DisplayIsTV` for CoreBrightness while
+    /// leaving this mode flag unset.
+    static func liveIsTelevision(displayID: CGDirectDisplayID) -> Bool? {
+        guard let mode = CGDisplayCopyDisplayMode(displayID) else { return nil }
+        return (mode.ioFlags & UInt32(kDisplayModeTelevisionFlag)) != 0
+    }
+
+    /// True after this app writes an override and until it observes the display
+    /// being added again. macOS exposes no reliable per-display status for
+    /// whether CoreBrightness has consumed `DisplayIsTV`, so the app reports the
+    /// reconnect action it can observe instead of inventing an applied state.
+    static func needsReconnect(displayID: CGDirectDisplayID) -> Bool {
+        guard let uuid = displayUUIDString(displayID) else { return false }
+        let defaults = UserDefaults.standard
+        let pendingKey = pendingPrefix + uuid
+        guard defaults.bool(forKey: pendingKey) else { return false }
+
+        // Display IDs normally change across a reconnect. This also clears a
+        // pending marker when the reconnect occurred while the app was closed.
+        let writtenID = defaults.object(forKey: displayIDPrefix + uuid) as? NSNumber
+        if let writtenID, writtenID.uint32Value != displayID {
+            clearReconnectNeeded(displayID: displayID)
+            return false
+        }
+        return true
+    }
+
+    static func markReconnectNeeded(displayID: CGDirectDisplayID) {
+        guard let uuid = displayUUIDString(displayID) else { return }
+        let defaults = UserDefaults.standard
+        defaults.set(true, forKey: pendingPrefix + uuid)
+        defaults.set(Int(displayID), forKey: displayIDPrefix + uuid)
+    }
+
+    static func clearReconnectNeeded(displayID: CGDirectDisplayID) {
+        guard let uuid = displayUUIDString(displayID) else { return }
+        let defaults = UserDefaults.standard
+        defaults.removeObject(forKey: pendingPrefix + uuid)
+        defaults.removeObject(forKey: displayIDPrefix + uuid)
     }
 
     enum RoleError: Error { case serializationFailed, authorizationFailed }

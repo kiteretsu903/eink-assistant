@@ -1,0 +1,134 @@
+/* E-Ink Assistant（繁體中文） */
+
+"app.title"        = "電子紙助手";
+"display.mark"     = "選取電子紙顯示器以啟用調校。";
+"display.none"     = "找不到顯示器。";
+"display.builtin"  = "內建";
+"quit"             = "結束";
+"login.toggle"     = "登入時啟動";
+
+"saturation.title"   = "彩度";
+"saturation.caption" = "適用於彩色電子紙：補償較窄的色域。結束 App 時會還原。";
+
+"rgb.title" = "RGB";
+"rgb.red"   = "紅";
+"rgb.green" = "綠";
+"rgb.blue"  = "藍";
+"rgb.reset" = "重設 RGB";
+"rgb.expand" = "展開 RGB 控制";
+"rgb.collapse" = "收合 RGB 控制";
+
+"text.title"   = "文字對比度";
+"text.caption" = "加深文字，讓低對比度面板更容易閱讀。適合閱讀時使用。";
+
+"video.title"   = "影片暗部增強";
+"video.caption" = "只提亮暗部。適合觀看影片與照片。";
+"video.warning" = "文字會變淡：%@。閱讀時建議關閉。";
+"video.blocked" = "文字對比度開啟時此功能會關閉：兩者使用同一份硬體色彩表，調整方向相反。";
+
+"level.off"    = "關閉";
+"level.subtle" = "輕微";
+"level.medium" = "中等";
+"level.strong" = "強";
+"level.sharp"  = "銳利";
+"level.solid"  = "實邊";
+
+"cost.13" = "文字對比度約降低 13%";
+"cost.34" = "文字對比度約降低 34%";
+"cost.56" = "文字對比度約降低 56%";
+
+"text.detail.medium" = "輕度加深文字。";
+"text.detail.strong" = "進一步加深；淡色文字仍然偏淡。";
+"text.detail.sharp"  = "較強；次要與淡色文字的改善明顯。";
+"text.detail.solid"  = "也會把反鋸齒邊緣壓成純黑：更清晰，但字緣可能較硬。";
+
+"help.title"      = "運作方式";
+"help.saturation" = "彩度與 RGB（彩色電子紙）：改寫顯示器的色彩描述檔，補償較窄的色域與偏色。黑白電子紙可維持 100%。";
+"help.video"      = "影片暗部增強：只提亮最暗的色調，中間調與亮部不變。";
+"help.tradeoff"   = "它無法區分暗色畫面與深色文字，因此文字會失去對比；深色模式最明顯。看影片時開啟，閱讀時關閉。";
+"help.volatile"   = "這裡的所有設定都需要 App 持續執行：結束時會還原顯示器，啟動時會重新套用。";
+
+"error.saturation" = "無法對 %@ 套用彩度設定。";
+"error.color"      = "無法對 %@ 套用色彩調校。";
+"error.login"      = "無法更改登入時啟動設定。";
+
+"language.title"  = "語言";
+"language.system" = "跟隨系統";
+
+"notice.tuned" = "預設值假設顯示器本身已設為：網頁模式、硬體 Gamma 等級 3、對比度 50、關閉色彩還原模式（Bigme B251 Pro，R2 FW V2.0）。請先完成這些設定。";
+"notice.risk"  = "黑白電子紙與其他彩色電子紙都能使用適合自己的功能，並在進階模式中自行調校。請自行承擔使用風險。";
+
+"preset.factory"  = "原廠";
+"preset.enhanced" = "增強";
+"preset.vivid"    = "鮮豔";
+"preset.anime"    = "動漫";
+
+"curve.title" = "目前曲線";
+
+"advanced.title" = "進階";
+"advanced.note"  = "以自訂曲線取代上方預設。";
+"curve.knee"     = "轉折點";
+"curve.gamma"    = "Gamma（低於 1 提亮，高於 1 加深）";
+"curve.black"    = "黑點";
+"curve.white"    = "白點";
+
+"presets.title"     = "已儲存的曲線";
+"presets.hint"      = "按一下空白位置可儲存目前曲線，按一下已儲存的位置可套用。按右鍵可覆寫或清除。";
+"presets.overwrite" = "覆寫";
+"presets.clear"     = "清除";
+"presets.rename"    = "重新命名";
+"advanced.reset"    = "重設曲線";
+
+"video.short" = "影片暗部增強";
+
+"shaking.title" = "減少閃爍";
+"shaking.info"  = "為此顯示器關閉抖動（dithering）。macOS 會使用抖動讓漸層更平滑；電子紙會保留每個像素，因此圖樣會形成持續閃爍。效果與 Stillcolor 相同，但只套用到單一顯示器，而不是全部顯示器。";
+
+"role.title"   = "只為 %@ 關閉 Night Shift 與原彩";
+"role.note"    = "需要管理員密碼。結束 App 時不會還原此變更。";
+"role.restart" = "中斷並重新連接此顯示器後才會生效。";
+"role.error"   = "無法更改顯示器角色。";
+
+"welcome.title"       = "歡迎使用電子紙助手";
+"welcome.menubar"     = "本 App 位於**選單列**，不會顯示 Dock 圖示。**按一下上方的圖示**即可開啟。";
+"welcome.bigme.title" = "使用 Bigme B251 Pro？";
+"welcome.bigme.body"  = "請先將顯示器設為：**網頁模式、硬體 Gamma 等級 3、對比度 50、關閉色彩還原模式**。預設值是依照 **R2 FW V2.0** 韌體調校；其他 Bigme 韌體的表現可能不同，請自行判斷效果。";
+"welcome.other.title" = "使用黑白或其他彩色電子紙？";
+"welcome.other.body"  = "兩種類型都能受益於**減少閃爍、文字對比度、影片暗部增強**與系統輔助使用控制；彩色面板還能調整**彩度與 RGB**。請先採用均衡的硬體基準；**進階模式**可進一步自訂曲線。";
+"welcome.hide"        = "不要再顯示此提示";
+"welcome.done"        = "知道了";
+
+"preset.bw"    = "黑白";
+"preset.faded" = "淡彩";
+
+"help.more" = "顯示更多";
+"help.less" = "顯示較少";
+
+"system.title"      = "降低透明度與動態效果";
+"system.hint"       = "兩者都有助於電子紙：半透明會讓文字混濁，而慢速面板不需要動畫。";
+"system.open"       = "開啟設定";
+"system.on"         = "開啟";
+"system.off"        = "關閉";
+"system.partial"    = "部分開啟";
+"system.install"    = "安裝並開啟";
+"system.toggle"     = "降低透明度與動態效果";
+"system.more"       = "選項";
+"system.reinstall"  = "重新安裝輔助捷徑";
+"system.guide"      = "安裝電子紙助手的輔助捷徑，以便同時控制兩項設定。";
+"system.ready"      = "使用開關即可同時開啟或關閉兩項設定。";
+"system.installing" = "正在等待你在「捷徑」中確認加入…";
+"system.running"    = "正在更改兩項設定…";
+"system.failed"     = "輔助捷徑無法使用。請確認已匯入，或從「選項」選擇「重新安裝輔助捷徑」。";
+"system.auto"       = "自動跟隨電子紙連接狀態";
+"system.auto.note"  = "標記的電子紙連接時開啟；只有最後一台標記的電子紙中斷連接後才會關閉。";
+
+"system.install.title"    = "安裝輔助捷徑？";
+"system.install.intro"    = "「降低透明度」與「減少動態效果」是 macOS 的系統全域設定。Apple 要求先確認一次，電子紙助手才能透過「捷徑」控制它們。";
+"system.install.step1"    = "電子紙助手會在 Apple 的「捷徑」App 中開啟隨附的輔助捷徑。";
+"system.install.step2"    = "檢查明確的 off/on 分支與最後的「無」動作，然後按一次「加入捷徑」。";
+"system.install.future"   = "安裝後，此列會變成開啟／關閉開關。重複使用是安全的，不會盲目反轉設定。";
+"system.install.auto"     = "你可以選擇跟隨已連接的電子紙。連接多台時，只有所有標記的電子紙都中斷連接後才會執行關閉。";
+"system.install.quit"     = "結束電子紙助手時一定會關閉這兩項設定。";
+"system.install.scope"    = "輔助捷徑只接受文字，只辨識完全相符的「on」與「off」，會忽略其他內容且不提供輸出。它不會出現在分享表單、Spotlight、快速動作或鎖定狀態中。電子紙助手不會列出、檢查或執行你的其他捷徑。";
+"system.install.cancel"   = "稍後再說";
+"system.install.continue" = "繼續前往捷徑";

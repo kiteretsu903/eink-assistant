@@ -1,5 +1,41 @@
 # Changelog
 
+## v2.0 — 2026-08-13
+
+- **Built for both B&W and color e-ink.** The app and documentation now make
+  clear which shared tools help both panel types and which color controls are
+  specific to color e-ink.
+
+- **Direct per-display RGB control** from 0% to 200% for each Red, Green, and
+  Blue channel. RGB is composed with Saturation in one display profile, saved
+  per display, and collapsed by default behind a compact live-value summary.
+
+- **Safe Reduce Transparency & Motion control.** A bundled, user-confirmed
+  Shortcuts helper provides explicit On and Off commands without inspecting
+  the user's other shortcuts or producing output. The app can automatically
+  turn both settings on when a marked e-ink display connects, off only after
+  the last marked display disconnects, and off whenever the app quits.
+
+- **E-ink-first interface redesign.** Larger black text, hard section and
+  control outlines, more visible sliders, aligned controls, bold selected
+  states, compact loading feedback, and clearer per-display grouping improve
+  readability without relying on subtle gray backgrounds.
+
+- **More accurate per-display system controls.** Night Shift and True Tone are
+  explicitly disabled only for the named display, with reconnect guidance and
+  reconnect-state tracking instead of a misleading restart message.
+
+- **Four complete languages:** American English, Simplified Chinese,
+  Traditional Chinese, and Japanese. Unsupported system languages fall back to
+  English.
+
+- **New native macOS app icon and refreshed documentation,** including
+  full-resolution screenshots and separate benefit summaries for B&W and color
+  e-ink displays.
+
+- **Standard drag-to-Applications DMG installer** with a custom background,
+  clear install arrow, Applications alias, and reusable release packaging.
+
 ## v1.1
 
 - **Disable Night Shift & True Tone** per display. macOS withholds both from
@@ -19,7 +55,7 @@
 
 ## v1.0
 
-First release. Per-display tuning for colour e-ink panels on macOS.
+First release. Per-display tuning for color e-ink panels on macOS.
 
 **Features**
 
@@ -27,7 +63,7 @@ First release. Per-display tuning for colour e-ink panels on macOS.
   e-ink shows as a constant shimmer. Based on
   [Stillcolor](https://github.com/aiaf/Stillcolor) by Abdullah Arif, narrowed
   from all displays to one.
-- **Saturation** compensates for the narrow gamut of a colour filter array, via
+- **Saturation** compensates for the narrow gamut of a color filter array, via
   a synthesized ICC display profile. Presets 原厂 / 增强 / 艳丽 / 动漫, or a
   slider from 60% to 300%.
 - **Text Contrast** darkens text so it reads on a low-contrast panel. Four

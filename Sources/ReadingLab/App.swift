@@ -4,7 +4,7 @@
 // white, pushing text toward the panel's floor instead of lifting shadows.
 //
 // Saturation is deliberately untouched here — reading mode is a tone-only
-// adjustment, so anything the colour profile is doing stays exactly as it is.
+// adjustment, so anything the color profile is doing stays exactly as it is.
 //
 // Drives the display's gamma table directly, so nothing persists: quitting or
 // sleeping restores the display.
@@ -51,7 +51,7 @@ enum WCAG {
     static func lin(_ c: Double) -> Double {
         c <= 0.04045 ? c/12.92 : pow((c + 0.055)/1.055, 2.4)
     }
-    static func luminance(_ grey: Double) -> Double { lin(grey) }
+    static func luminance(_ gray: Double) -> Double { lin(gray) }
     static func ratio(_ a: Double, _ b: Double) -> Double {
         let (x, y) = (luminance(a), luminance(b))
         return (max(x, y) + 0.05) / (min(x, y) + 0.05)
@@ -60,7 +60,7 @@ enum WCAG {
 
 // MARK: - Text specimen
 
-/// Real text at the greys macOS actually renders, on a white card. Because the
+/// Real text at the grays macOS actually renders, on a white card. Because the
 /// gamma table applies to the whole display, what you see here *is* the result.
 struct Specimen: View {
     let sample = "The quick brown fox jumps over the lazy dog. "
@@ -68,30 +68,28 @@ struct Specimen: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            row("Body 13pt", grey: 0.15, size: 13, weight: .regular)
-            row("Body 13pt bold", grey: 0.15, size: 13, weight: .semibold)
-            row("Small 11pt", grey: 0.15, size: 11, weight: .regular)
-            row("Secondary 13pt", grey: 0.45, size: 13, weight: .regular)
-            row("Tertiary 11pt", grey: 0.60, size: 11, weight: .regular)
-            row("Heading 17pt", grey: 0.10, size: 17, weight: .bold)
+            row("Body 13pt", gray: 0.15, size: 13, weight: .regular)
+            row("Body 13pt bold", gray: 0.15, size: 13, weight: .semibold)
+            row("Small 11pt", gray: 0.15, size: 11, weight: .regular)
+            row("Secondary 13pt", gray: 0.45, size: 13, weight: .regular)
+            row("Tertiary 11pt", gray: 0.60, size: 11, weight: .regular)
+            row("Heading 17pt", gray: 0.10, size: 17, weight: .bold)
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.white)          // a document page; white is pinned by the curve
-        .clipShape(RoundedRectangle(cornerRadius: 6))
-        .overlay(RoundedRectangle(cornerRadius: 6)
-            .stroke(Color.secondary.opacity(0.3), lineWidth: 1))
+        .einkOutlinedArea()
     }
 
-    private func row(_ label: String, grey: Double,
+    private func row(_ label: String, gray: Double,
                      size: CGFloat, weight: Font.Weight) -> some View {
         VStack(alignment: .leading, spacing: 1) {
             Text(label)
-                .font(.system(size: 8))
+                .font(.system(size: 10))
                 .foregroundStyle(Color(white: 0.55))
             Text(sample)
                 .font(.system(size: size, weight: weight))
-                .foregroundStyle(Color(white: grey))
+                .foregroundStyle(Color(white: gray))
                 .fixedSize(horizontal: false, vertical: true)
         }
     }
@@ -107,31 +105,31 @@ struct ContrastReadout: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 3) {
-            Text("Contrast against white").font(.system(size: 10, weight: .medium))
+            Text("Contrast against white").font(.system(size: 12, weight: .medium))
             ForEach(0..<levels.count, id: \.self) { i in
                 let name = levels[i].0
                 let v = levels[i].1
                 let before = WCAG.ratio(v, 1.0)
                 let after = WCAG.ratio(curve.value(v), curve.value(1.0))
                 HStack(spacing: 6) {
-                    Text(name).font(.system(size: 10))
-                        .foregroundStyle(.secondary)
-                        .frame(width: 92, alignment: .leading)
+                    Text(name).font(.system(size: 12))
+                        .foregroundStyle(EinkPalette.secondaryText)
+                        .frame(width: 104, alignment: .leading)
                     Text(String(format: "%.1f:1", before))
-                        .font(.system(size: 10)).monospacedDigit()
-                        .foregroundStyle(.secondary)
-                    Image(systemName: "arrow.right").font(.system(size: 7))
-                        .foregroundStyle(.secondary)
+                        .font(.system(size: 12)).monospacedDigit()
+                        .foregroundStyle(EinkPalette.secondaryText)
+                    Image(systemName: "arrow.right").font(.system(size: 9))
+                        .foregroundStyle(EinkPalette.secondaryText)
                     Text(String(format: "%.1f:1", after))
-                        .font(.system(size: 10, weight: .medium)).monospacedDigit()
+                        .font(.system(size: 12, weight: .medium)).monospacedDigit()
                     Text(String(format: "%+.0f%%", (after - before)/before*100))
-                        .font(.system(size: 9))
+                        .font(.system(size: 11))
                         .foregroundStyle(after >= before ? Color.green : Color.orange)
                 }
             }
             if !curve.isMonotonic() {
                 Label("not monotonic", systemImage: "exclamationmark.triangle.fill")
-                    .font(.system(size: 9)).foregroundStyle(Color.orange)
+                    .font(.system(size: 11)).foregroundStyle(Color.orange)
             }
         }
     }
@@ -183,47 +181,55 @@ struct ReadingLabView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     VStack(alignment: .leading, spacing: 2) {
                         HStack {
-                            Text("Knee").font(.system(size: 12, weight: .medium))
+                            Text("Knee").font(.system(size: 14, weight: .medium))
                             Spacer()
                             Text(String(format: "%.2f", model.curve.knee))
-                                .monospacedDigit().foregroundStyle(.secondary)
+                                .monospacedDigit().foregroundStyle(EinkPalette.secondaryText)
                         }
-                        Slider(value: $model.curve.knee, in: 0.20...1.00)
+                        EinkSlider(value: $model.curve.knee,
+                                   in: 0.20...1.00,
+                                   accessibilityLabel: "Knee")
                         Text("Below this level text is darkened; above it, untouched.")
-                            .font(.system(size: 9)).foregroundStyle(.secondary)
+                            .font(.system(size: 11)).foregroundStyle(EinkPalette.secondaryText)
                     }
                     VStack(alignment: .leading, spacing: 2) {
                         HStack {
-                            Text("Darkening (γ)").font(.system(size: 12, weight: .medium))
+                            Text("Darkening (γ)").font(.system(size: 14, weight: .medium))
                             Spacer()
                             Text(String(format: "%.2f", model.curve.gamma))
-                                .monospacedDigit().foregroundStyle(.secondary)
+                                .monospacedDigit().foregroundStyle(EinkPalette.secondaryText)
                         }
-                        Slider(value: $model.curve.gamma, in: 1.00...6.00)
+                        EinkSlider(value: $model.curve.gamma,
+                                   in: 1.00...6.00,
+                                   accessibilityLabel: "Darkening")
                         Text("Higher pushes text toward the panel's floor. 1.00 is off.")
-                            .font(.system(size: 9)).foregroundStyle(.secondary)
+                            .font(.system(size: 11)).foregroundStyle(EinkPalette.secondaryText)
                     }
                     VStack(alignment: .leading, spacing: 2) {
                         HStack {
-                            Text("Black point").font(.system(size: 12, weight: .medium))
+                            Text("Black point").font(.system(size: 14, weight: .medium))
                             Spacer()
                             Text(String(format: "%.2f", model.curve.blackPoint))
-                                .monospacedDigit().foregroundStyle(.secondary)
+                                .monospacedDigit().foregroundStyle(EinkPalette.secondaryText)
                         }
-                        Slider(value: $model.curve.blackPoint, in: 0.00...0.40)
+                        EinkSlider(value: $model.curve.blackPoint,
+                                   in: 0.00...0.40,
+                                   accessibilityLabel: "Black point")
                         Text("Crushes antialiased edges to solid black. 0 is off.")
-                            .font(.system(size: 9)).foregroundStyle(.secondary)
+                            .font(.system(size: 11)).foregroundStyle(EinkPalette.secondaryText)
                     }
                     VStack(alignment: .leading, spacing: 2) {
                         HStack {
-                            Text("White point").font(.system(size: 12, weight: .medium))
+                            Text("White point").font(.system(size: 14, weight: .medium))
                             Spacer()
                             Text(String(format: "%.2f", model.curve.whitePoint))
-                                .monospacedDigit().foregroundStyle(.secondary)
+                                .monospacedDigit().foregroundStyle(EinkPalette.secondaryText)
                         }
-                        Slider(value: $model.curve.whitePoint, in: 0.60...1.00)
-                        Text("Pushes the grey halo around glyphs to pure white. 1 is off.")
-                            .font(.system(size: 9)).foregroundStyle(.secondary)
+                        EinkSlider(value: $model.curve.whitePoint,
+                                   in: 0.60...1.00,
+                                   accessibilityLabel: "White point")
+                        Text("Pushes the gray halo around glyphs to pure white. 1 is off.")
+                            .font(.system(size: 11)).foregroundStyle(EinkPalette.secondaryText)
                     }
                     ReadingPresets(model: model)
                 }
@@ -235,14 +241,15 @@ struct ReadingLabView: View {
             Specimen()
 
             Text("Saturation is not touched — this is a tone-only adjustment, so "
-                 + "whatever your colour profile is doing stays as it is. Live "
+                 + "whatever your color profile is doing stays as it is. Live "
                  + "tuning only: the gamma table is reset by sleep, display "
                  + "changes and quitting.")
-                .font(.system(size: 9)).foregroundStyle(.secondary)
+                .font(.system(size: 11)).foregroundStyle(EinkPalette.secondaryText)
                 .fixedSize(horizontal: false, vertical: true)
         }
+        .font(.system(size: 15))
         .padding(18)
-        .frame(width: 640)
+        .frame(width: 700)
     }
 }
 

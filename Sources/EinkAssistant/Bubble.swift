@@ -57,7 +57,7 @@ private struct Bubble: View {
 }
 
 /// A borderless window cannot become key by default, which leaves every control
-/// drawn in its inactive grey state.
+/// drawn in its inactive gray state.
 private final class KeyablePanel: NSPanel {
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { true }
@@ -68,7 +68,7 @@ final class BubbleWindow {
     private var panel: NSPanel?
     private var outsideClickMonitor: Any?
     private let closesOnOutsideClick: Bool
-    /// Controls draw in their inactive grey state unless the app is active.
+    /// Controls draw in their inactive gray state unless the app is active.
     /// Worth doing for a panel the user just clicked open; not for a tip that
     /// appears by itself at launch and should not steal focus.
     private let activatesApp: Bool
@@ -121,7 +121,7 @@ final class BubbleWindow {
         hosting.rootView = Bubble(arrowX: arrowX, content: wrapped)
 
         // .nonactivatingPanel prevents the app becoming active at all, which is
-        // what kept the controls grey. The panel the user just clicked open
+        // what kept the controls gray. The panel the user just clicked open
         // takes focus; the tip, which appears by itself, does not.
         var style: NSWindow.StyleMask = [.borderless]
         if !activatesApp { style.insert(.nonactivatingPanel) }
@@ -135,7 +135,7 @@ final class BubbleWindow {
         window.isOpaque = false
         window.hasShadow = false               // the bubble draws its own
         window.hidesOnDeactivate = false
-        // Without becoming key the controls draw in their inactive grey state.
+        // Without becoming key the controls draw in their inactive gray state.
         // A non-activating panel can be key without bringing the app forward.
         window.becomesKeyOnlyIfNeeded = false
         window.setFrame(CGRect(origin: origin, size: size), display: true)
