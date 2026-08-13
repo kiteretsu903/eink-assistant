@@ -9,7 +9,8 @@ your laptop screen is left alone.
 **English** · [简体中文](README.zh-Hans.md)
 
 No permissions. No background service beyond the app itself. MIT licensed.
-English and 简体中文.
+
+![E-Ink Assistant](docs/app-main.png)
 
 ---
 
@@ -29,10 +30,9 @@ thing people notice.
 A colour e-ink panel puts a colour filter over a monochrome screen, which costs
 most of the gamut. Boosting saturation compensates.
 
-![Saturation before and after](docs/saturation.png)
+![Saturation before and after](docs/en/saturation.png)
 
-Presets **原厂 / 增强 / 艳丽 / 动漫** (Factory / Enhanced / Vivid / Anime), or a
-slider from 60% to 300%.
+Presets **Factory / Enhanced / Vivid / Anime**, or a slider from 60% to 300%.
 
 ### Text Contrast
 
@@ -40,7 +40,7 @@ Darkens text so it separates from the page on a panel with very little contrast
 to spend. Faint and secondary text gains the most: at the strongest level its
 contrast roughly triples.
 
-![Text contrast before and after](docs/text-contrast.png)
+![Text contrast before and after](docs/en/text-contrast.png)
 
 Four levels: **Medium, Strong, Sharp, Solid**. Solid also crushes antialiased
 edges to solid black, which looks crisper but harder-edged.
@@ -51,7 +51,7 @@ Brightens only the darkest tones and leaves mid-tones and highlights exactly as
 they were, so shadow detail that e-ink normally crushes into mush becomes
 visible again.
 
-![Video enhance before and after](docs/video-enhance.png)
+![Video enhance before and after](docs/en/video-enhance.png)
 
 Three levels: **Subtle, Medium, Strong**.
 
@@ -63,6 +63,8 @@ level is active, and it and Text Contrast are mutually exclusive.
 
 Full control of the curve (knee, gamma, black point, white point) with a live
 plot and five saveable, renameable slots.
+
+![Advanced mode](docs/app-advanced.png)
 
 > The comparison images are generated from the app's real transforms and
 > rendered on an LCD. The text and video images additionally simulate a
@@ -111,6 +113,8 @@ quarantined.
 
 ## Using it
 
+![Marking displays](docs/app-displays.png)
+
 1. Open the app from the menu bar.
 2. Tick your e-ink display. Controls appear only for ticked displays.
 3. Reduce Shaking comes on automatically. Adjust saturation to taste.
@@ -124,9 +128,9 @@ have that happen automatically.
 
 ## Scope
 
-Every value was tuned on a **Bigme B251 Pro** (固件版本 R2 FW V2.0) in one
-configuration: **网页模式 / Web Mode, 硬件伽马 "等级3" / Hardware Gamma Level 3,
-对比度 / Contrast 50, 色彩还原模式关闭 / Color Restore Mode off**.
+Every value was tuned on a **Bigme B251 Pro** (R2 FW V2.0) in one
+configuration: **Web Mode, Hardware Gamma Level 3, Contrast 50, Color Restore
+Mode off**.
 
 Nothing in the mechanism is specific to that panel: it works on any display
 macOS can assign a profile to, but the presets were chosen by eye against that
