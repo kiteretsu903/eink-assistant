@@ -31,14 +31,25 @@ enum WelcomeWindow {
         UserDefaults.standard.set(value, forKey: suppressKey)
     }
 
-    static func showIfNeeded() {
+    /// The status item's window is not laid out immediately after launch, and
+    /// anchoring to a missing one drops the tip into the middle of the screen.
+    /// So wait for a real frame before showing.
+    static func showIfNeeded(retries: Int = 12) {
         guard !isSuppressed else { return }
+        let anchor = AssistantDelegate.shared?.statusButton?.window
+        guard let frame = anchor?.frame, frame.width > 1 else {
+            guard retries > 0 else { show(); return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                showIfNeeded(retries: retries - 1)
+            }
+            return
+        }
         show()
     }
 
     static func show() {
         guard !bubble.isVisible else { return }
-        let button = (NSApp.delegate as? AssistantDelegate)?.statusButton
+        let button = AssistantDelegate.shared?.statusButton
         bubble.show(from: button) {
             WelcomeView(close: dismissAndOpenPanel)
         }
@@ -50,7 +61,7 @@ enum WelcomeWindow {
     static func dismissAndOpenPanel() {
         close()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-            (NSApp.delegate as? AssistantDelegate)?.openPanel()
+            AssistantDelegate.shared?.openPanel()
         }
     }
 
@@ -61,7 +72,7 @@ enum WelcomeWindow {
         panelWatch = Timer.scheduledTimer(withTimeInterval: 0.4, repeats: true) { timer in
             Task { @MainActor in
                 guard bubble.isVisible else { timer.invalidate(); return }
-                if (NSApp.delegate as? AssistantDelegate)?.isPanelOpen == true { close() }
+                if AssistantDelegate.shared?.isPanelOpen == true { close() }
             }
         }
     }

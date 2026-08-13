@@ -898,7 +898,7 @@ struct AssistantScroll: View {
         }
         // minWidth cannot be combined with a fixed height, so the height is
         // pinned by giving min and max the same value.
-        .frame(minWidth: 500, minHeight: clampedHeight, maxHeight: clampedHeight)
+        .frame(width: 500, height: clampedHeight)
     }
 }
 
@@ -906,6 +906,11 @@ struct AssistantScroll: View {
 
 @MainActor
 final class AssistantDelegate: NSObject, NSApplicationDelegate {
+    /// SwiftUI's NSApplicationDelegateAdaptor does not put this instance in
+    /// NSApp.delegate, so looking it up there silently returns nil. Everything
+    /// that needs the delegate goes through here instead.
+    static private(set) var shared: AssistantDelegate?
+
     var model: AssistantModel?
     private var statusItem: NSStatusItem?
     private let bubble = BubbleWindow(closesOnOutsideClick: true, activatesApp: true)
@@ -947,9 +952,15 @@ final class AssistantDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidFinishLaunching(_ note: Notification) {
+        AssistantDelegate.shared = self
         NSApp.setActivationPolicy(.accessory)
         model = .shared
         installStatusItem()
+        // After the status item exists, so the tip's arrow has something to
+        // point at.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+            WelcomeWindow.showIfNeeded()
+        }
         NSWorkspace.shared.notificationCenter.addObserver(
             forName: NSWorkspace.willPowerOffNotification,
             object: nil, queue: .main
