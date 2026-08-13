@@ -56,7 +56,7 @@ factory colour profile is restored, leaving the panel exactly as it was.
 
 ### Text Contrast
 
-The mirror of Video Shadow Lift: γ above 1 darkens the low end while pinning white,
+The mirror of Video Enhance: γ above 1 darkens the low end while pinning white,
 pushing text toward the panel's floor. For reading.
 
 | level | knee | γ | black point | body | secondary | tertiary |
@@ -97,14 +97,14 @@ store the current curve, a saved one to apply it; right-click to rename,
 overwrite or clear. Slots are global rather than per display, so a curve tuned
 on one panel can be applied to another.
 
-**Text Contrast and Video Shadow Lift are mutually exclusive.** They drive the same
+**Text Contrast and Video Enhance are mutually exclusive.** They drive the same
 hardware gamma table and pull in opposite directions, so turning one on turns
 the other off.
 
-### Video Shadow Lift
+### Video Enhance
 
 Colour e-ink has a very low contrast ratio, so dark detail collapses into an
-undifferentiated mush. Video Shadow Lift brightens **only the darkest part** of the
+undifferentiated mush. Video Enhance brightens **only the darkest part** of the
 image and leaves mid-tones and highlights exactly as they were:
 
 ```
@@ -145,9 +145,9 @@ UI whenever a level is active.
 
 Related: prefer **Light mode** on colour e-ink generally. The panel is
 reflective, so white is its natural resting state; dark backgrounds cost
-contrast and are where Video Shadow Lift does the most damage to text.
+contrast and are where Video Enhance does the most damage to text.
 
-**It does not persist.** Video Shadow Lift drives the display's gamma table, which
+**It does not persist.** Video Enhance drives the display's gamma table, which
 macOS clears on sleep and on display changes. The app re-applies it on wake and
 reconfiguration, so it needs to keep running.
 
