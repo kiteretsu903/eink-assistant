@@ -35,6 +35,8 @@ struct PanelState: Identifiable, Equatable {
 
 @MainActor
 final class AssistantModel: ObservableObject {
+    static let shared = AssistantModel()
+
     @Published var panels: [PanelState] = []
     @Published var launchAtLogin = false
     @Published var language: AppLanguage = Localization.current
@@ -902,15 +904,52 @@ struct AssistantScroll: View {
 
 // MARK: - App
 
+@MainActor
 final class AssistantDelegate: NSObject, NSApplicationDelegate {
     var model: AssistantModel?
+    private var statusItem: NSStatusItem?
+    private let bubble = BubbleWindow(closesOnOutsideClick: true, activatesApp: true)
+    /// Guards against the outside-click monitor closing the bubble on mouse
+    /// down and the button action reopening it on mouse up.
+    private var lastPanelClose = Date.distantPast
+
+    /// The menu bar button, used to anchor both the panel and the first-run tip.
+    var statusButton: NSStatusBarButton? { statusItem?.button }
+
+    var isPanelOpen: Bool { bubble.isVisible }
+
+    private func installStatusItem() {
+        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        item.button?.image = NSImage(systemSymbolName: "book.pages",
+                                     accessibilityDescription: L("app.title"))
+        item.button?.target = self
+        item.button?.action = #selector(togglePanel)
+        statusItem = item
+    }
+
+    @objc func togglePanel() {
+        if bubble.isVisible {
+            closePanel()
+        } else if Date().timeIntervalSince(lastPanelClose) > 0.25 {
+            openPanel()
+        }
+    }
+
+    /// Opens the panel, also used by the first-run tip's hand-off.
+    func openPanel() {
+        WelcomeWindow.close()
+        bubble.show(from: statusItem?.button) { AssistantScroll(model: .shared) }
+    }
+
+    func closePanel() {
+        bubble.close()
+        lastPanelClose = Date()
+    }
 
     func applicationDidFinishLaunching(_ note: Notification) {
         NSApp.setActivationPolicy(.accessory)
-        // After the menu bar item exists, so the tip's arrow points at something.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-            WelcomeWindow.showIfNeeded()
-        }
+        model = .shared
+        installStatusItem()
         NSWorkspace.shared.notificationCenter.addObserver(
             forName: NSWorkspace.willPowerOffNotification,
             object: nil, queue: .main
@@ -935,13 +974,10 @@ final class AssistantDelegate: NSObject, NSApplicationDelegate {
 @main
 struct EinkAssistantApp: App {
     @NSApplicationDelegateAdaptor(AssistantDelegate.self) var delegate
-    @StateObject private var model = AssistantModel()
 
     var body: some Scene {
-        MenuBarExtra("E-Ink Assistant", systemImage: "book.pages") {
-            AssistantScroll(model: model)
-                .onAppear { delegate.model = model }
-        }
-        .menuBarExtraStyle(.window)
+        // The menu bar item is created by the delegate; SwiftUI's MenuBarExtra
+        // cannot be opened programmatically, which the first-run tip needs.
+        Settings { EmptyView() }
     }
 }
