@@ -10,7 +10,9 @@ your laptop screen is left alone.
 
 No permissions. No background service beyond the app itself. MIT licensed.
 
-<img src="docs/app-main.png" alt="E-Ink Assistant" width="380">
+<p align="center">
+  <img src="docs/app-main.png" alt="E-Ink Assistant" width="440">
+</p>
 
 ---
 
@@ -64,7 +66,9 @@ level is active, and it and Text Contrast are mutually exclusive.
 Full control of the curve (knee, gamma, black point, white point) with a live
 plot and five saveable, renameable slots.
 
-<img src="docs/app-advanced.png" alt="Advanced mode" width="380">
+<p align="center">
+  <img src="docs/app-advanced.png" alt="Advanced mode" width="440">
+</p>
 
 > The comparison images are generated from the app's real transforms and
 > rendered on an LCD. The text and video images additionally simulate a
@@ -113,7 +117,9 @@ quarantined.
 
 ## Using it
 
-<img src="docs/app-displays.png" alt="Marking displays" width="380">
+<p align="center">
+  <img src="docs/app-displays.png" alt="Marking displays" width="440">
+</p>
 
 1. Open the app from the menu bar.
 2. Tick your e-ink display. Controls appear only for ticked displays.
