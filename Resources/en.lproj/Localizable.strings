@@ -101,3 +101,6 @@
 "welcome.other.body"  = "Set it to a **balanced hardware baseline**, with neutral contrast and gamma, so the software tuning has room to work. **Advanced mode** lets you dial in your own curve.";
 "welcome.hide"        = "Do not show this tip again";
 "welcome.done"        = "Got it";
+
+"preset.bw"    = "B&W";
+"preset.faded" = "Faded";

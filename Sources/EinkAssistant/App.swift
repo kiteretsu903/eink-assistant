@@ -395,6 +395,7 @@ struct PanelRow: View {
     // Named presets. 100% is the "off" shortcut: it drops the profile override
     // rather than installing an identity one.
     private let presets: [(value: Double, key: String)] = [
+        (0.0, "preset.bw"),      (0.5, "preset.faded"),
         (1.0, "preset.factory"), (1.3, "preset.enhanced"),
         (1.5, "preset.vivid"),   (2.0, "preset.anime"),
     ]
@@ -467,7 +468,7 @@ struct PanelRow: View {
             }
             Slider(
                     value: $panel.saturation,
-                    in: 0.6...3.0,
+                    in: 0.0...3.0,
                     // Each change rewrites a display profile, so commit on release.
                     onEditingChanged: { editing in
                         if !editing { model.setSaturation(panel.saturation, for: panel.id) }

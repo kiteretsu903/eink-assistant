@@ -45,7 +45,8 @@ most of the gamut. Boosting saturation compensates.
 
 ![Saturation before and after](docs/en/saturation.png)
 
-Presets **Factory / Enhanced / Vivid / Anime**, or a slider from 60% to 300%.
+Presets **B&W / Faded / Factory / Enhanced / Vivid / Anime**, or a slider from
+0% to 300%.
 
 ### Text Contrast
 

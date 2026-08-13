@@ -99,3 +99,6 @@
 "welcome.other.body"  = "请把硬件设置调到**较为中性的状态**（对比度、伽马等保持均衡），让软件层面的调校有发挥空间。**高级模式**可以自行调整曲线。";
 "welcome.hide"        = "不再显示此提示";
 "welcome.done"        = "知道了";
+
+"preset.bw"    = "黑白";
+"preset.faded" = "淡彩";
