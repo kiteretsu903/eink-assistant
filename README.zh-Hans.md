@@ -9,7 +9,7 @@
 
 无需任何权限。除应用本身外没有后台服务。MIT 开源协议。
 
-![墨水屏助手](docs/app-main.png)
+<img src="docs/app-main.png" alt="墨水屏助手" width="380">
 
 ---
 
@@ -54,7 +54,7 @@ macOS 会用抖动（dithering）让渐变更平滑。LCD 会在刷新中把这�
 
 直接控制曲线（拐点、伽马、黑点、白点），带实时曲线图，以及五个可保存、可重命名的槽位。
 
-![高级模式](docs/app-advanced.png)
+<img src="docs/app-advanced.png" alt="高级模式" width="380">
 
 > 上面的对比图是用应用真实的算法生成的模拟效果，在 LCD 上渲染。文字对比度和视频暗部增强两张图
 > 额外模拟了低对比度墨水屏的显示效果，因为这两项调整正是要解决那种情况；饱和度那张则是直接
@@ -98,7 +98,7 @@ xattr -dr com.apple.quarantine "/path/to/E-Ink Assistant.app"
 
 ## 使用
 
-![勾选显示器](docs/app-displays.png)
+<img src="docs/app-displays.png" alt="勾选显示器" width="380">
 
 1. 从菜单栏打开应用。
 2. 勾选你的墨水屏显示器。只有勾选后才会出现各项控制。
