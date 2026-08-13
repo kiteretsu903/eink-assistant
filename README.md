@@ -214,6 +214,32 @@ Sources/ToneLab/          the curve tuning tool
 build.sh                  builds both
 ```
 
+## Why three mechanisms
+
+| feature | mechanism | persists |
+|---|---|---|
+| Saturation | ICC display profile | yes, until removed |
+| Tone curves | display gamma table | no |
+| Reduce Shaking | I/O Registry property | yes (Apple Silicon only) |
+
+This split is deliberate, not an accident of history.
+
+**Saturation cannot use the gamma table.** That table is a per-channel 1D
+lookup: `out_R = f(in_R)`. Saturation is cross-channel, `out_R = a*R + b*G +
+c*B`, so it needs the 3x3 matrix an ICC profile carries. No 1D LUT can express
+it at any resolution.
+
+**Tone curves could move into the profile, but are not.** A profile TRC only
+affects content being converted into display space, so anything that bypasses
+colour management would miss it, and HDR content and clipping boundaries behave
+differently. The gamma table applies unconditionally at scanout, which is the
+more predictable behaviour for a tone adjustment.
+
+The cost of the split is that the gamma table is volatile: macOS clears it on
+sleep, on display reconfiguration, and as a side effect of writing a colour
+profile. That is why saturation is applied before curves, why curves are
+re-asserted shortly after a profile write, and why the app has to keep running.
+
 ## License and credits
 
 MIT, see [LICENSE](LICENSE).
