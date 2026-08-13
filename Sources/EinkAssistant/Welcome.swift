@@ -50,10 +50,12 @@ enum WelcomeWindow {
     }
 
     static func show() {
-        NSApp.activate(ignoringOtherApps: true)
-
         // Preferred: a popover hanging off the menu bar icon, so the tip points
         // at the thing it is telling you to click.
+        //
+        // Deliberately without NSApp.activate: activating an accessory app with
+        // a MenuBarExtra makes SwiftUI present the menu bar panel too, so the
+        // panel opened on top of the tip.
         if let anchor = statusItemView() {
             if let existing = popover, existing.isShown { return }
             let popover = NSPopover()
@@ -65,9 +67,16 @@ enum WelcomeWindow {
             popover.behavior = .applicationDefined
             popover.show(relativeTo: anchor.bounds, of: anchor, preferredEdge: .minY)
             self.popover = popover
+            // The popover only surfaces if the app activates, but activating
+            // also makes SwiftUI present the MenuBarExtra panel, which sits at
+            // a higher window level and covers the tip. Dismiss just that.
+            NSApp.activate(ignoringOtherApps: true)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { dismissMenuBarPanel() }
             return
         }
 
+        // The fallback window does need activating to come forward.
+        NSApp.activate(ignoringOtherApps: true)
         // Reuse the window if it is already up rather than stacking copies.
         if let existing = window {
             existing.makeKeyAndOrderFront(nil)
@@ -81,6 +90,14 @@ enum WelcomeWindow {
         panel.center()
         window = panel
         panel.makeKeyAndOrderFront(nil)
+    }
+
+    /// Hides SwiftUI's MenuBarExtra panel without touching the status item.
+    private static func dismissMenuBarPanel() {
+        for window in NSApp.windows
+        where NSStringFromClass(type(of: window)).contains("MenuBarExtraWindow") {
+            window.orderOut(nil)
+        }
     }
 
     static func close() {
@@ -133,7 +150,7 @@ struct WelcomeView: View {
         }
         .font(.system(size: 14))
         .padding(24)
-        .frame(width: 480)
+        .frame(width: 360)
     }
 
     private func tip(_ symbol: String, _ title: String, _ body: String) -> some View {
