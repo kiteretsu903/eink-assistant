@@ -14,6 +14,7 @@ import AppKit
 enum WelcomeWindow {
     private static let suppressKey = "hide-welcome"
     private static var window: NSWindow?
+    private static var popover: NSPopover?
 
     static var isSuppressed: Bool {
         UserDefaults.standard.bool(forKey: suppressKey)
@@ -28,11 +29,48 @@ enum WelcomeWindow {
         show()
     }
 
+    /// The status item MenuBarExtra creates is not exposed to us, so it is
+    /// found by class name.
+    ///
+    /// With separate Spaces per display there are several of these, including
+    /// placeholders parked at x = 0. Taking the first one put the tip on the
+    /// wrong screen, so this prefers a real slot on the active screen.
+    private static func statusItemView() -> NSView? {
+        let candidates = NSApp.windows.filter {
+            NSStringFromClass(type(of: $0)).contains("StatusBarWindow")
+                && $0.isVisible && $0.contentView != nil
+        }
+        // A parked placeholder sits at x = 0; a real menu bar slot does not.
+        let placed = candidates.filter { $0.frame.minX > 0 }
+        if let screen = NSScreen.main,
+           let onActiveScreen = placed.first(where: { screen.frame.intersects($0.frame) }) {
+            return onActiveScreen.contentView
+        }
+        return (placed.first ?? candidates.first)?.contentView
+    }
+
     static func show() {
+        NSApp.activate(ignoringOtherApps: true)
+
+        // Preferred: a popover hanging off the menu bar icon, so the tip points
+        // at the thing it is telling you to click.
+        if let anchor = statusItemView() {
+            if let existing = popover, existing.isShown { return }
+            let popover = NSPopover()
+            popover.contentViewController =
+                NSHostingController(rootView: WelcomeView(close: close))
+            // .transient dismisses as soon as the app resigns active, which
+            // for an accessory app is immediately after launch. This one stays
+            // until it is closed deliberately.
+            popover.behavior = .applicationDefined
+            popover.show(relativeTo: anchor.bounds, of: anchor, preferredEdge: .minY)
+            self.popover = popover
+            return
+        }
+
         // Reuse the window if it is already up rather than stacking copies.
         if let existing = window {
             existing.makeKeyAndOrderFront(nil)
-            NSApp.activate(ignoringOtherApps: true)
             return
         }
         let hosting = NSHostingController(rootView: WelcomeView(close: close))
@@ -43,11 +81,11 @@ enum WelcomeWindow {
         panel.center()
         window = panel
         panel.makeKeyAndOrderFront(nil)
-        // An accessory app does not come forward on its own.
-        NSApp.activate(ignoringOtherApps: true)
     }
 
     static func close() {
+        popover?.performClose(nil)
+        popover = nil
         window?.close()
         window = nil
     }
@@ -95,7 +133,7 @@ struct WelcomeView: View {
         }
         .font(.system(size: 14))
         .padding(24)
-        .frame(width: 540)
+        .frame(width: 480)
     }
 
     private func tip(_ symbol: String, _ title: String, _ body: String) -> some View {
