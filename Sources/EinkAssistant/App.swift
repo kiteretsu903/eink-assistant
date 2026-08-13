@@ -611,8 +611,6 @@ struct AssistantView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
-            Text(L("app.title")).font(.system(size: 15, weight: .semibold))
-
             if model.panels.isEmpty {
                 Text(L("display.none")).foregroundStyle(.secondary)
             } else {
@@ -671,10 +669,6 @@ struct AssistantView: View {
             ))
             .toggleStyle(.switch).controlSize(.small).font(.system(size: 13))
 
-            HStack {
-                Spacer()
-                Button(L("quit")) { NSApp.terminate(nil) }.font(.system(size: 13))
-            }
         }
         .padding(16)
     }
@@ -702,19 +696,38 @@ struct AssistantScroll: View {
     private static let maxHeight: CGFloat = 640
     private static let minHeight: CGFloat = 160
 
+    /// Height of the pinned header, which the content measurement excludes.
+    private static let headerHeight: CGFloat = 48
+
     private var clampedHeight: CGFloat {
-        min(max(contentHeight, Self.minHeight), Self.maxHeight)
+        min(max(contentHeight + Self.headerHeight, Self.minHeight), Self.maxHeight)
     }
 
     var body: some View {
-        ScrollView(.vertical) {
-            AssistantView(model: model)
+        VStack(spacing: 0) {
+            // Pinned header: Quit stays at the window's top right instead of
+            // scrolling away with the content.
+            HStack {
+                Text(L("app.title")).font(.system(size: 15, weight: .semibold))
+                Spacer()
+                Button(L("quit")) { NSApp.terminate(nil) }
+                    .font(.system(size: 13))
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 14)
+            .padding(.bottom, 10)
+
+            Divider()
+
+            ScrollView(.vertical) {
+                AssistantView(model: model)
                 .background(
-                    GeometryReader { geometry in
-                        Color.clear.preference(key: ContentHeightKey.self,
-                                               value: geometry.size.height)
-                    }
-                )
+                        GeometryReader { geometry in
+                            Color.clear.preference(key: ContentHeightKey.self,
+                                                   value: geometry.size.height)
+                        }
+                    )
+            }
         }
         .onPreferenceChange(ContentHeightKey.self) { height in
             // Guard against a zero measurement collapsing the window again.
