@@ -114,3 +114,9 @@
 "system.on"      = "On";
 "system.off"     = "Off";
 "system.partial" = "Partly on";
+
+"system.run"          = "Run";
+"system.more"         = "Options";
+"system.clear"        = "Stop using a shortcut";
+"system.noshortcuts"  = "No shortcuts found";
+"system.using"        = "Runs your shortcut \"%@\". macOS does not let an app change these directly, but a shortcut built from the Reduce Motion and Reduce Transparency actions can.";

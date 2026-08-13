@@ -112,3 +112,9 @@
 "system.on"      = "已开启";
 "system.off"     = "未开启";
 "system.partial" = "部分开启";
+
+"system.run"          = "运行";
+"system.more"         = "选项";
+"system.clear"        = "不再使用快捷指令";
+"system.noshortcuts"  = "未找到快捷指令";
+"system.using"        = "将运行你的快捷指令“%@”。macOS 不允许应用直接修改这两项，但用「减少动态效果」和「减少透明度」两个操作做成的快捷指令可以。";

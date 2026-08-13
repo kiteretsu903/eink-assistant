@@ -47,6 +47,8 @@ final class AssistantModel: ObservableObject {
     /// read and surfaced; changing them has to happen in System Settings.
     @Published var reduceTransparency = false
     @Published var reduceMotion = false
+    @Published var shortcutNames: [String] = []
+    @Published var chosenShortcut: String? = Shortcuts.chosen
     @Published var lastError: String?
 
     // Writing a gamma table or a colour profile makes macOS post a storm of
@@ -352,6 +354,25 @@ final class AssistantModel: ObservableObject {
         CurvePresets.clear(slot: slot)
         presets = CurvePresets.all()
         presetNamesVersion += 1
+    }
+
+    func refreshShortcuts() {
+        shortcutNames = Shortcuts.list()
+        chosenShortcut = Shortcuts.chosen
+    }
+
+    func chooseShortcut(_ name: String?) {
+        Shortcuts.chosen = name
+        chosenShortcut = name
+    }
+
+    func runChosenShortcut() {
+        guard let name = chosenShortcut else { return }
+        Shortcuts.run(name)
+        // The toggles change a moment after the shortcut runs.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            Task { @MainActor in self?.refreshAccessibility() }
+        }
     }
 
     func refreshAccessibility() {
@@ -813,10 +834,36 @@ struct SystemDisplayRow: View {
                 Text(L("system.title")).font(.system(size: 13, weight: .medium))
                 Text(status).font(.system(size: 12)).foregroundStyle(.secondary)
                 Spacer()
-                Button(L("system.open")) { model.openAccessibilitySettings() }
-                    .controlSize(.small)
+                if let chosen = model.chosenShortcut {
+                    Button(L("system.run")) { model.runChosenShortcut() }
+                        .controlSize(.small)
+                        .help(chosen)
+                }
+                Menu {
+                    Button(L("system.open")) { model.openAccessibilitySettings() }
+                    Divider()
+                    if model.shortcutNames.isEmpty {
+                        Text(L("system.noshortcuts"))
+                    } else {
+                        ForEach(0..<model.shortcutNames.count, id: \.self) { i in
+                            let name = model.shortcutNames[i]
+                            Button(name) { model.chooseShortcut(name) }
+                        }
+                    }
+                    if model.chosenShortcut != nil {
+                        Divider()
+                        Button(L("system.clear")) { model.chooseShortcut(nil) }
+                    }
+                } label: {
+                    Text(L("system.more"))
+                }
+                .menuStyle(.borderlessButton)
+                .controlSize(.small)
+                .fixedSize()
+                .onAppear { model.refreshShortcuts() }
             }
-            Text(L("system.hint"))
+            Text(model.chosenShortcut.map { String(format: L("system.using"), $0) }
+                 ?? L("system.hint"))
                 .font(.system(size: 11)).foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
