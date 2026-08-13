@@ -53,7 +53,7 @@ final class AssistantModel: ObservableObject {
         selfChangeUntil = Date().addingTimeInterval(1.5)
     }
 
-    private func scheduleReapply() {
+    func scheduleReapply() {
         reapplyTask?.cancel()
         reapplyTask = Task { @MainActor [weak self] in
             try? await Task.sleep(nanoseconds: 700_000_000)
@@ -84,6 +84,15 @@ final class AssistantModel: ObservableObject {
         ) { [weak self] _ in
             Task { @MainActor in self?.scheduleReapply() }
         }
+        // Display-only sleep, the common case, posts screensDidWake rather than
+        // didWake, which covers system sleep. Both are needed.
+        NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.screensDidWakeNotification,
+            object: nil, queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in self?.scheduleReapply() }
+        }
+        registerDisplayReconfigurationCallback()
 
         reapplyAll()
     }
@@ -129,6 +138,21 @@ final class AssistantModel: ObservableObject {
             Dither.setDisabled(panel.isEink && panel.reduceShaking, displayID: panel.id)
         }
         reassertCurvesSoon()
+    }
+
+    /// AppKit's didChangeScreenParameters does not fire for every display
+    /// reconfiguration. Stillcolor uses the CoreGraphics callback for exactly
+    /// this reason, so it is registered here as well.
+    private func registerDisplayReconfigurationCallback() {
+        let context = Unmanaged.passUnretained(self).toOpaque()
+        CGDisplayRegisterReconfigurationCallback({ _, flags, userInfo in
+            guard let userInfo else { return }
+            let relevant: CGDisplayChangeSummaryFlags =
+                [.addFlag, .removeFlag, .enabledFlag, .disabledFlag, .setModeFlag]
+            guard !flags.intersection(relevant).isEmpty else { return }
+            let model = Unmanaged<AssistantModel>.fromOpaque(userInfo).takeUnretainedValue()
+            Task { @MainActor in model.scheduleReapply() }
+        }, context)
     }
 
     /// The gamma-table wipe caused by a profile write can land slightly after
