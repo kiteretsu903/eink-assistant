@@ -102,3 +102,6 @@
 
 "preset.bw"    = "黑白";
 "preset.faded" = "淡彩";
+
+"help.more" = "展开";
+"help.less" = "收起";

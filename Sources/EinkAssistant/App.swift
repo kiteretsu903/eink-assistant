@@ -743,23 +743,34 @@ struct PanelRow: View {
 
 // MARK: - Explainer
 
+/// A disclosure triangle here read as if the notice below it were part of this
+/// section, so the control is an explicit Show more / Show less button.
 struct HowItWorks: View {
     @State private var expanded = false
 
     var body: some View {
-        DisclosureGroup(isExpanded: $expanded) {
-            VStack(alignment: .leading, spacing: 6) {
-                Text(L("help.saturation"))
-                Text(L("help.video"))
-                Text(L("help.tradeoff"))
-                Text(L("help.volatile"))
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 8) {
+                Text(L("help.title")).font(.system(size: 14, weight: .medium))
+                Button(expanded ? L("help.less") : L("help.more")) {
+                    expanded.toggle()
+                }
+                .buttonStyle(.link)
+                .font(.system(size: 13))
+                Spacer()
             }
-            .font(.system(size: 13))
-            .foregroundStyle(.secondary)
-            .fixedSize(horizontal: false, vertical: true)
-            .padding(.top, 4)
-        } label: {
-            Text(L("help.title")).font(.system(size: 14, weight: .medium))
+
+            if expanded {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(L("help.saturation"))
+                    Text(L("help.video"))
+                    Text(L("help.tradeoff"))
+                    Text(L("help.volatile"))
+                }
+                .font(.system(size: 13))
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            }
         }
     }
 }

@@ -104,3 +104,6 @@
 
 "preset.bw"    = "B&W";
 "preset.faded" = "Faded";
+
+"help.more" = "Show more";
+"help.less" = "Show less";
