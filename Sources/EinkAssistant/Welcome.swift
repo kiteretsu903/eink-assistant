@@ -1,26 +1,79 @@
-// First-run tip window.
+// First-run tip.
 //
 // A menu bar app with no Dock icon is easy to launch and then lose, so this
 // says where to find it. It also carries the one thing the app cannot do for
-// you: the monitor's own hardware settings have to be right before any of the
-// software tuning means much.
+// you: the monitor's own hardware settings have to be right before the software
+// tuning means much.
 //
-// Shown on every launch until the user opts out, since the hardware advice is
-// worth repeating while someone is still setting up.
+// Shown on every launch until the user opts out, since that advice is worth
+// repeating while someone is still setting up.
+//
+// Drawn as a custom panel rather than an NSPopover. A popover anchored to a
+// status item near the screen corner does not clamp itself to the screen and
+// ran off the right edge, and showing one required activating the app, which
+// made SwiftUI present the MenuBarExtra panel on top of the tip. A panel we
+// position ourselves has neither problem: the arrow points at the icon, the
+// frame is clamped, and it appears without activating anything.
 
 import SwiftUI
 import AppKit
 
+// MARK: - Bubble
+
+/// Rounded rectangle with a triangular arrow on top, pointing at `arrowX`
+/// (measured from the bubble's leading edge).
+private struct BubbleShape: Shape {
+    var arrowX: CGFloat
+    var arrowHeight: CGFloat = 10
+    var arrowWidth: CGFloat = 22
+    var radius: CGFloat = 12
+
+    func path(in rect: CGRect) -> Path {
+        let body = CGRect(x: rect.minX, y: rect.minY + arrowHeight,
+                          width: rect.width, height: rect.height - arrowHeight)
+        var path = Path(roundedRect: body, cornerRadius: radius)
+
+        // Keep the arrow clear of the rounded corners.
+        let limit = radius + arrowWidth / 2
+        let tip = min(max(arrowX, body.minX + limit), body.maxX - limit)
+
+        var arrow = Path()
+        arrow.move(to: CGPoint(x: tip - arrowWidth / 2, y: body.minY + 0.5))
+        arrow.addLine(to: CGPoint(x: tip, y: rect.minY))
+        arrow.addLine(to: CGPoint(x: tip + arrowWidth / 2, y: body.minY + 0.5))
+        arrow.closeSubpath()
+        path.addPath(arrow)
+        return path
+    }
+}
+
+private struct TipBubble: View {
+    let arrowX: CGFloat
+    let close: () -> Void
+
+    /// Margin around the bubble so its shadow is not clipped by the window.
+    static let inset: CGFloat = 18
+
+    var body: some View {
+        WelcomeView(close: close)
+            .padding(.top, 10)                 // room for the arrow
+            .background(
+                BubbleShape(arrowX: arrowX)
+                    .fill(Color(nsColor: .windowBackgroundColor))
+                    .shadow(color: .black.opacity(0.28), radius: 14, y: 5)
+            )
+            .padding(Self.inset)
+    }
+}
+
+// MARK: - Presentation
+
 enum WelcomeWindow {
     private static let suppressKey = "hide-welcome"
-    private static var window: NSWindow?
-    private static var popover: NSPopover?
+    private static var panel: NSPanel?
     private static var panelWatch: Timer?
 
-    static var isSuppressed: Bool {
-        UserDefaults.standard.bool(forKey: suppressKey)
-    }
-
+    static var isSuppressed: Bool { UserDefaults.standard.bool(forKey: suppressKey) }
     static func setSuppressed(_ value: Bool) {
         UserDefaults.standard.set(value, forKey: suppressKey)
     }
@@ -30,108 +83,96 @@ enum WelcomeWindow {
         show()
     }
 
-    /// The status item MenuBarExtra creates is not exposed to us, so it is
-    /// found by class name.
-    ///
-    /// With separate Spaces per display there are several of these, including
-    /// placeholders parked at x = 0. Taking the first one put the tip on the
-    /// wrong screen, so this prefers a real slot on the active screen.
-    private static func statusItemView() -> NSView? {
+    /// The status item MenuBarExtra creates is not exposed to us, so it is found
+    /// by class name. With separate Spaces per display there are several of
+    /// these, including placeholders parked at x = 0, so this prefers a real
+    /// slot on the active screen.
+    private static func statusItemWindow() -> NSWindow? {
         let candidates = NSApp.windows.filter {
-            NSStringFromClass(type(of: $0)).contains("StatusBarWindow")
-                && $0.isVisible && $0.contentView != nil
+            NSStringFromClass(type(of: $0)).contains("StatusBarWindow") && $0.isVisible
         }
-        // A parked placeholder sits at x = 0; a real menu bar slot does not.
         let placed = candidates.filter { $0.frame.minX > 0 }
         if let screen = NSScreen.main,
            let onActiveScreen = placed.first(where: { screen.frame.intersects($0.frame) }) {
-            return onActiveScreen.contentView
+            return onActiveScreen
         }
-        return (placed.first ?? candidates.first)?.contentView
+        return placed.first ?? candidates.first
     }
 
     static func show() {
-        // Preferred: a popover hanging off the menu bar icon, so the tip points
-        // at the thing it is telling you to click.
-        //
-        // Deliberately without NSApp.activate: activating an accessory app with
-        // a MenuBarExtra makes SwiftUI present the menu bar panel too, so the
-        // panel opened on top of the tip.
-        if let anchor = statusItemView() {
-            if let existing = popover, existing.isShown { return }
-            let popover = NSPopover()
-            popover.contentViewController =
-                NSHostingController(rootView: WelcomeView(close: close))
-            // .transient dismisses as soon as the app resigns active, which
-            // for an accessory app is immediately after launch. This one stays
-            // until it is closed deliberately.
-            popover.behavior = .applicationDefined
-            popover.show(relativeTo: anchor.bounds, of: anchor, preferredEdge: .minY)
-            self.popover = popover
-            // The popover only surfaces if the app activates, but activating
-            // also makes SwiftUI present the MenuBarExtra panel, which sits at
-            // a higher window level and covers the tip. Dismiss just that.
-            NSApp.activate(ignoringOtherApps: true)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                dismissMenuBarPanel()
-                watchForPanel()
-            }
-            return
-        }
+        guard panel == nil else { return }
 
-        // The fallback window does need activating to come forward.
-        NSApp.activate(ignoringOtherApps: true)
-        // Reuse the window if it is already up rather than stacking copies.
-        if let existing = window {
-            existing.makeKeyAndOrderFront(nil)
-            return
+        let hosting = NSHostingController(rootView: TipBubble(arrowX: 0, close: close))
+        let size = hosting.view.fittingSize
+        let inset = TipBubble.inset
+
+        let icon = statusItemWindow()
+        let screen = icon.flatMap { window in
+            NSScreen.screens.first { $0.frame.intersects(window.frame) }
+        } ?? NSScreen.main ?? NSScreen.screens[0]
+
+        let origin: CGPoint
+        let arrowX: CGFloat
+        if let icon {
+            let iconCentre = icon.frame.midX
+            // Clamp so the bubble never runs off the screen, which is exactly
+            // what NSPopover failed to do near the corner.
+            let lower = screen.visibleFrame.minX - inset
+            let upper = screen.visibleFrame.maxX - size.width + inset
+            let x = min(max(iconCentre - size.width / 2, lower), max(lower, upper))
+            origin = CGPoint(x: x, y: icon.frame.minY - size.height + inset)
+            // The arrow still points at the icon once the bubble is clamped.
+            arrowX = iconCentre - x - inset
+        } else {
+            origin = CGPoint(x: screen.frame.midX - size.width / 2,
+                             y: screen.frame.midY - size.height / 2)
+            arrowX = size.width / 2
         }
-        let hosting = NSHostingController(rootView: WelcomeView(close: close))
-        let panel = NSWindow(contentViewController: hosting)
-        panel.title = ""
-        panel.styleMask = [.titled, .closable]
-        panel.isReleasedWhenClosed = false
-        panel.center()
-        window = panel
-        panel.makeKeyAndOrderFront(nil)
+        hosting.rootView = TipBubble(arrowX: arrowX, close: close)
+
+        // A non-activating panel takes clicks without bringing the app forward,
+        // so the MenuBarExtra panel is never presented on top of the tip.
+        let tip = NSPanel(contentRect: CGRect(origin: origin, size: size),
+                          styleMask: [.borderless, .nonactivatingPanel],
+                          backing: .buffered, defer: false)
+        tip.contentViewController = hosting
+        tip.isFloatingPanel = true
+        tip.level = .floating
+        tip.backgroundColor = .clear
+        tip.isOpaque = false
+        tip.hasShadow = false                  // the bubble draws its own
+        tip.hidesOnDeactivate = false
+        tip.setFrame(CGRect(origin: origin, size: size), display: true)
+        tip.orderFrontRegardless()
+        panel = tip
+        watchForPanel()
     }
 
-    /// Once the panel is open the user has found the app, and the tip is only
-    /// in the way: it sits at a lower window level and ends up buried. So the
-    /// tip closes itself as soon as the panel appears.
+    /// Once the menu bar panel is open the user has found the app and the tip is
+    /// only in the way, so it dismisses itself.
     private static func watchForPanel() {
         panelWatch?.invalidate()
         panelWatch = Timer.scheduledTimer(withTimeInterval: 0.4, repeats: true) { timer in
             Task { @MainActor in
-                guard popover?.isShown == true else { timer.invalidate(); return }
-                if menuBarPanelIsVisible() { close() }
+                guard panel != nil else { timer.invalidate(); return }
+                let panelOpen = NSApp.windows.contains {
+                    NSStringFromClass(type(of: $0)).contains("MenuBarExtraWindow")
+                        && $0.isVisible
+                }
+                if panelOpen { close() }
             }
-        }
-    }
-
-    private static func menuBarPanelIsVisible() -> Bool {
-        NSApp.windows.contains {
-            NSStringFromClass(type(of: $0)).contains("MenuBarExtraWindow") && $0.isVisible
-        }
-    }
-
-    /// Hides SwiftUI's MenuBarExtra panel without touching the status item.
-    private static func dismissMenuBarPanel() {
-        for window in NSApp.windows
-        where NSStringFromClass(type(of: window)).contains("MenuBarExtraWindow") {
-            window.orderOut(nil)
         }
     }
 
     static func close() {
         panelWatch?.invalidate()
         panelWatch = nil
-        popover?.performClose(nil)
-        popover = nil
-        window?.close()
-        window = nil
+        panel?.orderOut(nil)
+        panel = nil
     }
 }
+
+// MARK: - Content
 
 /// Renders **bold** from the localized string. Text(String) is verbatim, so the
 /// markup has to be parsed rather than passed through.
@@ -175,7 +216,7 @@ struct WelcomeView: View {
         }
         .font(.system(size: 14))
         .padding(24)
-        .frame(width: 360)
+        .frame(width: 380)
     }
 
     private func tip(_ symbol: String, _ title: String, _ body: String) -> some View {
