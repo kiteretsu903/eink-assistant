@@ -69,6 +69,11 @@ final class BubbleWindow {
     /// Distance kept between the bubble and the screen edge.
     private let screenMargin: CGFloat = 14
 
+    /// Pulls the bubble up so the arrow sits against the menu bar rather than
+    /// floating below it. The status item's window is taller than the visible
+    /// menu bar, so aligning to its bottom edge leaves a gap.
+    private let menuBarOverlap: CGFloat = 7
+
     init(closesOnOutsideClick: Bool, activatesApp: Bool = false) {
         self.closesOnOutsideClick = closesOnOutsideClick
         self.activatesApp = activatesApp
@@ -97,7 +102,8 @@ final class BubbleWindow {
             let lower = screen.visibleFrame.minX - inset + screenMargin
             let upper = screen.visibleFrame.maxX - size.width + inset - screenMargin
             let x = min(max(iconCentre - size.width / 2, lower), max(lower, upper))
-            origin = CGPoint(x: x, y: anchor.frame.minY - size.height + inset)
+            origin = CGPoint(x: x,
+                             y: anchor.frame.minY - size.height + inset + menuBarOverlap)
             // The arrow still points at the icon once the bubble is clamped.
             arrowX = iconCentre - x - inset
         } else {
