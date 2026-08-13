@@ -308,7 +308,7 @@ struct PanelRow: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 16) {
             Toggle(isOn: Binding(
                 get: { panel.isEink },
                 set: { model.setEink($0, for: panel.id) }
@@ -334,13 +334,13 @@ struct PanelRow: View {
                 curveSection
             }
         }
-        .padding(10)
+        .padding(14)
         .background(Color.primary.opacity(panel.isEink ? 0.05 : 0.02))
         .clipShape(RoundedRectangle(cornerRadius: 6))
     }
 
     private var saturationSection: some View {
-        VStack(alignment: .leading, spacing: 3) {
+        VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text(L("saturation.title")).font(.system(size: 13, weight: .medium))
                 Spacer()
@@ -376,7 +376,7 @@ struct PanelRow: View {
     /// draw it. Always shown, so the graph does not vanish when a mode is off
     /// or the advanced curve is reset.
     private var curveSection: some View {
-        VStack(alignment: .leading, spacing: 3) {
+        VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text(L("curve.title")).font(.system(size: 12, weight: .medium))
                 Spacer()
@@ -389,7 +389,7 @@ struct PanelRow: View {
 
     /// Full manual control of the curve, replacing the preset pickers.
     @ViewBuilder private var advancedSection: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 8) {
             Toggle(isOn: Binding(
                 get: { panel.advanced },
                 set: { model.setAdvanced($0, for: panel.id) }
@@ -435,7 +435,7 @@ struct PanelRow: View {
     /// and a context menu renames, overwrites or clears. Renaming happens
     /// inline: a sheet or alert would be heavy inside a menu bar panel.
     private var presetSlots: some View {
-        VStack(alignment: .leading, spacing: 3) {
+        VStack(alignment: .leading, spacing: 6) {
             Text(L("presets.title")).font(.system(size: 11, weight: .medium))
             HStack(spacing: 5) {
                 ForEach(0..<CurvePresets.slotCount, id: \.self) { slot in
@@ -508,7 +508,7 @@ struct PanelRow: View {
     }
 
     private var textSection: some View {
-        VStack(alignment: .leading, spacing: 3) {
+        VStack(alignment: .leading, spacing: 6) {
             Text(L("text.title")).font(.system(size: 13, weight: .medium))
             Picker("", selection: Binding(
                 get: { panel.textLevel },
@@ -530,7 +530,7 @@ struct PanelRow: View {
     }
 
     private var enhanceSection: some View {
-        VStack(alignment: .leading, spacing: 3) {
+        VStack(alignment: .leading, spacing: 6) {
             Text(L("video.title")).font(.system(size: 13, weight: .medium))
             Picker("", selection: Binding(
                 get: { panel.enhance },
@@ -591,7 +591,7 @@ struct AssistantView: View {
     @ObservedObject var model: AssistantModel
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 18) {
             Text(L("app.title")).font(.system(size: 15, weight: .semibold))
 
             if model.panels.isEmpty {
@@ -657,7 +657,7 @@ struct AssistantView: View {
                 Button(L("quit")) { NSApp.terminate(nil) }.font(.system(size: 13))
             }
         }
-        .padding(14)
+        .padding(16)
     }
 }
 
