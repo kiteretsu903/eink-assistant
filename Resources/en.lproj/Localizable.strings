@@ -133,6 +133,6 @@
 "system.install.future"   = "After installation, this row becomes an On/Off switch. Repeated use is safe; it never blindly toggles a setting.";
 "system.install.auto"     = "You may optionally follow connected e-ink displays. With several panels, Off runs only after all marked e-ink displays disconnect.";
 "system.install.quit"     = "Quitting E-Ink Assistant always turns both settings off.";
-"system.install.scope"    = "The helper accepts Text only, recognizes exact “on” and “off” commands, ignores everything else, and provides no output. It is not exposed in Share Sheet, Spotlight, Quick Actions, or while locked. E-Ink Assistant does not list, inspect, or run your other shortcuts.";
+"system.install.scope"    = "The helper accepts Text only, recognizes exact “on” and “off” commands, ignores everything else, and provides no output. It is not exposed in Share Sheet, Spotlight, Quick Actions, or the lock-screen interface. It can run in the background while your Mac is locked so automatic display following and quit cleanup remain reliable. E-Ink Assistant does not list, inspect, or run your other shortcuts.";
 "system.install.cancel"   = "Not Now";
 "system.install.continue" = "Continue to Shortcuts";

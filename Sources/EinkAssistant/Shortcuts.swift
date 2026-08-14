@@ -20,18 +20,24 @@ enum AccessibilityHelperState: String {
 }
 
 enum Shortcuts {
-    static let helperName = "E-Ink Assistant Accessibility Helper"
-    static let helperResource = "E-Ink Assistant Accessibility Helper"
+    // v2.1 deliberately uses a new shortcut identity. An existing v2.0 helper
+    // has locked execution disabled, and a no-input probe cannot distinguish
+    // that older copy from the corrected workflow. The new name makes upgrade
+    // detection deterministic without listing or inspecting the user's other
+    // shortcuts.
+    static let helperName = "E-Ink Assistant Settings Helper"
+    static let helperResource = "E-Ink Assistant Settings Helper"
 
     private static let tool = "/usr/bin/shortcuts"
     private static let installedKey = "accessibility-helper-version"
     private static let legacyInstalledKey = "accessibility-helper-installed"
-    // v5 accepts Text only, recognizes exact "on" and "off" commands, ignores
+    // v6 accepts Text only, recognizes exact "on" and "off" commands, ignores
     // everything else, and ends with the Nothing action. That explicit final
     // action prevents Shortcuts from implicitly returning the input command as
-    // output even though Provide Output is disabled. The helper is also hidden
-    // from Share Sheet, Spotlight, Quick Actions, and locked-screen execution.
-    private static let currentVersion = 5
+    // output even though Provide Output is disabled. It stays hidden from
+    // Share Sheet, Spotlight, and Quick Actions, while allowing background
+    // execution when locked so auto-follow and quit cleanup remain reliable.
+    private static let currentVersion = 6
 
     static var isAvailable: Bool {
         FileManager.default.isExecutableFile(atPath: tool)

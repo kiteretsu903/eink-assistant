@@ -24,8 +24,8 @@ bundle() {  # bundle <name> <bundle-id> <extra-plist>
   <key>CFBundleName</key>            <string>$name</string>
   <key>CFBundleDisplayName</key>     <string>$name</string>
   <key>CFBundleIdentifier</key>      <string>$ident</string>
-  <key>CFBundleVersion</key>         <string>2.0</string>
-  <key>CFBundleShortVersionString</key><string>2.0</string>
+  <key>CFBundleVersion</key>         <string>2.1</string>
+  <key>CFBundleShortVersionString</key><string>2.1</string>
   <key>CFBundlePackageType</key>     <string>APPL</string>
   <key>CFBundleExecutable</key>      <string>$name</string>
   <key>CFBundleInfoDictionaryVersion</key><string>6.0</string>

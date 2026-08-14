@@ -23,18 +23,14 @@ app itself. MIT licensed.
 
 ## Latest release
 
-**v2.0 — August 13, 2026**
+**v2.1 — August 14, 2026**
 
-- Expanded and reframed for both B&W and color e-ink displays.
-- Added direct per-display RGB controls from 0%–200% per channel.
-- Added a safe On/Off accessibility helper with optional display-connection
-  automation and automatic shutdown cleanup.
-- Redesigned the interface with larger text, hard outlines, stronger controls,
-  and clearer selected states for reflective displays.
-- Added Traditional Chinese and Japanese, refreshed all screenshots, and added
-  a native macOS app icon.
-- Added a standard DMG installer that guides users to drag the app into
-  Applications.
+- Fixed the Shortcuts warning that could appear when display automation or app
+  cleanup ran while the Mac was locked.
+- Added a distinctly named, locked-capable settings helper so upgrades cannot
+  silently reuse the incompatible v2.0 helper.
+- Existing users confirm **Add Shortcut** once after upgrading. The old
+  **E-Ink Assistant Accessibility Helper** can then be deleted from Shortcuts.
 
 [Download the latest release](../../releases/latest) · [Read the full changelog](CHANGELOG.md)
 
@@ -217,8 +213,10 @@ The system-wide **Reduce Transparency & Motion** row has a one-time **Install &
 Enable** setup. Confirm **Add Shortcut** in Apple's Shortcuts app. The bundled
 helper accepts Text only, recognizes exact `on` and `off` commands, ignores
 everything else, and ends with `Nothing` so it produces no output. It is not
-exposed in Share Sheet, Spotlight, Quick Actions, or while locked, and the app
-does not list or inspect your other shortcuts.
+exposed in Share Sheet, Spotlight, Quick Actions, or the lock-screen interface.
+It can run in the background while the Mac is locked so automatic display
+following and quit cleanup remain reliable. The app does not list or inspect
+your other shortcuts.
 
 Automatic mode turns both settings on when a marked e-ink display connects and
 off only after the last marked e-ink display disconnects. Quitting the app also

@@ -1,5 +1,20 @@
 # Changelog
 
+## v2.1 — 2026-08-14
+
+- **Fixed locked-screen automation.** The settings helper can now run in the
+  background while the Mac is locked, so display-disconnection automation,
+  app-exit cleanup, and power-off cleanup no longer produce a Shortcuts warning.
+  It remains unavailable from Share Sheet, Spotlight, Quick Actions, and the
+  lock-screen interface; it still accepts only exact `on` and `off` commands
+  and provides no output.
+
+- **Reliable upgrade path.** The corrected workflow uses the new fixed name
+  `E-Ink Assistant Settings Helper`, so v2.1 never mistakes the older v2.0
+  helper for the updated one. Existing users confirm **Add Shortcut** once after
+  upgrading. The unused `E-Ink Assistant Accessibility Helper` can then be
+  deleted from Shortcuts.
+
 ## v2.0 — 2026-08-13
 
 - **Built for both B&W and color e-ink.** The app and documentation now make
