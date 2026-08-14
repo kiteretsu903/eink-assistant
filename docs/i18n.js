@@ -119,12 +119,24 @@
   }
 
   const params = new URLSearchParams(window.location.search);
+  let resetAfterLanguageSwitch = false;
+  try {
+    resetAfterLanguageSwitch = sessionStorage.getItem("eink-assistant-language-switch") === "1";
+    if (resetAfterLanguageSwitch) sessionStorage.removeItem("eink-assistant-language-switch");
+  } catch {}
+  if (resetAfterLanguageSwitch && "scrollRestoration" in history) history.scrollRestoration = "manual";
   let storedLocale = "";
   try { storedLocale = localStorage.getItem("eink-assistant-language") || ""; } catch {}
   let locale = params.has("lang") ? localeFrom(params.get("lang")) : (supported.includes(storedLocale) ? storedLocale : "");
   if (!locale) locale = localeFrom((navigator.languages || [navigator.language]).find((language) => localeFrom(language) !== "en") || "en");
   if (!supported.includes(locale)) locale = "en";
   if (locale !== "en") apply(locale);
+  if (resetAfterLanguageSwitch) {
+    const resetScroll = () => window.scrollTo(0, 0);
+    resetScroll();
+    requestAnimationFrame(resetScroll);
+    window.addEventListener("pageshow", resetScroll, { once: true });
+  }
   const picker = document.querySelector("#site-language");
-  if (picker) { picker.value = locale; picker.addEventListener("change", () => { const next = picker.value; try { localStorage.setItem("eink-assistant-language", next); } catch {} const url = new URL(window.location.href); if (next === "en") url.searchParams.delete("lang"); else url.searchParams.set("lang", next); window.location.assign(url); }); }
+  if (picker) { picker.value = locale; picker.addEventListener("change", () => { const next = picker.value; try { localStorage.setItem("eink-assistant-language", next); sessionStorage.setItem("eink-assistant-language-switch", "1"); } catch {} const url = new URL(window.location.href); if (next === "en") url.searchParams.delete("lang"); else url.searchParams.set("lang", next); url.hash = ""; window.location.assign(url); }); }
 })();

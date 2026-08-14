@@ -7,8 +7,82 @@
 html[lang^="zh"] body,
 html[lang="ja"] body { letter-spacing: 0; }
 
+html[lang="zh-Hans"] h1,
+html[lang="zh-Hans"] h2,
+html[lang="zh-Hans"] .card-heading h3,
+html[lang="zh-Hans"] .steps h3 {
+  font-family: "Songti SC", "STSong", "Noto Serif CJK SC", ui-serif, serif;
+}
+
+html[lang="zh-Hant"] h1,
+html[lang="zh-Hant"] h2,
+html[lang="zh-Hant"] .card-heading h3,
+html[lang="zh-Hant"] .steps h3 {
+  font-family: "Songti TC", "STSong", "Noto Serif CJK TC", ui-serif, serif;
+}
+
+html[lang="ja"] h1,
+html[lang="ja"] h2,
+html[lang="ja"] .card-heading h3,
+html[lang="ja"] .steps h3 {
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif CJK JP", ui-serif, serif;
+}
+
+html[lang^="zh"] h1,
+html[lang="ja"] h1 {
+  text-wrap: balance;
+}
+
+html[lang^="zh"] h1 em,
+html[lang^="zh"] h2 em,
+html[lang="ja"] h1 em,
+html[lang="ja"] h2 em {
+  font-style: normal;
+  font-weight: 500;
+}
+
+html[lang^="zh"] .hero h1 {
+  font-size: clamp(46px, 4.4vw, 60px);
+  line-height: 1.08;
+  letter-spacing: -.045em;
+}
+
+html[lang="ja"] .hero h1 {
+  font-size: clamp(42px, 4.1vw, 56px);
+  line-height: 1.15;
+  letter-spacing: -.035em;
+}
+
+html[lang^="zh"] h2,
+html[lang="ja"] h2 {
+  line-height: 1.08;
+  letter-spacing: -.045em;
+}
+
+html[lang^="zh"] .lede,
+html[lang="ja"] .lede {
+  max-width: 520px;
+  font-size: 17px;
+  line-height: 1.72;
+}
+
+html[lang^="zh"] .hero-actions,
+html[lang="ja"] .hero-actions {
+  flex-wrap: wrap;
+  gap: 14px 18px;
+}
+
+html[lang^="zh"] .feature-group h3,
+html[lang="ja"] .feature-group h3 {
+  line-height: 1.12;
+  letter-spacing: -.035em;
+}
+
 @media (max-width: 760px) {
   .site-header { gap: 10px; }
   .site-header .button-small { display: none; }
   .language-picker { margin-left: auto; }
+
+  html[lang^="zh"] .hero h1 { font-size: 43px; }
+  html[lang="ja"] .hero h1 { font-size: 39px; }
 }
