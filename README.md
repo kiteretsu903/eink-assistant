@@ -187,10 +187,11 @@ longer works.**
 3. Find the message that the app was blocked and click **Open Anyway**.
 4. Confirm.
 
-If the button does not appear, clear the quarantine flag directly:
+After dragging the app to **Applications**, if the button still does not appear,
+clear the quarantine flag directly:
 
 ```
-xattr -dr com.apple.quarantine "/path/to/E-Ink Assistant.app"
+xattr -dr com.apple.quarantine "/Applications/E-Ink Assistant.app"
 ```
 
 Building from source avoids quarantine entirely.

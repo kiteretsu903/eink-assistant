@@ -168,10 +168,10 @@ macOSから拒否されます。**macOS 15以降では、右クリック →「�
 3. アプリがブロックされたという表示を探し、**このまま開く**をクリックします。
 4. 確認します。
 
-ボタンが表示されない場合は、隔離属性を直接削除できます。
+アプリを**Applications**フォルダへドラッグした後もボタンが表示されない場合は、隔離属性を直接削除できます。
 
 ```
-xattr -dr com.apple.quarantine "/path/to/E-Ink Assistant.app"
+xattr -dr com.apple.quarantine "/Applications/E-Ink Assistant.app"
 ```
 
 ソースからビルドした場合、隔離属性は付きません。

@@ -156,10 +156,10 @@ open "E-Ink Assistant.app"
 3. 找到 App 遭封鎖的訊息，按一下**強制打開**。
 4. 確認。
 
-若沒有顯示按鈕，可直接清除隔離旗標：
+將 App 拖入**「應用程式」**資料夾後，如果仍未顯示按鈕，可直接清除隔離旗標：
 
 ```
-xattr -dr com.apple.quarantine "/path/to/E-Ink Assistant.app"
+xattr -dr com.apple.quarantine "/Applications/E-Ink Assistant.app"
 ```
 
 自行從原始碼建置不會帶有隔離旗標。

@@ -156,10 +156,10 @@ open "E-Ink Assistant.app"
 3. 找到应用被阻止的提示，点击**仍要打开**。
 4. 确认。
 
-如果没有该按钮，可直接清除隔离标记：
+将应用拖入**“应用程序”**文件夹后，如果仍没有该按钮，可直接清除隔离标记：
 
 ```
-xattr -dr com.apple.quarantine "/path/to/E-Ink Assistant.app"
+xattr -dr com.apple.quarantine "/Applications/E-Ink Assistant.app"
 ```
 
 自行从源码编译不会带有隔离标记。
