@@ -1,0 +1,20 @@
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid var(--red);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .ticker-track { animation: none; }
+}
+
+@media (max-width: 760px) {
+  .quiet-link,
+  .card-link,
+  .site-footer a {
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+  }
+}

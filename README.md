@@ -13,6 +13,13 @@
 
 **Tune black-and-white and color e-ink displays for macOS.**
 
+## Website
+
+The product site is ready for GitHub Pages in [`docs/`](docs/). In the
+repository's **Settings → Pages**, set **Build and deployment** to **Deploy from
+a branch**, then select your default branch and the **/docs** folder. It will be
+published at `https://kiteretsu903.github.io/eink-assistant/`.
+
 Both B&W and color e-ink share the problems of slow refresh, limited contrast,
 crushed shadow detail, and visible macOS dithering. E-Ink Assistant is a small
 menu bar app that addresses those problems per display, leaving your laptop
@@ -91,7 +98,7 @@ Darkens text so it separates from the page on a low-contrast panel. Faint and
 secondary text gains the most: at the strongest level its signal contrast
 roughly triples.
 
-![Text contrast before and after](docs/en/text-contrast.png)
+![Illustrative text contrast before and after](docs/en/text-contrast-editorial.png)
 
 Four levels: **Medium, Strong, Sharp, Solid**. Solid also crushes antialiased
 edges to solid black, which looks crisper but harder-edged.
@@ -101,7 +108,7 @@ edges to solid black, which looks crisper but harder-edged.
 Brightens only the darkest tones while leaving mid-tones and highlights alone,
 so shadow detail that e-ink normally crushes becomes visible again.
 
-![Video enhance before and after](docs/en/video-enhance.png)
+![Illustrative video enhancement before and after](docs/en/video-enhance-editorial.png)
 
 Three levels: **Subtle, Medium, Strong**. It cannot distinguish dark imagery
 from dark text, so it lightens text too. **Use it for video and photos, and turn
@@ -113,7 +120,7 @@ Color e-ink places a color filter over a monochrome panel, which costs much of
 the gamut. Saturation compensation restores stronger color signals. B&W panels
 can simply leave this at 100%.
 
-![Saturation before and after](docs/en/saturation.png)
+![Illustrative saturation before and after](docs/en/saturation-editorial.png)
 
 Presets **B&W / Faded / Factory / Enhanced / Vivid / Anime**, or a slider from
 0% to 300%.
@@ -155,10 +162,8 @@ five saveable, renameable slots.
   <img src="docs/app-advanced.png" alt="Advanced mode" width="440">
 </p>
 
-> The comparison images use the app's real transforms and are rendered on an
-> LCD. Text and video examples additionally simulate a low-contrast e-ink panel;
-> saturation shows the color transform directly. Actual results depend on the
-> panel.
+> The comparison images are illustrative feature previews. Actual results depend
+> on the panel and source material.
 
 ---
 

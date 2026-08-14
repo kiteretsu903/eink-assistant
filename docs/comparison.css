@@ -1,0 +1,42 @@
+/* Editorial before/after scenes make each feature legible at a glance. */
+.comparison-frame {
+  background: var(--ink);
+  padding: 14px 14px 0;
+  box-shadow: 15px 15px 0 var(--blue);
+}
+
+.comparison-frame img {
+  aspect-ratio: 16 / 9;
+  height: auto;
+  object-fit: contain;
+  background: #fff;
+}
+
+.comparison-frame::before,
+.comparison-frame::after {
+  position: absolute;
+  top: 27px;
+  z-index: 1;
+  padding: 6px 8px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .14em;
+}
+
+.comparison-frame::before { content: "BEFORE"; left: 27px; }
+.comparison-frame::after { content: "AFTER"; right: 27px; }
+
+.comparison-frame figcaption {
+  color: #d6d1c6;
+  padding: 12px 2px 13px;
+}
+
+@media (max-width: 760px) {
+  .comparison-frame { padding: 9px 9px 0; box-shadow: 9px 9px 0 var(--blue); }
+  .comparison-frame::before,
+  .comparison-frame::after { top: 19px; }
+  .comparison-frame::before { left: 19px; }
+  .comparison-frame::after { right: 19px; }
+}
