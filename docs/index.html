@@ -6,6 +6,11 @@
     <meta name="description" content="E-Ink Assistant tunes black-and-white and color e-ink displays for macOS." />
     <meta name="theme-color" content="#f2f0ea" />
     <link rel="canonical" href="https://kiteretsu903.github.io/eink-assistant/" />
+    <link rel="alternate" hreflang="en" href="https://kiteretsu903.github.io/eink-assistant/" />
+    <link rel="alternate" hreflang="zh-Hans" href="https://kiteretsu903.github.io/eink-assistant/?lang=zh-Hans" />
+    <link rel="alternate" hreflang="zh-Hant" href="https://kiteretsu903.github.io/eink-assistant/?lang=zh-Hant" />
+    <link rel="alternate" hreflang="ja" href="https://kiteretsu903.github.io/eink-assistant/?lang=ja" />
+    <link rel="alternate" hreflang="x-default" href="https://kiteretsu903.github.io/eink-assistant/" />
     <title>E-Ink Assistant: Make e-ink feel at home on macOS</title>
     <link rel="stylesheet" href="site.css" />
     <link rel="stylesheet" href="a11y.css" />
@@ -14,12 +19,14 @@
     <link rel="stylesheet" href="light-theme.css" />
     <link rel="stylesheet" href="gallery.css" />
     <link rel="stylesheet" href="changelog.css" />
+    <link rel="stylesheet" href="i18n.css" />
   </head>
-  <body>
+  <body data-page="home">
     <div class="paper-grain" aria-hidden="true"></div>
     <header class="site-header shell">
       <a class="brand" href="#top" aria-label="E-Ink Assistant home"><img src="app-icon.png" alt="" width="44" height="44" /><span>E‑Ink Assistant</span></a>
       <nav aria-label="Main navigation"><a href="#features">Features</a><a href="#how-it-works">How it works</a><a href="changelog.html">Changelog</a><a href="#download">Download</a></nav>
+      <label class="language-picker"><span class="sr-only">Language</span><select id="site-language" aria-label="Language"><option value="en">English</option><option value="zh-Hans">简体中文</option><option value="zh-Hant">繁體中文</option><option value="ja">日本語</option></select></label>
       <a class="button button-small" href="https://github.com/kiteretsu903/eink-assistant/releases/latest">Get the app <span aria-hidden="true">↗</span></a>
     </header>
     <main id="top">
@@ -75,5 +82,6 @@
       <section class="download shell" id="download"><div class="download-content"><p class="section-number">READY WHEN YOUR DISPLAY IS</p><h2>Make e‑ink<br /><em>feel at home.</em></h2><p>Free, privacy-respecting, and built for the screen you actually want to look at all day.</p><a class="button button-light" href="https://github.com/kiteretsu903/eink-assistant/releases/latest">Download E‑Ink Assistant <span aria-hidden="true">↓</span></a><p class="fine-print light">macOS 14+ · Apple Silicon · MIT License</p></div><img src="app-icon.png" alt="" class="giant-icon" /></section>
     </main>
     <footer class="site-footer shell"><span>© 2026 E‑Ink Assistant</span><a href="https://github.com/kiteretsu903/eink-assistant">View source on GitHub <span aria-hidden="true">↗</span></a></footer>
+    <script src="i18n.js"></script>
   </body>
 </html>

@@ -1,0 +1,14 @@
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+.language-picker { display: block; }
+.language-picker select { appearance: none; min-width: 88px; padding: 7px 27px 7px 9px; border: 1px solid var(--line); border-radius: 2px; background: var(--paper) linear-gradient(45deg, transparent 50%, var(--ink) 50%) calc(100% - 12px) 50% / 5px 5px no-repeat; color: var(--ink); font: 700 11px var(--sans); cursor: pointer; }
+.language-picker select:focus-visible { outline: 3px solid var(--red); outline-offset: 3px; }
+
+html[lang^="zh"] body,
+html[lang="ja"] body { letter-spacing: 0; }
+
+@media (max-width: 760px) {
+  .site-header { gap: 10px; }
+  .site-header .button-small { display: none; }
+  .language-picker { margin-left: auto; }
+}
