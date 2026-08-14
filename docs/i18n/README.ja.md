@@ -1,14 +1,14 @@
 # E-Ink Assistant
 
 <p align="center">
-  <a href="README.md">English</a> &nbsp;·&nbsp;
+  <a href="../../README.md">English</a> &nbsp;·&nbsp;
   <a href="README.zh-Hans.md">简体中文</a> &nbsp;·&nbsp;
   <a href="README.zh-Hant.md">繁體中文</a> &nbsp;·&nbsp;
   <b>日本語</b>
 </p>
 
 <p align="center">
-  <img src="Resources/AppIcon.png" alt="E-Ink Assistantのアプリアイコン" width="128">
+  <img src="../../Resources/AppIcon.png" alt="E-Ink Assistantのアプリアイコン" width="128">
 </p>
 
 **macOSで白黒・カラー電子ペーパーディスプレイを調整します。**
@@ -33,10 +33,10 @@ MITライセンスです。
 - 繁体字中国語と日本語、更新済みスクリーンショット、macOSネイティブのアプリアイコンを追加しました。
 - アプリをApplicationsフォルダへドラッグする標準DMGインストーラーを追加しました。
 
-[最新バージョンをダウンロード](../../releases/latest) · [変更履歴をすべて読む](CHANGELOG.md)
+[最新バージョンをダウンロード](https://github.com/kiteretsu903/eink-assistant/releases/latest) · [変更履歴をすべて読む](../../CHANGELOG.md)
 
 <p align="center">
-  <img src="docs/app-main.png" alt="E-Ink Assistant" width="440">
+  <img src="../app-main.png" alt="E-Ink Assistant" width="440">
 </p>
 
 ## 主な機能
@@ -83,7 +83,7 @@ macOSは階調を滑らかにするため表示出力をディザリングしま
 文字を濃くし、低コントラストのパネルでも背景から判別しやすくします。薄い文字や補助的な文字ほど
 効果が大きく、最強設定では信号上のコントラストがおよそ3倍になります。
 
-![テキストコントラストの比較](docs/en/text-contrast.png)
+![テキストコントラストの比較](../en/text-contrast.png)
 
 **中、強、シャープ、ソリッド**の4段階です。ソリッドはアンチエイリアスの縁も黒くつぶすため、
 くっきりしますが字形が硬く見えます。
@@ -93,7 +93,7 @@ macOSは階調を滑らかにするため表示出力をディザリングしま
 中間調とハイライトを変えず、最も暗い階調だけを明るくします。電子ペーパーでつぶれやすい動画や
 写真の暗部を見えるようにします。
 
-![映像の暗部補正の比較](docs/en/video-enhance.png)
+![映像の暗部補正の比較](../en/video-enhance.png)
 
 **弱、中、強**の3段階です。暗い映像と濃い文字を区別できないため、文字も薄くなります。
 **動画や写真ではオン、読書ではオフ**にしてください。テキストコントラストとは同時に使えません。
@@ -103,7 +103,7 @@ macOSは階調を滑らかにするため表示出力をディザリングしま
 カラー電子ペーパーは白黒パネルにカラーフィルターを重ねるため、色域の多くを失います。彩度補正で
 より強いカラー信号を送れます。白黒パネルでは100%のままで構いません。
 
-![彩度の比較](docs/en/saturation.png)
+![彩度の比較](../en/saturation.png)
 
 **白黒 / 淡色 / 標準 / 強調 / 鮮やか / アニメ**のプリセット、または0%〜300%のスライダーを使えます。
 
@@ -137,7 +137,7 @@ RGBと彩度は1つのディスプレイ別カラープロファイルに統合�
 できる5つのスロットがあります。
 
 <p align="center">
-  <img src="docs/app-advanced.png" alt="詳細モード" width="440">
+  <img src="../app-advanced.png" alt="詳細モード" width="440">
 </p>
 
 > 比較画像はアプリの実際の変換を使い、LCD上でレンダリングしています。文字と映像の例では低コントラスト
@@ -156,7 +156,7 @@ cd eink-assistant
 open "E-Ink Assistant.app"
 ```
 
-推奨方法は、[Releases](../../releases)から`.dmg`をダウンロードして開き、
+推奨方法は、[Releases](https://github.com/kiteretsu903/eink-assistant/releases)から`.dmg`をダウンロードして開き、
 **E-Ink Assistant**をインストーラー内の**Applications**フォルダへドラッグすることです。
 
 ### 初回起動：Gatekeeperを通過する
@@ -182,7 +182,7 @@ xattr -dr com.apple.quarantine "/path/to/E-Ink Assistant.app"
 ## 使い方
 
 <p align="center">
-  <img src="docs/app-displays.png" alt="ディスプレイの登録" width="440">
+  <img src="../app-displays.png" alt="ディスプレイの登録" width="440">
 </p>
 
 1. メニューバーからアプリを開きます。
@@ -220,13 +220,13 @@ Appleの「ショートカット」で**ショートカットを追加**を確�
 
 ## その他
 
-- [CHANGELOG.md](CHANGELOG.md)：バージョンごとの変更内容（英語）
-- [TECHNICAL.md](TECHNICAL.md)：実装、測定値、現行macOSで**機能しない**方法（英語）
+- [CHANGELOG.md](../../CHANGELOG.md)：バージョンごとの変更内容（英語）
+- [TECHNICAL.md](../../TECHNICAL.md)：実装、測定値、現行macOSで**機能しない**方法（英語）
 - [mac-saturation](https://github.com/kiteretsu903/mac-saturation)：カラー機構の調査とプロファイル書き出しCLI（英語）
 
 ## ライセンスとクレジット
 
-MITです。[LICENSE](LICENSE)を参照してください。
+MITです。[LICENSE](../../LICENSE)を参照してください。
 
 **ちらつき低減はAbdullah Arifによる
 [Stillcolor](https://github.com/aiaf/Stillcolor)（MIT）を基にしています。** Stillcolorは
@@ -234,4 +234,4 @@ MITです。[LICENSE](LICENSE)を参照してください。
 本プロジェクトはそのアイデアをディスプレイ単位で再実装しています。発見の功績はStillcolorにあります。
 ありがとうございます。
 
-完全な表記は[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)にあります。
+完全な表記は[THIRD-PARTY-NOTICES.md](../../THIRD-PARTY-NOTICES.md)にあります。

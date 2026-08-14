@@ -1,14 +1,14 @@
 # 墨水屏助手
 
 <p align="center">
-  <a href="README.md">English</a> &nbsp;·&nbsp;
+  <a href="../../README.md">English</a> &nbsp;·&nbsp;
   <b>简体中文</b> &nbsp;·&nbsp;
   <a href="README.zh-Hant.md">繁體中文</a> &nbsp;·&nbsp;
   <a href="README.ja.md">日本語</a>
 </p>
 
 <p align="center">
-  <img src="Resources/AppIcon.png" alt="墨水屏助手应用图标" width="128">
+  <img src="../../Resources/AppIcon.png" alt="墨水屏助手应用图标" width="128">
 </p>
 
 **在 macOS 上调校黑白和彩色墨水屏显示器。**
@@ -30,10 +30,10 @@
 - 新增繁体中文与日语，更新全部截图，并加入原生 macOS 应用图标。
 - 新增标准 DMG 安装器，引导用户将应用拖入“应用程序”文件夹。
 
-[下载最新版本](../../releases/latest) · [查看完整更新日志](CHANGELOG.md)
+[下载最新版本](https://github.com/kiteretsu903/eink-assistant/releases/latest) · [查看完整更新日志](../../CHANGELOG.md)
 
 <p align="center">
-  <img src="docs/app-main.png" alt="墨水屏助手" width="440">
+  <img src="../app-main.png" alt="墨水屏助手" width="440">
 </p>
 
 ## 主要功能
@@ -77,7 +77,7 @@ macOS 会用抖动（dithering）让渐变更平滑。LCD 会在刷新中把图�
 加深文字，让它在低对比度面板上更容易从页面中分离。浅色和次要文字受益最大；在最强档位下，
 其信号对比度大约可提升到三倍。
 
-![文字对比度调整前后对比](docs/zh/text-contrast.png)
+![文字对比度调整前后对比](../zh/text-contrast.png)
 
 四个档位：**中等、强、锐利、实边**。实边还会把抗锯齿边缘压成纯黑，显示更清晰，但字缘会偏硬。
 
@@ -85,7 +85,7 @@ macOS 会用抖动（dithering）让渐变更平滑。LCD 会在刷新中把图�
 
 只提亮最暗的色调，中间调和高光保持不变，让墨水屏通常会压没的暗部细节重新可见。
 
-![视频暗部增强调整前后对比](docs/zh/video-enhance.png)
+![视频暗部增强调整前后对比](../zh/video-enhance.png)
 
 三个档位：**轻微、中等、强**。它无法区分暗部画面和深色文字，所以文字也会变浅。
 **看视频和照片时开启，阅读时关闭。** 视频暗部增强与文字对比度互斥。
@@ -95,7 +95,7 @@ macOS 会用抖动（dithering）让渐变更平滑。LCD 会在刷新中把图�
 彩色墨水屏在黑白面板上增加彩色滤光层，因此损失大量色域。饱和度补偿可以恢复更强的颜色信号。
 黑白墨水屏保持 100% 即可。
 
-![饱和度调整前后对比](docs/zh/saturation.png)
+![饱和度调整前后对比](../zh/saturation.png)
 
 预设 **黑白 / 淡彩 / 原厂 / 增强 / 艳丽 / 动漫**，或使用 0%–300% 滑块。
 
@@ -126,7 +126,7 @@ RGB 与饱和度共用同一个逐显示器颜色配置文件，因此两者可�
 直接控制拐点、伽马、黑点和白点，带实时曲线图以及五个可保存、可重命名的槽位。
 
 <p align="center">
-  <img src="docs/app-advanced.png" alt="高级模式" width="440">
+  <img src="../app-advanced.png" alt="高级模式" width="440">
 </p>
 
 > 对比图使用应用真实的变换生成，并在 LCD 上渲染。文字和视频示例还模拟了低对比度墨水屏；
@@ -145,7 +145,7 @@ cd eink-assistant
 open "E-Ink Assistant.app"
 ```
 
-推荐从 [Releases](../../releases) 下载 `.dmg`，打开后将**墨水屏助手**拖到安装器中显示的
+推荐从 [Releases](https://github.com/kiteretsu903/eink-assistant/releases) 下载 `.dmg`，打开后将**墨水屏助手**拖到安装器中显示的
 **应用程序**文件夹。
 
 ### 首次启动：通过 Gatekeeper
@@ -171,7 +171,7 @@ xattr -dr com.apple.quarantine "/path/to/E-Ink Assistant.app"
 ## 使用方法
 
 <p align="center">
-  <img src="docs/app-displays.png" alt="标记显示器" width="440">
+  <img src="../app-displays.png" alt="标记显示器" width="440">
 </p>
 
 1. 从菜单栏打开应用。
@@ -207,16 +207,16 @@ xattr -dr com.apple.quarantine "/path/to/E-Ink Assistant.app"
 
 ## 更多
 
-- [CHANGELOG.md](CHANGELOG.md)：各版本更新内容
-- [TECHNICAL.md](TECHNICAL.md)：实现原理、实测数据，以及新版 macOS 上**行不通**的方法（英文）
+- [CHANGELOG.md](../../CHANGELOG.md)：各版本更新内容
+- [TECHNICAL.md](../../TECHNICAL.md)：实现原理、实测数据，以及新版 macOS 上**行不通**的方法（英文）
 - [mac-saturation](https://github.com/kiteretsu903/mac-saturation)：颜色机制调查和配置文件导出工具（英文）
 
 ## 许可与致谢
 
-MIT，见 [LICENSE](LICENSE)。
+MIT，见 [LICENSE](../../LICENSE)。
 
 **减少抖动基于 [Stillcolor](https://github.com/aiaf/Stillcolor)（作者 Abdullah Arif，MIT）。**
 Stillcolor 发现可以通过 `enableDither` I/O Registry 属性关闭显示器抖动。本项目按显示器重新实现
 这一思路；发现方法的功劳属于 Stillcolor。感谢。
 
-完整声明见 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。
+完整声明见 [THIRD-PARTY-NOTICES.md](../../THIRD-PARTY-NOTICES.md)。

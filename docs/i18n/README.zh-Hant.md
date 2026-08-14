@@ -1,14 +1,14 @@
 # 電子紙助手
 
 <p align="center">
-  <a href="README.md">English</a> &nbsp;·&nbsp;
+  <a href="../../README.md">English</a> &nbsp;·&nbsp;
   <a href="README.zh-Hans.md">简体中文</a> &nbsp;·&nbsp;
   <b>繁體中文</b> &nbsp;·&nbsp;
   <a href="README.ja.md">日本語</a>
 </p>
 
 <p align="center">
-  <img src="Resources/AppIcon.png" alt="電子紙助手 App 圖示" width="128">
+  <img src="../../Resources/AppIcon.png" alt="電子紙助手 App 圖示" width="128">
 </p>
 
 **在 macOS 上調校黑白與彩色電子紙顯示器。**
@@ -30,10 +30,10 @@
 - 新增繁體中文與日文，更新所有螢幕截圖，並加入原生 macOS App 圖示。
 - 新增標準 DMG 安裝程式，引導使用者將 App 拖入「應用程式」資料夾。
 
-[下載最新版本](../../releases/latest) · [查看完整更新記錄](CHANGELOG.md)
+[下載最新版本](https://github.com/kiteretsu903/eink-assistant/releases/latest) · [查看完整更新記錄](../../CHANGELOG.md)
 
 <p align="center">
-  <img src="docs/app-main.png" alt="電子紙助手" width="440">
+  <img src="../app-main.png" alt="電子紙助手" width="440">
 </p>
 
 ## 主要功能
@@ -77,7 +77,7 @@ macOS 會使用抖動（dithering）讓漸層更平滑。LCD 會在更新時把�
 加深文字，讓它在低對比度面板上更容易與頁面分離。淡色與次要文字受益最大；在最強等級下，
 其訊號對比度約可提升為三倍。
 
-![文字對比度調整前後](docs/zh/text-contrast.png)
+![文字對比度調整前後](../zh/text-contrast.png)
 
 四個等級：**中等、強、銳利、實邊**。實邊也會把反鋸齒邊緣壓成純黑，顯示更清晰，但字緣會較硬。
 
@@ -85,7 +85,7 @@ macOS 會使用抖動（dithering）讓漸層更平滑。LCD 會在更新時把�
 
 只提亮最暗的色調，中間調與亮部保持不變，讓電子紙通常會壓掉的暗部細節重新可見。
 
-![影片暗部增強調整前後](docs/zh/video-enhance.png)
+![影片暗部增強調整前後](../zh/video-enhance.png)
 
 三個等級：**輕微、中等、強**。它無法區分暗色畫面與深色文字，因此文字也會變淡。
 **觀看影片與照片時開啟，閱讀時關閉。** 影片暗部增強與文字對比度互斥。
@@ -95,7 +95,7 @@ macOS 會使用抖動（dithering）讓漸層更平滑。LCD 會在更新時把�
 彩色電子紙在黑白面板上增加彩色濾光層，因此損失大量色域。彩度補償可以恢復更強的色彩訊號。
 黑白電子紙維持 100% 即可。
 
-![彩度調整前後](docs/zh/saturation.png)
+![彩度調整前後](../zh/saturation.png)
 
 預設 **黑白 / 淡彩 / 原廠 / 增強 / 鮮豔 / 動漫**，或使用 0%–300% 滑桿。
 
@@ -126,7 +126,7 @@ RGB 與彩度共用同一個逐顯示器色彩描述檔，因此兩者可一起�
 直接控制轉折點、Gamma、黑點與白點，提供即時曲線圖和五個可儲存、可重新命名的槽位。
 
 <p align="center">
-  <img src="docs/app-advanced.png" alt="進階模式" width="440">
+  <img src="../app-advanced.png" alt="進階模式" width="440">
 </p>
 
 > 比較圖片使用 App 的實際變換產生，並在 LCD 上算繪。文字與影片範例另外模擬低對比度電子紙；
@@ -145,7 +145,7 @@ cd eink-assistant
 open "E-Ink Assistant.app"
 ```
 
-建議從 [Releases](../../releases) 下載 `.dmg`，開啟後將**電子紙助手**拖到安裝程式中顯示的
+建議從 [Releases](https://github.com/kiteretsu903/eink-assistant/releases) 下載 `.dmg`，開啟後將**電子紙助手**拖到安裝程式中顯示的
 **應用程式**資料夾。
 
 ### 第一次啟動：通過 Gatekeeper
@@ -171,7 +171,7 @@ xattr -dr com.apple.quarantine "/path/to/E-Ink Assistant.app"
 ## 使用方式
 
 <p align="center">
-  <img src="docs/app-displays.png" alt="標記顯示器" width="440">
+  <img src="../app-displays.png" alt="標記顯示器" width="440">
 </p>
 
 1. 從選單列開啟 App。
@@ -207,16 +207,16 @@ App 也不會列出或檢查你的其他捷徑。
 
 ## 更多資訊
 
-- [CHANGELOG.md](CHANGELOG.md)：各版本更新內容
-- [TECHNICAL.md](TECHNICAL.md)：實作原理、測量資料，以及新版 macOS 上**無法運作**的方法（英文）
+- [CHANGELOG.md](../../CHANGELOG.md)：各版本更新內容
+- [TECHNICAL.md](../../TECHNICAL.md)：實作原理、測量資料，以及新版 macOS 上**無法運作**的方法（英文）
 - [mac-saturation](https://github.com/kiteretsu903/mac-saturation)：色彩機制調查與描述檔匯出工具（英文）
 
 ## 授權與致謝
 
-MIT，請參閱 [LICENSE](LICENSE)。
+MIT，請參閱 [LICENSE](../../LICENSE)。
 
 **減少閃爍以 [Stillcolor](https://github.com/aiaf/Stillcolor)（作者 Abdullah Arif，MIT）為基礎。**
 Stillcolor 發現可透過 `enableDither` I/O Registry 屬性關閉顯示器抖動。本專案按顯示器重新實作
 這個概念；發現方法的功勞屬於 Stillcolor。謝謝。
 
-完整聲明請見 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。
+完整聲明請見 [THIRD-PARTY-NOTICES.md](../../THIRD-PARTY-NOTICES.md)。

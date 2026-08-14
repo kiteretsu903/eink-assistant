@@ -2,9 +2,9 @@
 
 <p align="center">
   <b>English</b> &nbsp;·&nbsp;
-  <a href="README.zh-Hans.md">简体中文</a> &nbsp;·&nbsp;
-  <a href="README.zh-Hant.md">繁體中文</a> &nbsp;·&nbsp;
-  <a href="README.ja.md">日本語</a>
+  <a href="docs/i18n/README.zh-Hans.md">简体中文</a> &nbsp;·&nbsp;
+  <a href="docs/i18n/README.zh-Hant.md">繁體中文</a> &nbsp;·&nbsp;
+  <a href="docs/i18n/README.ja.md">日本語</a>
 </p>
 
 <p align="center">
