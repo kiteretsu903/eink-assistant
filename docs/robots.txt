@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kiteretsu903.github.io/eink-assistant/sitemap.xml
