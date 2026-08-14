@@ -5,16 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="E-Ink Assistant tunes black-and-white and color e-ink displays for macOS." />
     <meta name="theme-color" content="#f2f0ea" />
-    <title>E-Ink Assistant — Make e-ink feel at home on macOS</title>
+    <title>E-Ink Assistant: Make e-ink feel at home on macOS</title>
     <link rel="stylesheet" href="site.css" />
     <link rel="stylesheet" href="a11y.css" />
     <link rel="stylesheet" href="comparison.css" />
+    <link rel="stylesheet" href="features.css" />
+    <link rel="stylesheet" href="light-theme.css" />
+    <link rel="stylesheet" href="gallery.css" />
+    <link rel="stylesheet" href="changelog.css" />
   </head>
   <body>
     <div class="paper-grain" aria-hidden="true"></div>
     <header class="site-header shell">
       <a class="brand" href="#top" aria-label="E-Ink Assistant home"><img src="app-icon.png" alt="" width="44" height="44" /><span>E‑Ink Assistant</span></a>
-      <nav aria-label="Main navigation"><a href="#features">Features</a><a href="#how-it-works">How it works</a><a href="#download">Download</a></nav>
+      <nav aria-label="Main navigation"><a href="#features">Features</a><a href="#how-it-works">How it works</a><a href="changelog.html">Changelog</a><a href="#download">Download</a></nav>
       <a class="button button-small" href="https://github.com/kiteretsu903/eink-assistant/releases/latest">Get the app <span aria-hidden="true">↗</span></a>
     </header>
     <main id="top">
@@ -22,8 +26,9 @@
         <div class="hero-copy">
           <p class="eyebrow"><span></span> Made for macOS · Apple silicon</p>
           <h1>Give your e‑ink display<br /><em>better instincts.</em></h1>
-          <p class="lede">E‑Ink Assistant is a small menu-bar app that makes black-and-white and color e‑ink displays calmer, clearer, and more capable—without touching your laptop screen.</p>
-          <div class="hero-actions"><a class="button" href="https://github.com/kiteretsu903/eink-assistant/releases/latest">Download for macOS <span aria-hidden="true">↓</span></a><a class="quiet-link" href="#features">Explore features <span aria-hidden="true">↓</span></a></div>
+          <p class="lede">E‑Ink Assistant is a small menu-bar app that makes black-and-white and color e‑ink displays calmer, clearer, and more capable without touching your laptop screen.</p>
+          <div class="hero-actions"><a class="button" href="https://github.com/kiteretsu903/eink-assistant/releases/latest">Download for macOS <span aria-hidden="true">↓</span></a><a class="github-star hero-star" href="https://github.com/kiteretsu903/eink-assistant" aria-label="Give E-Ink Assistant a star on GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.5c-2.23.49-2.7-.95-2.7-.95-.36-.93-.89-1.18-.89-1.18-.73-.5.06-.49.06-.49.81.06 1.23.83 1.23.83.72 1.23 1.88.88 2.34.67.07-.52.28-.88.51-1.08-1.78-.2-3.65-.89-3.65-3.96 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.13 0 0 .67-.21 2.2.82A7.64 7.64 0 0 1 8 4.8c.68 0 1.36.09 2 .27 1.53-1.03 2.2-.82 2.2-.82.44 1.11.16 1.93.08 2.13.51.56.82 1.28.82 2.15 0 3.08-1.87 3.75-3.66 3.95.29.25.54.73.54 1.47v2.18c0 .21.15.46.55.38A8 8 0 0 0 8 0Z" /></svg><span>Enjoying it? Give it a star.</span></a></div>
+          <div class="hero-release"><span>Latest release</span><strong>v2.1</strong><time datetime="2026-08-14">August 14, 2026</time></div>
           <p class="fine-print">macOS 14+ · Apple Silicon · Free &amp; open source</p>
         </div>
         <div class="hero-visual" aria-label="E-Ink Assistant application shown on a display">
@@ -34,23 +39,40 @@
       </section>
       <section class="ticker" aria-label="Product capabilities"><div class="ticker-track"><span>CALMER REFRESH <b>✦</b> DEEPER TEXT <b>✦</b> MORE VISIBLE SHADOW DETAIL <b>✦</b> BETTER COLOR <b>✦</b> CALMER REFRESH <b>✦</b> DEEPER TEXT <b>✦</b> MORE VISIBLE SHADOW DETAIL <b>✦</b> BETTER COLOR <b>✦</b></span></div></section>
       <section class="intro shell" id="features">
-        <p class="section-number">01 — WHAT IT FIXES</p>
-        <div class="intro-grid"><h2>E‑ink is different.<br />Your display controls<br /><em>should be, too.</em></h2><div><p>Slow refresh, limited contrast, macOS dithering, and a narrow color gamut are not flaws you can solve with a generic brightness slider.</p><p>E‑Ink Assistant gives each marked display its own purpose-built profile—leaving every other screen exactly as it was.</p></div></div>
+        <p class="section-number">01 / DESIGNED FOR macOS</p>
+        <div class="intro-grid"><h2>A display utility<br />for <em>macOS and e‑ink.</em></h2><div><p>E‑Ink Assistant runs from the menu bar on macOS 14+ with Apple silicon. It targets only the external displays you mark as e‑ink, so your built-in Mac display and other monitors stay unchanged.</p><p>The core display controls need no permissions and do not install a separate background service.</p></div></div>
+        <aside class="intro-preset-note">
+          <article class="preset-path"><p class="preset-eyebrow">BIGME B251 PRO</p><h3>Use the built-in baseline.</h3><p>Optimized for R2 firmware V2.0 with Web Mode, Hardware Gamma Level 3, Contrast 50, and Color Restore Mode off.</p></article>
+          <article class="preset-path"><p class="preset-eyebrow">OTHER B&amp;W + COLOR E‑INK</p><h3>Start with a balanced hardware baseline.</h3><p>Set a balanced hardware baseline for your panel first, then use Advanced tuning to refine and save a curve that benefits from E‑Ink Assistant’s software adjustments.</p></article>
+        </aside>
       </section>
-      <section class="feature-grid shell">
-        <article class="feature-card card-ink"><div class="card-index">01</div><div class="card-heading"><span class="glyph">◒</span><h3>Stop the shimmer.</h3></div><p>Reduce Shaking turns off visible macOS dithering on supported panels, so each pixel can finally sit still.</p><div class="pixel-field" aria-hidden="true"></div><span class="card-label">B&amp;W + COLOR</span></article>
-        <article class="feature-card card-paper"><div class="card-index">02</div><div class="card-heading"><span class="glyph">Aa</span><h3>Make reading effortless.</h3></div><p>Text Contrast brings faint interface text forward with four carefully tuned levels, from gentle to solid black.</p><a class="card-link" href="#comparison-text">See the difference <span aria-hidden="true">↘</span></a><span class="card-label">B&amp;W + COLOR</span></article>
-        <article class="feature-card card-red"><div class="card-index">03</div><div class="card-heading"><span class="glyph">◉</span><h3>Let color e‑ink sing.</h3></div><p>Restore saturation, then correct individual red, green, and blue channels—one profile for each panel.</p><div class="rgb-bars" aria-hidden="true"><i></i><i></i><i></i></div><span class="card-label">COLOR E‑INK</span></article>
+      <section class="feature-catalogue shell" aria-label="E-Ink Assistant feature catalogue">
+        <aside class="macos-card">
+          <p class="catalogue-kicker">BUILT FOR macOS</p>
+          <h3>One menu-bar app.<br />Per-display control.</h3>
+          <p>For macOS 14+ on Apple silicon, with B&amp;W and color e‑ink displays supported.</p>
+          <dl><div><dt>NO CORE PERMISSIONS</dt><dd>Display controls work without Accessibility access.</dd></div><div><dt>NO OTHER DISPLAYS TOUCHED</dt><dd>Each marked e‑ink panel keeps its own profile.</dd></div><div><dt>SAFE LIFECYCLE</dt><dd>Changes restore on quit and reapply on launch.</dd></div></dl>
+        </aside>
+        <div class="catalogue-groups">
+          <article class="feature-group"><p>01 / DISPLAY STABILITY</p><h3>Steadier e‑ink output</h3><ul><li><strong>Reduce Shaking and Motion</strong> removes visible dithering and simplifies slow-refresh macOS visuals.</li><li><strong>Display following</strong> applies the selected profile when a marked display connects.</li></ul></article>
+          <article class="feature-group"><p>02 / READING &amp; MEDIA</p><h3>Reading and media</h3><ul><li><strong>Text Contrast</strong> darkens faint text. Four levels: Medium, Strong, Sharp, and Solid.</li><li><strong>Video Enhance</strong> reveals dark photo and video detail. Three levels: Subtle, Medium, and Strong.</li></ul></article>
+          <article class="feature-group"><p>03 / COLOR E‑INK</p><h3>Color e‑ink control</h3><ul><li><strong>Saturation and RGB</strong> offer six presets, a 0%–300% slider, and independent 0%–200% channel correction.</li><li><strong>Per-display Night Shift and True Tone</strong> keeps macOS color-temperature processing off the e‑ink panel only.</li></ul></article>
+          <article class="feature-group"><p>04 / ADVANCED TUNING</p><h3>Curves and presets</h3><ul><li><strong>Full tone curve</strong> adjusts knee, gamma, black point, and white point with a live plot.</li><li><strong>Five named slots and Shortcuts</strong> save profiles and automate display behavior.</li></ul></article>
+        </div>
       </section>
       <section class="comparison shell" id="comparison-text">
-        <div class="comparison-copy"><p class="section-number">02 — REAL IMPROVEMENTS</p><h2>Small changes.<br /><em>A much clearer page.</em></h2><p>The app uses a targeted tone transform: darken what needs to be read, or lift only the shadows that hide media detail.</p><div class="comparison-controls" role="group" aria-label="Choose comparison"><button class="compare-choice is-active" data-image="en/text-contrast-editorial.png" data-alt="Illustrative before and after reading-page contrast">Text Contrast</button><button class="compare-choice" data-image="en/video-enhance-editorial.png" data-alt="Illustrative before and after shadow-detail landscape">Video Enhance</button><button class="compare-choice" data-image="en/saturation-editorial.png" data-alt="Illustrative before and after color e-ink botanical still life">Color Saturation</button></div></div>
-        <figure class="comparison-frame"><img id="comparison-image" src="en/text-contrast-editorial.png" alt="Illustrative before and after reading-page contrast" /><figcaption>Illustrative feature previews. Exact results vary by panel and source material.</figcaption></figure>
+        <div class="improvements-head"><div><p class="section-number">02 / REAL IMPROVEMENTS</p><h2>Small changes.<br /><em>A much clearer page.</em></h2></div><p>The app uses targeted tone transforms: darken what needs to be read, lift only the shadows that hide media detail, or recover color from a narrow-gamut panel.</p></div>
+        <div class="comparison-gallery">
+          <figure class="gallery-card"><img src="en/text-contrast-editorial.png" alt="Illustrative before and after reading-page contrast" /><figcaption><strong>Text Contrast</strong><span>Darkens faint body and secondary text for a clearer reading page.</span></figcaption></figure>
+          <figure class="gallery-card"><img src="en/video-enhance-editorial.png" alt="Illustrative before and after shadow-detail landscape" /><figcaption><strong>Video Enhance</strong><span>Lifts dark photo and video tones to reveal shadow detail.</span></figcaption></figure>
+          <figure class="gallery-card"><img src="en/saturation-editorial.png" alt="Illustrative before and after color e-ink botanical still life" /><figcaption><strong>Color Saturation</strong><span>Restores more useful color on a muted color e‑ink panel.</span></figcaption></figure>
+        </div>
+        <p class="gallery-note">Illustrative feature previews. Exact results vary by panel and source material.</p>
       </section>
-      <section class="workflow" id="how-it-works"><div class="shell"><p class="section-number">03 — SIMPLE BY DESIGN</p><h2>One app. Three steps.<br /><em>Every screen stays itself.</em></h2><ol class="steps"><li><span>01</span><div><h3>Connect your display</h3><p>Plug in your B&amp;W or color e‑ink panel as usual.</p></div></li><li><span>02</span><div><h3>Mark it as e‑ink</h3><p>Tell E‑Ink Assistant which display to tune—nothing else is affected.</p></div></li><li><span>03</span><div><h3>Choose your moment</h3><p>Read with deeper text, watch with lifted shadows, or refine a saved profile.</p></div></li></ol></div></section>
-      <section class="advanced shell"><div class="advanced-image"><img src="app-advanced.png" alt="E-Ink Assistant advanced tone curve editor" /></div><div class="advanced-copy"><p class="section-number">04 — WHEN YOU WANT MORE</p><h2>Your panel,<br /><em>down to the curve.</em></h2><p>Fine-tune knee, gamma, black point, and white point with a live curve. Save five named presets for different displays, rooms, or moods.</p><p>Profiles are per display. Adjustments restore on quit and reapply on launch.</p></div></section>
+      <section class="workflow" id="how-it-works"><div class="shell"><p class="section-number">03 / SIMPLE BY DESIGN</p><h2>One app. Three steps.<br /><em>Every screen stays itself.</em></h2><ol class="steps"><li><span>01</span><div><h3>Connect your display</h3><p>Plug in your B&amp;W or color e‑ink panel as usual.</p></div></li><li><span>02</span><div><h3>Mark it as e‑ink</h3><p>Tell E‑Ink Assistant which display to tune. Nothing else is affected.</p></div></li><li><span>03</span><div><h3>Choose your moment</h3><p>Read with deeper text, watch with lifted shadows, or refine a saved profile.</p></div></li></ol></div></section>
+      <section class="advanced shell"><div class="advanced-image"><img src="app-advanced.png" alt="E-Ink Assistant advanced tone curve editor" /></div><div class="advanced-copy"><p class="section-number">04 / WHEN YOU WANT MORE</p><h2>Your panel,<br /><em>down to the curve.</em></h2><p>Fine-tune knee, gamma, black point, and white point with a live curve. Save five named presets for different displays, rooms, or moods.</p><p>Profiles are per display. Adjustments restore on quit and reapply on launch.</p></div></section>
       <section class="download shell" id="download"><div class="download-content"><p class="section-number">READY WHEN YOUR DISPLAY IS</p><h2>Make e‑ink<br /><em>feel at home.</em></h2><p>Free, privacy-respecting, and built for the screen you actually want to look at all day.</p><a class="button button-light" href="https://github.com/kiteretsu903/eink-assistant/releases/latest">Download E‑Ink Assistant <span aria-hidden="true">↓</span></a><p class="fine-print light">macOS 14+ · Apple Silicon · MIT License</p></div><img src="app-icon.png" alt="" class="giant-icon" /></section>
     </main>
     <footer class="site-footer shell"><span>© 2026 E‑Ink Assistant</span><a href="https://github.com/kiteretsu903/eink-assistant">View source on GitHub <span aria-hidden="true">↗</span></a></footer>
-    <script src="site.js"></script>
   </body>
 </html>

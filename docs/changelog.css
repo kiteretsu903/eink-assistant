@@ -1,0 +1,69 @@
+.github-star {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #f8f6f0;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.github-star:hover { text-decoration: underline; text-underline-offset: 4px; }
+.github-star svg { width: 17px; height: 17px; fill: currentColor; flex: 0 0 auto; }
+
+.hero-star {
+  min-height: 47px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.hero-star:hover { border-color: rgba(55, 54, 48, .42); text-decoration: none; }
+
+.hero-release {
+  display: flex;
+  align-items: baseline;
+  gap: 9px 14px;
+  width: max-content;
+  margin-top: 16px;
+  font-size: 11px;
+}
+
+.hero-release > span { color: #6d6a62; font-size: 9px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.hero-release strong { color: var(--ink); font-size: 14px; }
+.hero-release time { color: #6d6a62; }
+
+.download { min-height: 468px; }
+.download-content { width: min(100%, 560px); }
+.download-content > p:not(.section-number):not(.fine-print) { margin-bottom: 24px; }
+
+.changelog { padding: 103px 0 104px; }
+.changelog-intro { max-width: 720px; }
+.changelog-intro h1 { font-size: clamp(58px, 7.2vw, 96px); margin-bottom: 27px; }
+.changelog-intro > p:last-child { max-width: 400px; color: #5d5b54; font-size: 17px; }
+
+.release-list { margin-top: 72px; border-top: 6px solid #9eaf9b; }
+.release-list article { display: grid; grid-template-columns: .33fr .67fr; gap: 40px; padding: 32px 28px; border: 1px solid var(--line); border-top: 0; background: rgba(255, 255, 255, .28); }
+.release-list .release-current { background: #f2f4ec; }
+.release-version p { margin: 0 0 6px; color: var(--ink); font: 500 27px/1 var(--serif); letter-spacing: -.04em; }
+.release-version time { color: #68665e; font-size: 10px; font-weight: 800; letter-spacing: .11em; }
+.release-list h2 { margin: 0 0 14px; font-size: clamp(32px, 3.4vw, 45px); }
+.release-list ul { margin: 0; padding-left: 18px; color: #57554e; font-size: 14px; line-height: 1.5; }
+.release-list li + li { margin-top: 8px; }
+
+.changelog-github { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 30px; margin-top: 44px; padding: 28px; border-top: 6px solid #d9a099; background: #f5e8e1; }
+.changelog-github p { width: 100%; margin: 0; font-size: 10px; font-weight: 800; letter-spacing: .14em; }
+.changelog-github h2 { margin: 0; font-size: 36px; }
+.github-star-dark { padding: 12px 14px; background: var(--ink); color: var(--paper); }
+
+@media (max-width: 760px) {
+  .hero-release { flex-wrap: wrap; width: 100%; margin-top: 15px; }
+  .hero-actions { align-items: stretch; flex-direction: column; }
+  .hero-actions .button,
+  .hero-star { justify-content: space-between; width: 100%; }
+  .changelog { padding: 72px 0 76px; }
+  .release-list { margin-top: 48px; }
+  .release-list article { grid-template-columns: 1fr; gap: 20px; padding: 25px 22px; }
+  .changelog-github { margin-top: 30px; padding: 23px; }
+}

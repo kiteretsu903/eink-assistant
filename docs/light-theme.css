@@ -1,0 +1,72 @@
+/* A lighter, warmer display palette with e-ink-inspired contrast. */
+:root {
+  --ink: #373630;
+  --paper: #f8f6f0;
+  --cream: #ede9de;
+  --red: #d97b6c;
+  --blue: #b3c8d6;
+  --line: rgba(55, 54, 48, .16);
+}
+
+.macos-card,
+.feature-group,
+.feature-group:nth-child(2),
+.feature-group:nth-child(3),
+.feature-group:nth-child(4) {
+  background: rgba(255, 255, 255, .28);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-top-width: 6px;
+  border-top-style: solid;
+}
+
+.macos-card {
+  background: #f2f4ec;
+  border-top-color: #9eaf9b;
+}
+
+.feature-group { border-top-color: #cbb98e; }
+.feature-group:nth-child(2) { border-top-color: #aebfcd; }
+.feature-group:nth-child(3) { border-top-color: #d9a099; }
+.feature-group:nth-child(4) { border-top-color: #b5aecb; }
+
+.macos-card > p:not(.catalogue-kicker),
+.macos-card dd { color: #5d5b54; }
+
+.macos-card dl > div,
+.feature-group li { border-color: var(--line); }
+
+.intro-preset-note {
+  display: grid;
+  grid-template-columns: .9fr 1.1fr;
+  gap: 42px;
+  margin: 48px 0 0;
+  padding: 24px 28px;
+  border: 1px solid var(--line);
+  border-top: 6px solid #9eaf9b;
+  background: #f2f4ec;
+  color: #5d5b54;
+}
+
+.preset-eyebrow {
+  margin: 0 0 10px;
+  color: var(--ink);
+  font: 500 clamp(23px, 2.1vw, 30px)/1 var(--serif);
+  letter-spacing: -.04em;
+}
+
+.preset-path h3 {
+  margin: 0 0 16px;
+  color: var(--ink);
+  font: 800 11px/1.3 var(--sans);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.preset-path p:last-child { margin: 0; font-size: 14px; line-height: 1.48; }
+.preset-path + .preset-path { padding-left: 32px; border-left: 1px solid var(--line); }
+
+@media (max-width: 760px) {
+  .intro-preset-note { grid-template-columns: 1fr; gap: 21px; margin-top: 32px; padding: 23px; }
+  .preset-path + .preset-path { padding: 21px 0 0; border-top: 1px solid var(--line); border-left: 0; }
+}
