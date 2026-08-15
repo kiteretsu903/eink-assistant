@@ -13,12 +13,7 @@
 
 **Tune black-and-white and color e-ink displays for macOS.**
 
-## Website
-
-The product site is ready for GitHub Pages in [`docs/`](docs/). In the
-repository's **Settings → Pages**, set **Build and deployment** to **Deploy from
-a branch**, then select your default branch and the **/docs** folder. It will be
-published at `https://kiteretsu903.github.io/eink-assistant/`.
+[Visit the product website](https://kiteretsu903.github.io/eink-assistant/)
 
 Both B&W and color e-ink share the problems of slow refresh, limited contrast,
 crushed shadow detail, and visible macOS dithering. E-Ink Assistant is a small
