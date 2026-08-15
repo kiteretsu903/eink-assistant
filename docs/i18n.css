@@ -189,6 +189,34 @@ html[lang="ja"] .feature-group h3 {
   .site-header .button-small { display: none; }
   .language-picker { margin-left: auto; }
 
-  html[lang^="zh"] .hero h1 { font-size: 43px; }
-  html[lang="ja"] .hero h1 { font-size: 39px; }
+  html[lang^="zh"] .hero h1 { font-size: 36px; }
+  html[lang="ja"] .hero h1 { font-size: 35px; }
+
+  html[lang^="zh"] h2,
+  html[lang="ja"] h2 {
+    font-size: 32px;
+    line-height: 1.15;
+  }
+
+  html[lang^="zh"] .changelog-intro h1,
+  html[lang="ja"] .changelog-intro h1 {
+    font-size: 34px;
+    line-height: 1.12;
+  }
+
+  html[lang^="zh"] .macos-card h3,
+  html[lang="ja"] .macos-card h3 {
+    font-size: 31px;
+    line-height: 1.12;
+  }
+
+  html[lang^="zh"] .feature-group h3,
+  html[lang="ja"] .feature-group h3 {
+    font-size: 26px;
+    line-height: 1.18;
+  }
+
+  html[lang="ja"] .workflow h2 {
+    font-size: 30px;
+  }
 }
