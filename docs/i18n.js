@@ -4,7 +4,7 @@
       lang: "zh-Hans",
       title: "E-Ink Assistant：让电子墨水屏更适合 macOS",
       description: "E-Ink Assistant 为 macOS 上的黑白和彩色电子墨水显示器提供专属调校。",
-      nav: ["功能", "使用方法", "更新日志", "下载"],
+      nav: ["功能", "使用方法", "更新日志"],
       getApp: "获取应用 <span aria-hidden=\"true\">↗</span>",
       home: {
         eyebrow: "<span></span> 为 macOS 与 Apple 芯片打造",
@@ -27,7 +27,7 @@
       lang: "zh-Hant",
       title: "E-Ink Assistant：讓電子紙更適合 macOS",
       description: "E-Ink Assistant 為 macOS 上的黑白與彩色電子紙顯示器提供專屬調校。",
-      nav: ["功能", "使用方式", "更新日誌", "下載"],
+      nav: ["功能", "使用方式", "更新日誌"],
       getApp: "取得應用程式 <span aria-hidden=\"true\">↗</span>",
       home: {
         eyebrow: "<span></span> 為 macOS 與 Apple 晶片打造", hero: "讓你的電子紙螢幕<br><em>更懂你的使用方式。</em>", lede: "E-Ink Assistant 是一款小巧的選單列應用程式，讓黑白與彩色電子紙顯示器更穩定、更清晰、更好用，同時不改變你的筆電螢幕。", download: "下載 macOS 版 <span aria-hidden=\"true\">↓</span>", star: "喜歡它嗎？給個 Star 吧。", latest: "最新版本", releaseDate: "2026 年 8 月 14 日", fine: "macOS 14+ · Apple Silicon · 免費開源", tag: "你的電子紙<br>顯示器",
@@ -47,7 +47,7 @@
       lang: "ja",
       title: "E-Ink Assistant：macOS の電子ペーパーをもっと使いやすく",
       description: "E-Ink Assistant は、macOS のモノクロ・カラー電子ペーパーディスプレイを調整します。",
-      nav: ["機能", "使い方", "更新履歴", "ダウンロード"], getApp: "アプリを入手 <span aria-hidden=\"true\">↗</span>",
+      nav: ["機能", "使い方", "更新履歴"], getApp: "アプリを入手 <span aria-hidden=\"true\">↗</span>",
       home: {
         eyebrow: "<span></span> macOS と Apple シリコンのために", hero: "電子ペーパーに<br><em>もっと良い感覚を。</em>", lede: "E-Ink Assistant は、ノート Mac の画面に触れずに、モノクロとカラーの電子ペーパーディスプレイを落ち着かせ、見やすく、使いやすくする小さなメニューバーアプリです。", download: "macOS 版をダウンロード <span aria-hidden=\"true\">↓</span>", star: "気に入りましたか？Star をお願いします。", latest: "最新リリース", releaseDate: "2026年8月14日", fine: "macOS 14+ · Apple Silicon · 無料・オープンソース", tag: "あなたの電子ペーパー<br>ディスプレイ",
         ticker: "落ち着いた更新 <b>✦</b> 深い文字 <b>✦</b> 見やすい暗部 <b>✦</b> より良い色 <b>✦</b> 落ち着いた更新 <b>✦</b> 深い文字 <b>✦</b> 見やすい暗部 <b>✦</b> より良い色 <b>✦</b>",
