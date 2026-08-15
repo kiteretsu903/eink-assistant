@@ -76,6 +76,13 @@ html[lang="ja"] .workflow h2 {
   max-width: 940px;
 }
 
+@media (min-width: 761px) {
+  html[lang^="zh"] .download-content,
+  html[lang="ja"] .download-content {
+    width: min(70%, 720px);
+  }
+}
+
 html[lang^="zh"] .lede,
 html[lang="ja"] .lede {
   max-width: 520px;
