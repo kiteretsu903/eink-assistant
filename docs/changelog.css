@@ -9,7 +9,7 @@
 }
 
 .github-star:hover { text-decoration: underline; text-underline-offset: 4px; }
-.github-star svg { display: block; width: 17px; height: 17px; fill: currentColor; flex: 0 0 auto; }
+.github-star svg { display: block; width: 17px; height: 17px; overflow: visible; fill: currentColor; flex: 0 0 auto; }
 
 .hero-star {
   min-height: 47px;
