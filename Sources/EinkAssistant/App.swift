@@ -1200,6 +1200,10 @@ struct PanelRow: View {
 /// A disclosure triangle here read as if the notice below it were part of this
 /// section, so the control is an explicit Show more / Show less button.
 struct HowItWorks: View {
+    /// `L()` reads a runtime-selected bundle rather than a SwiftUI environment
+    /// value. Keep the selected language as an explicit input so SwiftUI knows
+    /// this otherwise self-contained child must redraw after a language switch.
+    let language: AppLanguage
     @State private var expanded = false
 
     var body: some View {
@@ -1424,7 +1428,7 @@ struct AssistantView: View {
                 Text(error).font(.system(size: 14)).foregroundStyle(.red)
             }
 
-            HowItWorks()
+            HowItWorks(language: model.language)
 
             // The settings here were tuned against one specific panel in one
             // specific configuration. Say so, rather than implying they are

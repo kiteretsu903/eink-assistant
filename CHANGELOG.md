@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.2 — 2026-08-14
+
+- **Fixed live language switching.** Changing the in-app language now refreshes
+  the self-contained **How this works** section and its **Show more / Show
+  less** control immediately. A section rendered in Japanese, Chinese, or
+  English can no longer remain in that language after the rest of the panel
+  switches.
+
 ## v2.1 — 2026-08-14
 
 - **Fixed locked-screen automation.** The settings helper can now run in the

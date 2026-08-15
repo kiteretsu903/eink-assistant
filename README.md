@@ -30,14 +30,12 @@ app itself. MIT licensed.
 
 ## Latest release
 
-**v2.1 — August 14, 2026**
+**v2.2 — August 14, 2026**
 
-- Fixed the Shortcuts warning that could appear when display automation or app
-  cleanup ran while the Mac was locked.
-- Added a distinctly named, locked-capable settings helper so upgrades cannot
-  silently reuse the incompatible v2.0 helper.
-- Existing users confirm **Add Shortcut** once after upgrading. The old
-  **E-Ink Assistant Accessibility Helper** can then be deleted from Shortcuts.
+- Fixed live language switching in the **How this works** section.
+- Its heading and **Show more / Show less** control now refresh immediately
+  with the rest of the panel instead of retaining Japanese, Chinese, or English
+  from the previous selection.
 
 [Download the latest release](../../releases/latest) · [Read the full changelog](CHANGELOG.md)
 
