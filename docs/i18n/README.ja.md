@@ -35,7 +35,7 @@ MITライセンスです。
 [最新バージョンをダウンロード](https://github.com/kiteretsu903/eink-assistant/releases/latest) · [変更履歴をすべて読む](../../CHANGELOG.md)
 
 <p align="center">
-  <img src="../ja/app-main.png" alt="E-Ink Assistant 日本語画面" width="440">
+  <img src="../ja/app-main-v2-1.png" alt="E-Ink Assistant v2.1 日本語画面" width="440">
 </p>
 
 ## 主な機能
@@ -136,7 +136,7 @@ RGBと彩度は1つのディスプレイ別カラープロファイルに統合�
 できる5つのスロットがあります。
 
 <p align="center">
-  <img src="../ja/app-advanced.png" alt="日本語の詳細モード" width="440">
+  <img src="../ja/app-advanced-v2-1.png" alt="E-Ink Assistant v2.1 日本語の詳細モード" width="440">
 </p>
 
 > 比較画像はアプリの実際の変換を使い、LCD上でレンダリングしています。文字と映像の例では低コントラスト
@@ -181,7 +181,7 @@ xattr -dr com.apple.quarantine "/Applications/E-Ink Assistant.app"
 ## 使い方
 
 <p align="center">
-  <img src="../app-displays.png" alt="ディスプレイの登録" width="440">
+  <img src="../ja/app-displays-v2-1.png" alt="E-Ink Assistant v2.1 日本語のディスプレイ登録画面" width="440">
 </p>
 
 1. メニューバーからアプリを開きます。

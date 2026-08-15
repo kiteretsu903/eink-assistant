@@ -31,7 +31,7 @@
 [下載最新版本](https://github.com/kiteretsu903/eink-assistant/releases/latest) · [查看完整更新記錄](../../CHANGELOG.md)
 
 <p align="center">
-  <img src="../zh-Hant/app-main.png" alt="電子紙助手繁體中文介面" width="440">
+  <img src="../zh-Hant/app-main-v2-1.png" alt="電子紙助手 v2.1 繁體中文介面" width="440">
 </p>
 
 ## 主要功能
@@ -124,7 +124,7 @@ RGB 與彩度共用同一個逐顯示器色彩描述檔，因此兩者可一起�
 直接控制轉折點、Gamma、黑點與白點，提供即時曲線圖和五個可儲存、可重新命名的槽位。
 
 <p align="center">
-  <img src="../zh-Hant/app-advanced.png" alt="繁體中文進階模式" width="440">
+  <img src="../zh-Hant/app-advanced-v2-1.png" alt="電子紙助手 v2.1 繁體中文進階模式" width="440">
 </p>
 
 > 比較圖片使用 App 的實際變換產生，並在 LCD 上算繪。文字與影片範例另外模擬低對比度電子紙；
@@ -169,7 +169,7 @@ xattr -dr com.apple.quarantine "/Applications/E-Ink Assistant.app"
 ## 使用方式
 
 <p align="center">
-  <img src="../app-displays.png" alt="標記顯示器" width="440">
+  <img src="../zh-Hant/app-displays-v2-1.png" alt="電子紙助手 v2.1 繁體中文標記顯示器介面" width="440">
 </p>
 
 1. 從選單列開啟 App。

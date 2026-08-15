@@ -42,7 +42,7 @@ app itself. MIT licensed.
 [Download the latest release](../../releases/latest) · [Read the full changelog](CHANGELOG.md)
 
 <p align="center">
-  <img src="docs/en/app-main.png" alt="E-Ink Assistant in English" width="440">
+  <img src="docs/en/app-main-v2-1.png" alt="E-Ink Assistant v2.1 in English" width="440">
 </p>
 
 ## Key features
@@ -159,7 +159,7 @@ Full control of knee, gamma, black point, and white point, with a live plot and
 five saveable, renameable slots.
 
 <p align="center">
-  <img src="docs/en/app-advanced.png" alt="Advanced mode in English" width="440">
+  <img src="docs/en/app-advanced-v2-1.png" alt="Advanced mode in E-Ink Assistant v2.1" width="440">
 </p>
 
 > The comparison images are illustrative feature previews. Actual results depend
@@ -206,7 +206,7 @@ Building from source avoids quarantine entirely.
 ## Using it
 
 <p align="center">
-  <img src="docs/app-displays.png" alt="Marking displays" width="440">
+  <img src="docs/en/app-displays-v2-1.png" alt="Marking displays in E-Ink Assistant v2.1" width="440">
 </p>
 
 1. Open the app from the menu bar.

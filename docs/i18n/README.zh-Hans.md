@@ -31,7 +31,7 @@
 [下载最新版本](https://github.com/kiteretsu903/eink-assistant/releases/latest) · [查看完整更新日志](../../CHANGELOG.md)
 
 <p align="center">
-  <img src="../zh-Hans/app-main.png" alt="墨水屏助手简体中文界面" width="440">
+  <img src="../zh-Hans/app-main-v2-1.png" alt="墨水屏助手 v2.1 简体中文界面" width="440">
 </p>
 
 ## 主要功能
@@ -124,7 +124,7 @@ RGB 与饱和度共用同一个逐显示器颜色配置文件，因此两者可�
 直接控制拐点、伽马、黑点和白点，带实时曲线图以及五个可保存、可重命名的槽位。
 
 <p align="center">
-  <img src="../zh-Hans/app-advanced.png" alt="简体中文高级模式" width="440">
+  <img src="../zh-Hans/app-advanced-v2-1.png" alt="墨水屏助手 v2.1 简体中文高级模式" width="440">
 </p>
 
 > 对比图使用应用真实的变换生成，并在 LCD 上渲染。文字和视频示例还模拟了低对比度墨水屏；
@@ -169,7 +169,7 @@ xattr -dr com.apple.quarantine "/Applications/E-Ink Assistant.app"
 ## 使用方法
 
 <p align="center">
-  <img src="../app-displays.png" alt="标记显示器" width="440">
+  <img src="../zh-Hans/app-displays-v2-1.png" alt="墨水屏助手 v2.1 简体中文标记显示器界面" width="440">
 </p>
 
 1. 从菜单栏打开应用。

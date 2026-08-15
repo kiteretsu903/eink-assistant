@@ -114,7 +114,7 @@
     selectAll("nav a", d.nav); select(".button-small", d.getApp, true);
     const heroImage = document.querySelector(".hero-visual .app-window");
     if (heroImage) {
-      heroImage.src = `${locale}/app-main.png`;
+      heroImage.src = `${locale}/app-main-v2-1.png`;
       heroImage.alt = {
         "zh-Hans": "E-Ink Assistant 简体中文主界面",
         "zh-Hant": "E-Ink Assistant 繁體中文主介面",
@@ -123,7 +123,7 @@
     }
     const advancedImage = document.querySelector(".advanced-image img");
     if (advancedImage) {
-      advancedImage.src = `${locale}/app-advanced.png`;
+      advancedImage.src = `${locale}/app-advanced-v2-1.png`;
       advancedImage.alt = {
         "zh-Hans": "E-Ink Assistant 简体中文高级曲线调校界面",
         "zh-Hant": "E-Ink Assistant 繁體中文進階曲線調校介面",
