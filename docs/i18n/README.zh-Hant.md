@@ -124,7 +124,7 @@ RGB 與彩度共用同一個逐顯示器色彩描述檔，因此兩者可一起�
 直接控制轉折點、Gamma、黑點與白點，提供即時曲線圖和五個可儲存、可重新命名的槽位。
 
 <p align="center">
-  <img src="../app-advanced.png" alt="進階模式" width="440">
+  <img src="../zh-Hant/app-advanced.png" alt="繁體中文進階模式" width="440">
 </p>
 
 > 比較圖片使用 App 的實際變換產生，並在 LCD 上算繪。文字與影片範例另外模擬低對比度電子紙；

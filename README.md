@@ -159,7 +159,7 @@ Full control of knee, gamma, black point, and white point, with a live plot and
 five saveable, renameable slots.
 
 <p align="center">
-  <img src="docs/app-advanced.png" alt="Advanced mode" width="440">
+  <img src="docs/en/app-advanced.png" alt="Advanced mode in English" width="440">
 </p>
 
 > The comparison images are illustrative feature previews. Actual results depend

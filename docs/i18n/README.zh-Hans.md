@@ -124,7 +124,7 @@ RGB 与饱和度共用同一个逐显示器颜色配置文件，因此两者可�
 直接控制拐点、伽马、黑点和白点，带实时曲线图以及五个可保存、可重命名的槽位。
 
 <p align="center">
-  <img src="../app-advanced.png" alt="高级模式" width="440">
+  <img src="../zh-Hans/app-advanced.png" alt="简体中文高级模式" width="440">
 </p>
 
 > 对比图使用应用真实的变换生成，并在 LCD 上渲染。文字和视频示例还模拟了低对比度墨水屏；

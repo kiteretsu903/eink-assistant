@@ -121,6 +121,15 @@
         ja: "E-Ink Assistant 日本語メイン画面"
       }[locale];
     }
+    const advancedImage = document.querySelector(".advanced-image img");
+    if (advancedImage) {
+      advancedImage.src = `${locale}/app-advanced.png`;
+      advancedImage.alt = {
+        "zh-Hans": "E-Ink Assistant 简体中文高级曲线调校界面",
+        "zh-Hant": "E-Ink Assistant 繁體中文進階曲線調校介面",
+        ja: "E-Ink Assistant 日本語の高度なカーブ調整画面"
+      }[locale];
+    }
     if (document.body.dataset.page === "home") applyHome(d); else applyChangelog(d);
     updateInternalLinks(locale);
     const canonical = document.querySelector('link[rel="canonical"]');

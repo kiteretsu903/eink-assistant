@@ -136,7 +136,7 @@ RGBと彩度は1つのディスプレイ別カラープロファイルに統合�
 できる5つのスロットがあります。
 
 <p align="center">
-  <img src="../app-advanced.png" alt="詳細モード" width="440">
+  <img src="../ja/app-advanced.png" alt="日本語の詳細モード" width="440">
 </p>
 
 > 比較画像はアプリの実際の変換を使い、LCD上でレンダリングしています。文字と映像の例では低コントラスト
