@@ -31,7 +31,7 @@
 [下載最新版本](https://github.com/kiteretsu903/eink-assistant/releases/latest) · [查看完整更新記錄](../../CHANGELOG.md)
 
 <p align="center">
-  <img src="../app-main.png" alt="電子紙助手" width="440">
+  <img src="../zh-Hant/app-main.png" alt="電子紙助手繁體中文介面" width="440">
 </p>
 
 ## 主要功能

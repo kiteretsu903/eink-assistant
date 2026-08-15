@@ -35,7 +35,7 @@ MITライセンスです。
 [最新バージョンをダウンロード](https://github.com/kiteretsu903/eink-assistant/releases/latest) · [変更履歴をすべて読む](../../CHANGELOG.md)
 
 <p align="center">
-  <img src="../app-main.png" alt="E-Ink Assistant" width="440">
+  <img src="../ja/app-main.png" alt="E-Ink Assistant 日本語画面" width="440">
 </p>
 
 ## 主な機能

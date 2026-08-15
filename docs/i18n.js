@@ -112,6 +112,15 @@
     document.title = d.title;
     const description = document.querySelector('meta[name="description"]'); if (description) description.content = d.description;
     selectAll("nav a", d.nav); select(".button-small", d.getApp, true);
+    const heroImage = document.querySelector(".hero-visual .app-window");
+    if (heroImage) {
+      heroImage.src = `${locale}/app-main.png`;
+      heroImage.alt = {
+        "zh-Hans": "E-Ink Assistant 简体中文主界面",
+        "zh-Hant": "E-Ink Assistant 繁體中文主介面",
+        ja: "E-Ink Assistant 日本語メイン画面"
+      }[locale];
+    }
     if (document.body.dataset.page === "home") applyHome(d); else applyChangelog(d);
     updateInternalLinks(locale);
     const canonical = document.querySelector('link[rel="canonical"]');

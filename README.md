@@ -42,7 +42,7 @@ app itself. MIT licensed.
 [Download the latest release](../../releases/latest) · [Read the full changelog](CHANGELOG.md)
 
 <p align="center">
-  <img src="docs/app-main.png" alt="E-Ink Assistant" width="440">
+  <img src="docs/en/app-main.png" alt="E-Ink Assistant in English" width="440">
 </p>
 
 ## Key features
