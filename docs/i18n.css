@@ -55,8 +55,25 @@ html[lang="ja"] .hero h1 {
 
 html[lang^="zh"] h2,
 html[lang="ja"] h2 {
+  font-size: clamp(40px, 4.2vw, 58px);
   line-height: 1.08;
   letter-spacing: -.045em;
+  line-break: strict;
+  overflow-wrap: anywhere;
+}
+
+html[lang^="zh"] .intro-grid > *,
+html[lang="ja"] .intro-grid > *,
+html[lang^="zh"] .feature-catalogue > *,
+html[lang="ja"] .feature-catalogue > *,
+html[lang^="zh"] .advanced > *,
+html[lang="ja"] .advanced > * {
+  min-width: 0;
+}
+
+html[lang^="zh"] .workflow h2,
+html[lang="ja"] .workflow h2 {
+  max-width: 940px;
 }
 
 html[lang^="zh"] .lede,
@@ -76,6 +93,88 @@ html[lang^="zh"] .feature-group h3,
 html[lang="ja"] .feature-group h3 {
   line-height: 1.12;
   letter-spacing: -.035em;
+}
+
+@media (max-width: 1050px) {
+  html[lang^="zh"] .site-header nav,
+  html[lang="ja"] .site-header nav {
+    display: none;
+  }
+
+  html[lang^="zh"] .hero,
+  html[lang="ja"] .hero {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    min-height: 0;
+    padding: 62px 0 58px;
+  }
+
+  html[lang^="zh"] .hero-copy,
+  html[lang="ja"] .hero-copy {
+    max-width: 720px;
+  }
+
+  html[lang^="zh"] .hero-visual,
+  html[lang="ja"] .hero-visual {
+    min-height: 430px;
+  }
+
+  html[lang^="zh"] h2,
+  html[lang="ja"] h2 {
+    font-size: clamp(38px, 5.4vw, 52px);
+    line-height: 1.12;
+  }
+
+  html[lang^="zh"] .intro-grid,
+  html[lang="ja"] .intro-grid,
+  html[lang^="zh"] .advanced,
+  html[lang="ja"] .advanced,
+  html[lang^="zh"] .improvements-head,
+  html[lang="ja"] .improvements-head,
+  html[lang^="zh"] .feature-catalogue,
+  html[lang="ja"] .feature-catalogue {
+    grid-template-columns: 1fr;
+  }
+
+  html[lang^="zh"] .intro-grid,
+  html[lang="ja"] .intro-grid { gap: 28px; }
+
+  html[lang^="zh"] .intro-grid div,
+  html[lang="ja"] .intro-grid div {
+    max-width: 640px;
+    padding-top: 0;
+  }
+
+  html[lang^="zh"] .intro-preset-note,
+  html[lang="ja"] .intro-preset-note {
+    grid-template-columns: 1fr;
+    gap: 21px;
+  }
+
+  html[lang^="zh"] .preset-path + .preset-path,
+  html[lang="ja"] .preset-path + .preset-path {
+    padding: 21px 0 0;
+    border-top: 1px solid var(--line);
+    border-left: 0;
+  }
+
+  html[lang^="zh"] .feature-catalogue,
+  html[lang="ja"] .feature-catalogue { margin-bottom: 96px; }
+
+  html[lang^="zh"] .macos-card,
+  html[lang="ja"] .macos-card { min-height: 0; }
+
+  html[lang^="zh"] .macos-card dl,
+  html[lang="ja"] .macos-card dl { margin-top: 28px; }
+
+  html[lang^="zh"] .improvements-head,
+  html[lang="ja"] .improvements-head { gap: 22px; }
+
+  html[lang^="zh"] .advanced,
+  html[lang="ja"] .advanced { gap: 46px; }
+
+  html[lang^="zh"] .advanced-copy,
+  html[lang="ja"] .advanced-copy { max-width: 720px; }
 }
 
 @media (max-width: 760px) {
