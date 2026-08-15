@@ -53,10 +53,10 @@
 "error.login"      = "ログイン時の起動設定を変更できませんでした。";
 
 "language.title"  = "言語";
-"language.system" = "システム";
+"language.system" = "システム設定に従う";
 
 "notice.tuned" = "プリセットはディスプレイ本体が次の設定であることを前提にしています：Web Mode、Hardware Gamma Level 3、Contrast 50、Color Restore Mode オフ（Bigme B251 Pro、R2 FW V2.0）。先に設定してください。";
-"notice.risk"  = "白黒および他のカラー電子ペーパーディスプレイも、対応する機能を使い、詳細モードで独自に調整できます。自己責任で使用してください。";
+"notice.risk"  = "白黒および他のカラー電子ペーパーディスプレイでも、対応する機能を使い、詳細モードでパネルに合う値を設定できます。実際の表示を確認しながら調整してください。";
 
 "preset.factory"  = "標準";
 "preset.enhanced" = "強調";
@@ -96,7 +96,7 @@
 "welcome.other.title" = "白黒または他のカラー電子ペーパーですか？";
 "welcome.other.body"  = "どちらも**ちらつき低減、テキストコントラスト、映像の暗部補正**、システムのアクセシビリティ設定を活用できます。カラーパネルでは**彩度とRGB**も調整できます。まず本体をバランスの取れた設定にし、**詳細モード**でカーブを追い込んでください。";
 "welcome.hide"        = "今後このヒントを表示しない";
-"welcome.done"        = "了解";
+"welcome.done"        = "わかりました";
 
 "preset.bw"    = "白黒";
 "preset.faded" = "淡色";
@@ -104,14 +104,14 @@
 "help.more" = "詳細を表示";
 "help.less" = "閉じる";
 
-"system.title"      = "透明度と視差効果を下げる";
-"system.hint"       = "どちらも電子ペーパーに有効です。半透明表示は文字を濁らせ、動きの遅いパネルにアニメーションは不要です。";
+"system.title"      = "透明度を下げる・視差効果を減らす";
+"system.hint"       = "どちらも電子ペーパーに有効です。半透明表示は文字を濁らせ、更新の遅いパネルではアニメーションが見づらくなります。";
 "system.open"       = "設定を開く";
 "system.on"         = "オン";
 "system.off"        = "オフ";
 "system.partial"    = "一部オン";
 "system.install"    = "インストールしてオン";
-"system.toggle"     = "透明度と視差効果を下げる";
+"system.toggle"     = "透明度を下げる・視差効果を減らす";
 "system.more"       = "オプション";
 "system.reinstall"  = "補助ショートカットを再インストール";
 "system.guide"      = "2つの設定をまとめて操作する補助ショートカットをインストールします。";

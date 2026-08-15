@@ -1,11 +1,11 @@
 /* E-Ink Assistant (简体中文) */
 
 "app.title"        = "墨水屏助手";
-"display.mark"     = "勾选E-Ink显示器以开启显示调校。";
+"display.mark"     = "选择要调校的墨水屏显示器。";
 "display.none"     = "未找到显示器。";
 "display.builtin"  = "内置";
 "quit"             = "退出";
-"login.toggle"     = "登录时启动";
+"login.toggle"     = "登录时打开";
 
 "saturation.title"   = "饱和度";
 "saturation.caption" = "适用于彩色墨水屏：补偿偏窄的色域。退出应用后会恢复原状。";
@@ -56,7 +56,7 @@
 "language.system" = "跟随系统";
 
 "notice.tuned" = "预设的前提是显示器本身已设为：网页模式、硬件伽马“等级3”、对比度 50、色彩还原模式关闭（Bigme B251 Pro，固件版本 R2 FW V2.0）。请先设置好这些。";
-"notice.risk"  = "黑白墨水屏及其他彩色墨水屏都可以使用适合自己的功能，并在高级模式中自行调校。请自行斟酌使用，风险自负。";
+"notice.risk"  = "黑白墨水屏及其他彩色墨水屏都可以使用适合自己的功能，并在高级模式中调整专属参数。请根据面板的实际显示效果进行调校。";
 
 "preset.factory"  = "原厂";
 "preset.enhanced" = "增强";
