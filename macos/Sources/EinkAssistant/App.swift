@@ -1495,20 +1495,21 @@ private struct ContentHeightKey: PreferenceKey {
 ///
 /// A ScrollView has no intrinsic height: given only a maxHeight it collapses to
 /// a sliver, because nothing tells it how big its content is. So the content is
-/// measured and the window is sized to that, capped so it starts scrolling
-/// rather than running off the screen.
+/// measured and the window is sized to that, capped to the status item's
+/// current screen so it starts scrolling rather than running off the screen.
 struct AssistantScroll: View {
     @ObservedObject var model: AssistantModel
+    let maximumHeight: CGFloat
     @State private var contentHeight: CGFloat = 420
 
-    private static let maxHeight: CGFloat = 640
     private static let minHeight: CGFloat = 160
 
     /// Height of the pinned header, which the content measurement excludes.
     private static let headerHeight: CGFloat = 48
 
     private var clampedHeight: CGFloat {
-        min(max(contentHeight + Self.headerHeight, Self.minHeight), Self.maxHeight)
+        min(max(contentHeight + Self.headerHeight, Self.minHeight),
+            max(maximumHeight, Self.minHeight))
     }
 
     var body: some View {
@@ -1594,7 +1595,11 @@ final class AssistantDelegate: NSObject, NSApplicationDelegate {
     /// Opens the panel, also used by the first-run tip's hand-off.
     func openPanel() {
         WelcomeWindow.close()
-        bubble.show(from: statusItem?.button) { AssistantScroll(model: .shared) }
+        let button = statusItem?.button
+        let maximumHeight = bubble.maximumContentHeight(from: button)
+        bubble.show(from: button) {
+            AssistantScroll(model: .shared, maximumHeight: maximumHeight)
+        }
     }
 
     func closePanel() {
