@@ -1,9 +1,0 @@
-<RCC>
-  <qresource prefix="/">
-    <file alias="app-icon.png">../docs/app-icon.png</file>
-    <file alias="i18n/en.strings">../Resources/en.lproj/Localizable.strings</file>
-    <file alias="i18n/zh-Hans.strings">../Resources/zh-Hans.lproj/Localizable.strings</file>
-    <file alias="i18n/zh-Hant.strings">../Resources/zh-Hant.lproj/Localizable.strings</file>
-    <file alias="i18n/ja.strings">../Resources/ja.lproj/Localizable.strings</file>
-  </qresource>
-</RCC>

@@ -8,7 +8,7 @@ Copyright (c) 2024 Abdullah Arif
 
 The technique used by the "Reduce Shaking" feature — disabling display
 dithering by setting the enableDither property on IOMobileFramebufferAP
-I/O Registry entries — is taken from Stillcolor. Sources/Shared/Dither.swift
+I/O Registry entries — is taken from Stillcolor. macos/Sources/Shared/Dither.swift
 is a reimplementation of that idea, narrowed from all displays to a single
 display. Thanks to Abdullah Arif for working it out and publishing it.
 

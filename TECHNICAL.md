@@ -218,10 +218,10 @@ curve can reveal posterization. The ramp patterns are there to catch that.
 ## Layout
 
 ```
-Sources/Shared/           ICC profile generation, tone curve, display enumeration
-Sources/EinkAssistant/    the menu bar app
-Sources/ToneLab/          the curve tuning tool
-Sources/ReadingLab/       the reading-curve tuning tool
+macos/Sources/Shared/           ICC profile generation, tone curve, display enumeration
+macos/Sources/EinkAssistant/    the menu bar app
+macos/Sources/ToneLab/          the curve tuning tool
+macos/Sources/ReadingLab/       the reading-curve tuning tool
 build.sh                  builds all three apps
 package-dmg.sh            builds the drag-to-Applications release DMG
 scripts/                  deterministic release-artwork generation
