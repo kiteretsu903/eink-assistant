@@ -17,7 +17,7 @@ import CoreGraphics
 final class ReadingModel: ObservableObject {
     @Published var displays: [Display] = []
     @Published var selected: CGDirectDisplayID = 0
-    @Published var curve = ToneCurve(knee: 0.90, gamma: 3.00) { didSet { push() } }
+    @Published var curve = ToneCurve(knee: 0.95, gamma: 3.80, blackPoint: 0.04) { didSet { push() } }
     @Published var live = true { didSet { push() } }
 
     init() {

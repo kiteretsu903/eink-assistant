@@ -25,12 +25,13 @@ app itself. MIT licensed.
 
 ## Latest release
 
-**v2.2 — August 14, 2026**
+**v2.3 — September 1, 2026**
 
-- Fixed live language switching in the **How this works** section.
-- Its heading and **Show more / Show less** control now refresh immediately
-  with the rest of the panel instead of retaining Japanese, Chinese, or English
-  from the previous selection.
+- Made every **Text Contrast** preset more aggressive. Medium now matches the
+  previous Strong level, while Strong and Sharp step up more decisively.
+- Made **Solid** substantially stronger with a heavy black-point crush for
+  maximum text separation. It intentionally sacrifices more gray detail and
+  soft antialiased edges.
 
 [Download the latest release](../../releases/latest) · [Read the full changelog](CHANGELOG.md)
 
@@ -88,13 +89,15 @@ mark a supported display as e-ink.
 ### Text Contrast — B&W and color
 
 Darkens text so it separates from the page on a low-contrast panel. Faint and
-secondary text gains the most: at the strongest level its signal contrast
-roughly triples.
+secondary text gains the most: at the strongest level its signal contrast is
+roughly quadrupled.
 
 ![Illustrative text contrast before and after](docs/en/text-contrast-editorial.png)
 
-Four levels: **Medium, Strong, Sharp, Solid**. Solid also crushes antialiased
-edges to solid black, which looks crisper but harder-edged.
+Four levels: **Medium, Strong, Sharp, Solid**. Medium now equals the former
+Strong setting; each level after it is more aggressive. Solid heavily crushes
+the black point for maximum separation, which looks crisper but loses more gray
+detail and soft edges.
 
 ### Video Enhance — B&W and color
 
