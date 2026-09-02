@@ -41,12 +41,14 @@ private struct Bubble: View {
     let arrowX: CGFloat
     let content: AnyView
 
+    /// Vertical room reserved above the content for the menu-bar arrow.
+    static let arrowRoom: CGFloat = 10
     /// Margin around the bubble so its shadow is not clipped by the window.
     static let inset: CGFloat = 18
 
     var body: some View {
         content
-            .padding(.top, 10)                 // room for the arrow
+            .padding(.top, Self.arrowRoom)
             .background(
                 BubbleShape(arrowX: arrowX)
                     .fill(Color(nsColor: .windowBackgroundColor))
@@ -73,8 +75,11 @@ final class BubbleWindow {
     /// appears by itself at launch and should not steal focus.
     private let activatesApp: Bool
 
-    /// Distance kept between the bubble and the screen edge.
-    private let screenMargin: CGFloat = 14
+    /// Side clearance can stay compact; the bottom needs enough breathing room
+    /// for the bubble's shadow to remain visible and feel detached from the
+    /// screen edge or Dock.
+    private let horizontalScreenMargin: CGFloat = 14
+    private let bottomScreenMargin: CGFloat = 40
 
     /// Pulls the bubble up so the arrow sits against the menu bar rather than
     /// floating below it. The status item's window is taller than the visible
@@ -88,6 +93,26 @@ final class BubbleWindow {
 
     var isVisible: Bool { panel != nil }
 
+    /// Maximum height available to the caller's content on the screen that
+    /// owns the status item. The bubble's arrow and overlap consume a few
+    /// points above the content; `bottomScreenMargin` leaves a natural gap
+    /// between the visible bubble and the Dock or bottom edge.
+    func maximumContentHeight(from button: NSStatusBarButton?) -> CGFloat {
+        let screen = screen(for: button)
+        // Use the visible frame rather than the status item's window origin:
+        // menu-bar window coordinates can extend into the menu-bar region and
+        // therefore overstate the height available below the icon.
+        return screen.visibleFrame.height - bottomScreenMargin
+            - Bubble.arrowRoom - Bubble.inset
+    }
+
+    private func screen(for button: NSStatusBarButton?) -> NSScreen {
+        let anchor = button?.window
+        return anchor.flatMap { window in
+            NSScreen.screens.first { $0.frame.intersects(window.frame) }
+        } ?? NSScreen.main ?? NSScreen.screens[0]
+    }
+
     func show<Content: View>(from button: NSStatusBarButton?,
                              @ViewBuilder content: () -> Content) {
         close()
@@ -97,17 +122,16 @@ final class BubbleWindow {
         let inset = Bubble.inset
 
         let anchor = button?.window
-        let screen = anchor.flatMap { window in
-            NSScreen.screens.first { $0.frame.intersects(window.frame) }
-        } ?? NSScreen.main ?? NSScreen.screens[0]
+        let screen = screen(for: button)
 
         let origin: CGPoint
         let arrowX: CGFloat
         if let anchor {
             let iconCentre = anchor.frame.midX
             // The clamp NSPopover does not do.
-            let lower = screen.visibleFrame.minX - inset + screenMargin
-            let upper = screen.visibleFrame.maxX - size.width + inset - screenMargin
+            let lower = screen.visibleFrame.minX - inset + horizontalScreenMargin
+            let upper = screen.visibleFrame.maxX - size.width + inset
+                - horizontalScreenMargin
             let x = min(max(iconCentre - size.width / 2, lower), max(lower, upper))
             origin = CGPoint(x: x,
                              y: anchor.frame.minY - size.height + inset + menuBarOverlap)

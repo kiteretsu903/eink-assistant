@@ -25,13 +25,11 @@ app itself. MIT licensed.
 
 ## Latest release
 
-**v2.3 — September 1, 2026**
+**v2.4 — September 1, 2026**
 
-- Made every **Text Contrast** preset more aggressive. Medium now matches the
-  previous Strong level, while Strong and Sharp step up more decisively.
-- Made **Solid** substantially stronger with a heavy black-point crush for
-  maximum text separation. It intentionally sacrifices more gray detail and
-  soft antialiased edges.
+- The control panel now fits the visible height of its current screen.
+- Tall content scrolls and keeps a 40-point gap above the Dock or screen edge;
+  shorter panels keep their natural height.
 
 [Download the latest release](../../releases/latest) · [Read the full changelog](CHANGELOG.md)
 
