@@ -40,7 +40,7 @@
 
 "text.detail.medium" = "Noticeable darkening—the previous Strong level.";
 "text.detail.strong" = "Aggressive darkening, including secondary text.";
-"text.detail.sharp"  = "Very strong, with a light edge crush for faint text.";
+"text.detail.sharp"  = "Very strong, with an aggressive edge crush for faint text.";
 "text.detail.solid"  = "Maximum contrast with a heavy black-point crush: much darker, but gray detail and soft edges are lost.";
 
 "help.title"      = "How this works";

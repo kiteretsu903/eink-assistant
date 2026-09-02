@@ -8,8 +8,8 @@
 
 - **A substantially stronger Solid level.** Solid now combines a full-range
   gamma curve with a much heavier black-point crush. In the signal model used
-  by ReadingLab, secondary-text contrast rises from 15.5:1 to 19.3:1 and
-  tertiary-text contrast from 6.2:1 to 11.0:1. The tradeoff is deliberately
+  by ReadingLab, secondary-text contrast rises from 15.5:1 to 20.6:1 and
+  tertiary-text contrast from 6.2:1 to 15.7:1. The tradeoff is deliberately
   harder edges and greater loss of gray detail.
 
 ## v2.2 — 2026-08-14

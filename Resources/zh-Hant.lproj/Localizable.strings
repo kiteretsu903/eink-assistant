@@ -39,7 +39,7 @@
 
 "text.detail.medium" = "明顯加深文字，相當於先前的「強」。";
 "text.detail.strong" = "更積極地加深文字，包括次要文字。";
-"text.detail.sharp"  = "非常強，並輕度壓黑邊緣以加深淡色文字。";
+"text.detail.sharp"  = "非常強，並大幅壓黑邊緣以加深淡色文字。";
 "text.detail.solid"  = "以大幅壓黑取得最高對比度：文字明顯更深，但會損失灰階細節與柔和邊緣。";
 
 "help.title"      = "運作方式";

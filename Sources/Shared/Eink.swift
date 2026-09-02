@@ -75,8 +75,8 @@ enum TextLevel: String, CaseIterable {
         case .off:    return nil
         case .medium: return ToneCurve(knee: 0.65, gamma: 2.10)
         case .strong: return ToneCurve(knee: 0.80, gamma: 2.70)
-        case .sharp:  return ToneCurve(knee: 0.95, gamma: 3.80, blackPoint: 0.04)
-        case .solid:  return ToneCurve(knee: 1.00, gamma: 4.50, blackPoint: 0.24)
+        case .sharp:  return ToneCurve(knee: 1.00, gamma: 5.00, blackPoint: 0.10)
+        case .solid:  return ToneCurve(knee: 1.00, gamma: 6.00, blackPoint: 0.34)
         }
     }
 

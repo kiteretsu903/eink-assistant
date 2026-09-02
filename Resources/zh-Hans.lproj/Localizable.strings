@@ -39,7 +39,7 @@
 
 "text.detail.medium" = "明显加深文字，相当于之前的“强”。";
 "text.detail.strong" = "更激进地加深文字，包括次要文字。";
-"text.detail.sharp"  = "非常强，并轻度压黑边缘以加深浅色文字。";
+"text.detail.sharp"  = "非常强，并大幅压黑边缘以加深浅色文字。";
 "text.detail.solid"  = "以大幅压黑获得最高对比度：文字明显更深，但会损失灰阶细节和柔和边缘。";
 
 "help.title"      = "工作原理";
