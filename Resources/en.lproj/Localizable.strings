@@ -6,10 +6,14 @@
 "display.builtin"  = "built-in";
 "quit"             = "Quit";
 "login.toggle"     = "Launch at Login";
+"busy.starting"    = "Preparing your display settings…";
+"busy.quitting"    = "Restoring your display settings…";
+"busy.configuring" = "Configuring your display…";
 
 "saturation.title"   = "Saturation";
 /* Saturation is cleared on quit and re-applied on launch. */
 "saturation.caption" = "For color e-ink: compensates for the narrow color gamut. Restored when the app quits.";
+"saturation.mhc2.compat" = "Windows 10 MHC2 path: verified on the tested hardware. Support remains display- and driver-dependent; quitting restores the original profile.";
 
 "rgb.title" = "RGB";
 "rgb.red"   = "Red";
@@ -38,10 +42,10 @@
 "cost.34" = "about 34% less text contrast";
 "cost.56" = "about 56% less text contrast";
 
-"text.detail.medium" = "Mild darkening of text.";
-"text.detail.strong" = "More darkening; faint text still faint.";
-"text.detail.sharp"  = "Strong. Big gain on secondary and faint text.";
-"text.detail.solid"  = "Also crushes antialiased edges solid: crisper, but text may look harder-edged.";
+"text.detail.medium" = "Noticeable darkening—the previous Strong level.";
+"text.detail.strong" = "Aggressive darkening, including secondary text.";
+"text.detail.sharp"  = "Very strong, with an aggressive edge crush for faint text.";
+"text.detail.solid"  = "Maximum contrast with a heavy black-point crush: much darker, but gray detail and soft edges are lost.";
 
 "help.title"      = "How this works";
 "help.saturation" = "Saturation and RGB (color e-ink): rewrite the display's color profile to compensate for a narrow gamut and color cast. B&W panels can leave them at 100%.";

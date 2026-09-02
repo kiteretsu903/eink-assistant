@@ -6,9 +6,13 @@
 "display.builtin"  = "内置";
 "quit"             = "退出";
 "login.toggle"     = "登录时打开";
+"busy.starting"    = "正在准备显示设置…";
+"busy.quitting"    = "正在恢复显示设置…";
+"busy.configuring" = "正在配置显示器…";
 
 "saturation.title"   = "饱和度";
 "saturation.caption" = "适用于彩色墨水屏：补偿偏窄的色域。退出应用后会恢复原状。";
+"saturation.mhc2.compat" = "Windows 10 MHC2 路径：已在测试硬件上验证。支持情况仍取决于显示器和驱动程序；退出应用会恢复原始配置文件。";
 
 "rgb.title" = "RGB";
 "rgb.red"   = "红";
@@ -37,10 +41,10 @@
 "cost.34" = "文字对比度约降低 34%";
 "cost.56" = "文字对比度约降低 56%";
 
-"text.detail.medium" = "轻度加深文字。";
-"text.detail.strong" = "加深更明显；浅色文字仍然偏浅。";
-"text.detail.sharp"  = "较强。对次要文字和浅色文字提升明显。";
-"text.detail.solid"  = "同时把抗锯齿边缘压成纯黑：更清晰，但文字边缘可能显得偏硬。";
+"text.detail.medium" = "明显加深文字，相当于之前的“强”。";
+"text.detail.strong" = "更激进地加深文字，包括次要文字。";
+"text.detail.sharp"  = "非常强，并大幅压黑边缘以加深浅色文字。";
+"text.detail.solid"  = "以大幅压黑获得最高对比度：文字明显更深，但会损失灰阶细节和柔和边缘。";
 
 "help.title"      = "工作原理";
 "help.saturation" = "饱和度与 RGB（彩色墨水屏）：改写显示器的颜色配置文件，补偿偏窄的色域与偏色。黑白墨水屏可保持 100%。";

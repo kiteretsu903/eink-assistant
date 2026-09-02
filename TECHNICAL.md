@@ -70,17 +70,18 @@ pushing text toward the panel's floor. For reading.
 
 | level | knee | γ | black point | body | secondary | tertiary |
 |---|---|---|---|---|---|---|
-| Medium | 0.55 | 1.70 | 0 | 19.1:1 | 5.1:1 | 2.8:1 |
-| Strong | 0.65 | 2.10 | 0 | 19.9:1 | 6.0:1 | 2.9:1 |
-| Sharp | 0.90 | 3.00 | 0 | 20.5:1 | 9.6:1 | 4.0:1 |
-| Solid | 0.90 | 3.00 | 0.16 | 21.0:1 | 15.5:1 | 6.2:1 |
+| Medium | 0.65 | 2.10 | 0 | 19.9:1 | 6.0:1 | 2.9:1 |
+| Strong | 0.80 | 2.70 | 0 | 20.4:1 | 8.1:1 | 3.4:1 |
+| Sharp | 1.00 | 5.00 | 0.10 | 21.0:1 | 15.7:1 | 7.1:1 |
+| Solid | 1.00 | 6.00 | 0.34 | 21.0:1 | 20.6:1 | 15.7:1 |
 
 (contrast against white, unadjusted is 15.1 / 4.8 / 2.8)
 
 Body text saturates quickly. The real gains are in **secondary and faint
-text**, which is where a low-contrast panel struggles. `Solid` additionally
-crushes antialiased glyph edges to black, making stems solid at the cost of
-harder edges.
+text**, which is where a low-contrast panel struggles. In v2.3, Medium is the
+former Strong curve; each following level is steeper. `Solid` uses a much
+heavier black-point crush, making stems and faint text substantially darker at
+the cost of harder edges and lost gray detail.
 
 ReadingLab also exposes a **white point**, the counterpart to the black point.
 In practice it turned out **not to be worth promoting to a level**: with macOS

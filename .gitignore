@@ -3,3 +3,16 @@
 *.dmg
 *.o
 .DS_Store
+.vs/
+bin/
+obj/
+artifacts/
+.reference/
+TestResults/
+*.user
+*.suo
+build/
+build-*/
+artifacts/
+.tools/
+aqtinstall.log

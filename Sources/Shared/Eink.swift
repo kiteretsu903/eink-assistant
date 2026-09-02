@@ -53,8 +53,10 @@ enum EnhanceLevel: String, CaseIterable {
 /// Text contrast strength — the mirror of EnhanceLevel. Gamma above 1 darkens
 /// the low end while pinning white, pushing text toward the panel's floor.
 ///
-/// The four levels were tuned by eye on a Bigme B251 Pro. `solid` adds a
-/// black-point crush that turns antialiased glyph edges into solid black.
+/// The four levels were tuned by eye on a Bigme B251 Pro. The v2.3 presets
+/// deliberately start at the former Strong level and ramp more aggressively.
+/// `solid` adds a heavy black-point crush that turns antialiased glyph edges
+/// and faint text substantially darker.
 enum TextLevel: String, CaseIterable {
     case off, medium, strong, sharp, solid
 
@@ -71,10 +73,10 @@ enum TextLevel: String, CaseIterable {
     var curve: ToneCurve? {
         switch self {
         case .off:    return nil
-        case .medium: return ToneCurve(knee: 0.55, gamma: 1.70)
-        case .strong: return ToneCurve(knee: 0.65, gamma: 2.10)
-        case .sharp:  return ToneCurve(knee: 0.90, gamma: 3.00)
-        case .solid:  return ToneCurve(knee: 0.90, gamma: 3.00, blackPoint: 0.16)
+        case .medium: return ToneCurve(knee: 0.65, gamma: 2.10)
+        case .strong: return ToneCurve(knee: 0.80, gamma: 2.70)
+        case .sharp:  return ToneCurve(knee: 1.00, gamma: 5.00, blackPoint: 0.10)
+        case .solid:  return ToneCurve(knee: 1.00, gamma: 6.00, blackPoint: 0.34)
         }
     }
 
