@@ -13,6 +13,14 @@
 
 **Tune black-and-white and color e-ink displays for macOS.**
 
+> **Windows port:** this repository also contains a Qt 5.15/C++ Windows port
+> with Windows 7-compatible core features plus one runtime-selected color
+> package: MHC2 saturation on Windows 10 builds 19041–19045 and ACM on
+> Windows 11 24H2 or above.
+> See [WINDOWS.md](WINDOWS.md) for compatibility, building, and testing.
+> Maintainers and coding agents should also read the authoritative
+> [Windows engineering reference](WINDOWS-TECHNICAL.md).
+
 [Visit the product website](https://kiteretsu903.github.io/eink-assistant/)
 
 Both B&W and color e-ink share the problems of slow refresh, limited contrast,

@@ -6,9 +6,13 @@
 "display.builtin"  = "内蔵";
 "quit"             = "終了";
 "login.toggle"     = "ログイン時に起動";
+"busy.starting"    = "ディスプレイ設定を準備しています…";
+"busy.quitting"    = "ディスプレイ設定を復元しています…";
+"busy.configuring" = "ディスプレイを設定しています…";
 
 "saturation.title"   = "彩度";
 "saturation.caption" = "カラー電子ペーパー向け：狭い色域を補正します。アプリ終了時に元へ戻ります。";
+"saturation.mhc2.compat" = "Windows 10 MHC2 パス：テスト環境で動作確認済みです。ディスプレイとドライバーに依存し、終了時に元のプロファイルへ戻します。";
 
 "rgb.title" = "RGB";
 "rgb.red"   = "赤";

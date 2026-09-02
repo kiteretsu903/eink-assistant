@@ -6,9 +6,13 @@
 "display.builtin"  = "内置";
 "quit"             = "退出";
 "login.toggle"     = "登录时打开";
+"busy.starting"    = "正在准备显示设置…";
+"busy.quitting"    = "正在恢复显示设置…";
+"busy.configuring" = "正在配置显示器…";
 
 "saturation.title"   = "饱和度";
 "saturation.caption" = "适用于彩色墨水屏：补偿偏窄的色域。退出应用后会恢复原状。";
+"saturation.mhc2.compat" = "Windows 10 MHC2 路径：已在测试硬件上验证。支持情况仍取决于显示器和驱动程序；退出应用会恢复原始配置文件。";
 
 "rgb.title" = "RGB";
 "rgb.red"   = "红";

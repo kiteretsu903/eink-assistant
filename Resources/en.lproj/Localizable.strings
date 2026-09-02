@@ -6,10 +6,14 @@
 "display.builtin"  = "built-in";
 "quit"             = "Quit";
 "login.toggle"     = "Launch at Login";
+"busy.starting"    = "Preparing your display settings…";
+"busy.quitting"    = "Restoring your display settings…";
+"busy.configuring" = "Configuring your display…";
 
 "saturation.title"   = "Saturation";
 /* Saturation is cleared on quit and re-applied on launch. */
 "saturation.caption" = "For color e-ink: compensates for the narrow color gamut. Restored when the app quits.";
+"saturation.mhc2.compat" = "Windows 10 MHC2 path: verified on the tested hardware. Support remains display- and driver-dependent; quitting restores the original profile.";
 
 "rgb.title" = "RGB";
 "rgb.red"   = "Red";
