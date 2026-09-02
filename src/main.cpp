@@ -40,126 +40,6 @@
 using namespace eink;
 
 #ifdef Q_OS_WIN
-enum class TrayPromotionResult { Unavailable, Pending, Promoted };
-
-struct TrayToolbarData {
-    HWND ownerWindow;
-    UINT iconId;
-    UINT callbackMessage;
-    DWORD reserved[2];
-    HICON icon;
-};
-
-static QScreen *screenForTaskbar(HWND taskbar,MONITORINFOEXW *monitorInfo=nullptr) {
-    MONITORINFOEXW monitor{};monitor.cbSize=sizeof(monitor);
-    if(!GetMonitorInfoW(MonitorFromWindow(taskbar,MONITOR_DEFAULTTOPRIMARY),&monitor))return QGuiApplication::primaryScreen();
-    if(monitorInfo)*monitorInfo=monitor;
-    const QString device=QString::fromWCharArray(monitor.szDevice);
-    for(QScreen *screen:QGuiApplication::screens())
-        if(QString::compare(screen->name(),device,Qt::CaseInsensitive)==0||device.endsWith(screen->name(),Qt::CaseInsensitive))return screen;
-    return QGuiApplication::primaryScreen();
-}
-
-static QRect ownPromotedTrayIconRectForTaskbar(HWND taskbar) {
-    const HWND notifyArea=taskbar?FindWindowExW(taskbar,nullptr,L"TrayNotifyWnd",nullptr):nullptr;
-    const HWND toolbar=notifyArea?FindWindowExW(notifyArea,nullptr,L"ToolbarWindow32",nullptr):nullptr;
-    if(!toolbar)return {};
-    DWORD explorerPid=0;GetWindowThreadProcessId(toolbar,&explorerPid);if(!explorerPid)return {};
-    HANDLE explorer=OpenProcess(PROCESS_VM_OPERATION|PROCESS_VM_READ|PROCESS_VM_WRITE,FALSE,explorerPid);if(!explorer)return {};
-    constexpr SIZE_T bufferSize=128;
-    void *remote=VirtualAllocEx(explorer,nullptr,bufferSize,MEM_COMMIT|MEM_RESERVE,PAGE_READWRITE);
-    if(!remote){CloseHandle(explorer);return {};}
-    QRect result;
-    const LRESULT buttonCount=SendMessageW(toolbar,TB_BUTTONCOUNT,0,0);
-    for(LRESULT index=0;index<buttonCount;++index) {
-        TBBUTTON button{};SIZE_T read=0;
-        if(!SendMessageW(toolbar,TB_GETBUTTON,static_cast<WPARAM>(index),reinterpret_cast<LPARAM>(remote)))continue;
-        if(!ReadProcessMemory(explorer,remote,&button,sizeof(button),&read)||read!=sizeof(button)||!button.dwData)continue;
-        TrayToolbarData data{};
-        if(!ReadProcessMemory(explorer,reinterpret_cast<const void *>(button.dwData),&data,sizeof(data),&read)||read!=sizeof(data))continue;
-        DWORD ownerPid=0;if(data.ownerWindow)GetWindowThreadProcessId(data.ownerWindow,&ownerPid);
-        if(ownerPid!=GetCurrentProcessId())continue;
-        if(button.fsState&TBSTATE_HIDDEN) {
-            SendMessageW(toolbar,TB_HIDEBUTTON,static_cast<WPARAM>(button.idCommand),FALSE);
-            SendMessageW(toolbar,TB_AUTOSIZE,0,0);
-        }
-        RECT item{};
-        if(!SendMessageW(toolbar,TB_GETITEMRECT,static_cast<WPARAM>(index),reinterpret_cast<LPARAM>(remote)))continue;
-        if(!ReadProcessMemory(explorer,remote,&item,sizeof(item),&read)||read!=sizeof(item))continue;
-        RECT client{};GetClientRect(toolbar,&client);POINT origin{0,0};ClientToScreen(toolbar,&origin);
-        const double scale=(item.bottom>client.bottom&&item.bottom>0)?static_cast<double>(client.bottom)/item.bottom:1.0;
-        const QPoint topLeft(origin.x+qRound(item.left*scale),origin.y+qRound(item.top*scale));
-        const QPoint bottomRight(origin.x+qRound(item.right*scale)-1,origin.y+qRound(item.bottom*scale)-1);
-        result=QRect(topLeft,bottomRight);
-        RECT toolbarRect{};GetWindowRect(toolbar,&toolbarRect);
-        const QRect toolbarBounds(QPoint(toolbarRect.left,toolbarRect.top),QPoint(toolbarRect.right-1,toolbarRect.bottom-1));
-        if(!result.isValid()||!toolbarBounds.intersects(result)||result.width()>80||result.height()>80)result={};
-        if(result.isValid()) {
-            MONITORINFOEXW monitor{};QScreen *screen=screenForTaskbar(taskbar,&monitor);
-            if(screen) {
-                const QRect logical=screen->geometry();
-                const qreal scaleX=static_cast<qreal>(monitor.rcMonitor.right-monitor.rcMonitor.left)/logical.width();
-                const qreal scaleY=static_cast<qreal>(monitor.rcMonitor.bottom-monitor.rcMonitor.top)/logical.height();
-                result=QRect(logical.left()+qRound((result.x()-monitor.rcMonitor.left)/scaleX),
-                    logical.top()+qRound((result.y()-monitor.rcMonitor.top)/scaleY),
-                    qRound(result.width()/scaleX),qRound(result.height()/scaleY));
-            }
-        }
-        break;
-    }
-    VirtualFreeEx(explorer,remote,0,MEM_RELEASE);CloseHandle(explorer);return result;
-}
-
-static QVector<QRect> ownPromotedTrayIconRects() {
-    QVector<HWND> taskbars;
-    EnumWindows([](HWND window,LPARAM context)->BOOL {
-        wchar_t className[64]{};GetClassNameW(window,className,static_cast<int>(std::size(className)));
-        if(std::wcscmp(className,L"Shell_TrayWnd")==0||std::wcscmp(className,L"Shell_SecondaryTrayWnd")==0)
-            reinterpret_cast<QVector<HWND> *>(context)->push_back(window);
-        return TRUE;
-    },reinterpret_cast<LPARAM>(&taskbars));
-    QVector<QRect> results;
-    for(HWND taskbar:taskbars) {
-        const QRect rect=ownPromotedTrayIconRectForTaskbar(taskbar);
-        if(rect.isValid())results.push_back(rect);
-    }
-    return results;
-}
-
-static TrayPromotionResult promoteOwnTrayIcon() {
-    HKEY root=nullptr;
-    if(RegOpenKeyExW(HKEY_CURRENT_USER,L"Control Panel\\NotifyIconSettings",0,KEY_READ|KEY_WRITE,&root)!=ERROR_SUCCESS)return TrayPromotionResult::Unavailable;
-    const QString executable=QDir::cleanPath(QCoreApplication::applicationFilePath());
-    const QString executableName=QFileInfo(executable).fileName();
-    QStringList staleAppEntries;
-    bool matched=false;
-    bool written=false;
-    for(DWORD index=0;;++index) {
-        wchar_t subkeyName[256]{};DWORD nameLength=static_cast<DWORD>(std::size(subkeyName));
-        const LONG enumerated=RegEnumKeyExW(root,index,subkeyName,&nameLength,nullptr,nullptr,nullptr,nullptr);
-        if(enumerated==ERROR_NO_MORE_ITEMS)break;
-        if(enumerated!=ERROR_SUCCESS)continue;
-        HKEY subkey=nullptr;
-        if(RegOpenKeyExW(root,subkeyName,0,KEY_QUERY_VALUE|KEY_SET_VALUE,&subkey)!=ERROR_SUCCESS)continue;
-        wchar_t registeredPath[32768]{};DWORD bytes=sizeof(registeredPath);
-        if(RegGetValueW(subkey,nullptr,L"ExecutablePath",RRF_RT_REG_SZ,nullptr,registeredPath,&bytes)==ERROR_SUCCESS) {
-            const QString registered=QDir::cleanPath(QString::fromWCharArray(registeredPath));
-            if(QString::compare(registered,executable,Qt::CaseInsensitive)==0) {
-                const DWORD promoted=1;
-                matched=true;
-                written=RegSetValueExW(subkey,L"IsPromoted",0,REG_DWORD,reinterpret_cast<const BYTE *>(&promoted),sizeof(promoted))==ERROR_SUCCESS;
-            } else if(QString::compare(QFileInfo(registered).fileName(),executableName,Qt::CaseInsensitive)==0) {
-                staleAppEntries.push_back(QString::fromWCharArray(subkeyName));
-            }
-        }
-        RegCloseKey(subkey);
-    }
-    for(const QString &subkeyName:staleAppEntries)RegDeleteKeyW(root,reinterpret_cast<const wchar_t *>(subkeyName.utf16()));
-    RegCloseKey(root);
-    if(matched)return written?TrayPromotionResult::Promoted:TrayPromotionResult::Unavailable;
-    return TrayPromotionResult::Pending;
-}
-
 static int runColorSelfTest(const QString &resultPath) {
     QFile reportFile(resultPath);
     if(!reportFile.open(QIODevice::WriteOnly|QIODevice::Text))return 20;
@@ -439,6 +319,7 @@ int main(int argc,char **argv) {
     while(!initialized.load()){app.processEvents(QEventLoop::AllEvents,20);std::this_thread::sleep_for(std::chrono::milliseconds(16));}initializer.join();busy.hide();
     const QString currentExecutable=QDir::cleanPath(QCoreApplication::applicationFilePath());
     const bool showTrayDiscovery=!controller.settings().trayDiscoveryShown
+        ||controller.settings().trayDiscoveryVersion<kCurrentTrayDiscoveryVersion
         || QString::compare(QDir::cleanPath(controller.settings().trayDiscoveryExecutablePath),currentExecutable,Qt::CaseInsensitive)!=0;
     Localization::instance().setLanguage(controller.settings().language);MainPanel panel(&controller);WelcomeDialog welcome(&controller);
     bool trayLightBackground=ui::systemTrayUsesLightBackground();QSystemTrayIcon tray(ui::bookPagesTrayIcon(trayLightBackground));tray.setToolTip(L("app.title"));QMenu menu;auto *open=menu.addAction(L("app.title"));menu.addSeparator();auto *quit=menu.addAction(L("quit"));tray.setContextMenu(&menu);
@@ -456,37 +337,66 @@ int main(int argc,char **argv) {
     auto show=[&]{welcome.hide();if(panel.isVisible())panel.hide();else panel.showPanel();};QObject::connect(open,&QAction::triggered,&panel,[&]{welcome.hide();panel.showPanel();});QObject::connect(&tray,&QSystemTrayIcon::activated,&panel,[&](QSystemTrayIcon::ActivationReason reason){if(reason==QSystemTrayIcon::Trigger)show();});QObject::connect(quit,&QAction::triggered,&app,requestQuit);QObject::connect(&panel,&MainPanel::quitRequested,&app,requestQuit);QObject::connect(&app,&QCoreApplication::aboutToQuit,&controller,&ApplicationController::shutdown);
     QObject::connect(&tray,&QSystemTrayIcon::messageClicked,&panel,[&]{welcome.hide();panel.showPanel();});
     QObject::connect(&controller,&ApplicationController::stateChanged,&tray,[&]{tray.setToolTip(L("app.title"));open->setText(L("app.title"));quit->setText(L("quit"));});
+    windows::TrayPromotionWatcher trayPromotionWatcher;
+    const bool trayWatcherArmed=showTrayDiscovery&&trayPromotionWatcher.arm(true);
     tray.show();
     std::function<void(int)> showWelcomeAtTray;
     showWelcomeAtTray=[&](int retries){
         const QVector<QRect> anchors=windows::ownPromotedTrayIconRects();
-        if(anchors.isEmpty()&&retries>0){QTimer::singleShot(100,&tray,[&,retries]{showWelcomeAtTray(retries-1);});return;}
+        const QRect qtTrayGeometry=tray.geometry();
+        if(anchors.isEmpty()&&!qtTrayGeometry.isValid()&&retries>0){QTimer::singleShot(100,&tray,[&,retries]{showWelcomeAtTray(retries-1);});return;}
         QRect anchor;
         QScreen *preferred=QGuiApplication::screenAt(QCursor::pos());
         if(preferred)for(const QRect &candidate:anchors)if(preferred->geometry().contains(candidate.center())){anchor=candidate;break;}
         if(!anchor.isValid()&&!anchors.isEmpty())anchor=anchors.first();
-        if(!anchor.isValid())anchor=tray.geometry();
+        if(!anchor.isValid())anchor=qtTrayGeometry;
         welcome.setTrayAnchorRect(anchor);welcome.show();
     };
     QObject::connect(&welcome,&QDialog::finished,&panel,[&](int){panel.showPanel();});
+    const bool shouldShowWelcome=!backgroundLaunch&&controller.settings().showWelcome
+        &&!arguments.contains(QStringLiteral("--skip-welcome"));
+    bool welcomeRequested=false;
+    auto showWelcomeOnce=[&]{
+        if(!shouldShowWelcome||welcomeRequested)return;
+        welcomeRequested=true;showWelcomeAtTray(10);
+    };
     std::function<void(int)> promoteThenShow;
     if(showTrayDiscovery) {
+        constexpr int kTrayPromotionAttempts=300; // Explorer can publish the per-icon key late.
+        bool catalogNotificationSent=false;
         promoteThenShow=[&](int attempt){
-            const windows::TrayPromotionResult result=windows::promoteOwnTrayIcon();
-            if(result==windows::TrayPromotionResult::Pending&&attempt<3) {
-                tray.hide();
-                QTimer::singleShot(100,&tray,[&,attempt]{tray.show();QTimer::singleShot(350,&tray,[&,attempt]{promoteThenShow(attempt+1);});});
+            windows::TrayPromotionResult result=windows::promoteOwnTrayIcon();
+            if(trayWatcherArmed) {
+                const windows::TrayPromotionResult watched=trayPromotionWatcher.result();
+                if(watched==windows::TrayPromotionResult::Promoted
+                    ||watched==windows::TrayPromotionResult::Overflow)result=watched;
+                else if(result==windows::TrayPromotionResult::Overflow&&attempt<kTrayPromotionAttempts)
+                    result=windows::TrayPromotionResult::Pending;
+            }
+            if(result==windows::TrayPromotionResult::Pending&&trayWatcherArmed
+                &&!catalogNotificationSent&&attempt>=5) {
+                // NIF_INFO forces lazy Windows 11 shells to catalog the icon,
+                // giving the still-armed registry watcher an identity to promote.
+                catalogNotificationSent=true;
+                tray.showMessage(L("welcome.windows.tray.title"),L("welcome.windows.tray"),
+                    QSystemTrayIcon::Information,10000);
+            }
+            if(result==windows::TrayPromotionResult::Pending&&attempt<kTrayPromotionAttempts) {
+                QTimer::singleShot(100,&tray,[&,attempt]{promoteThenShow(attempt+1);});
             } else if(result==windows::TrayPromotionResult::Promoted) {
-                tray.hide();
-                QTimer::singleShot(100,&tray,[&]{tray.show();QTimer::singleShot(450,&tray,[&]{showWelcomeAtTray(10);controller.setTrayDiscoveryShown(true,currentExecutable);});});
+                trayPromotionWatcher.stop();
+                QTimer::singleShot(450,&tray,[&]{showWelcomeOnce();controller.setTrayDiscoveryShown(true,currentExecutable);});
             } else if(result==windows::TrayPromotionResult::Overflow) {
+                trayPromotionWatcher.stop();
                 tray.showMessage(L("welcome.windows.tray.title"),L("welcome.windows.tray"),QSystemTrayIcon::Information,10000);
-                QTimer::singleShot(500,&tray,[&]{showWelcomeAtTray(10);controller.setTrayDiscoveryShown(true,currentExecutable);});
-            } else {showWelcomeAtTray(10);controller.setTrayDiscoveryShown(true,currentExecutable);}
+                QTimer::singleShot(500,&tray,[&]{showWelcomeOnce();});
+            } else {trayPromotionWatcher.stop();showWelcomeOnce();}
         };
+        if(shouldShowWelcome)QTimer::singleShot(250,&tray,[&]{showWelcomeOnce();});
+        else if(!backgroundLaunch)panel.showPanel();
         QTimer::singleShot(200,&tray,[&]{promoteThenShow(0);});
     } else if(!arguments.contains(QStringLiteral("--background"))) {
-        if(controller.settings().showWelcome&&!arguments.contains(QStringLiteral("--skip-welcome")))QTimer::singleShot(250,&tray,[&]{showWelcomeAtTray(10);});else panel.showPanel();
+        if(shouldShowWelcome)QTimer::singleShot(250,&tray,[&]{showWelcomeOnce();});else panel.showPanel();
     }
     const int exitIndex=arguments.indexOf(QStringLiteral("--exit-after-ms"));
     if(exitIndex>=0 && exitIndex+1<arguments.size())QTimer::singleShot(arguments[exitIndex+1].toInt(),&app,&QCoreApplication::quit);

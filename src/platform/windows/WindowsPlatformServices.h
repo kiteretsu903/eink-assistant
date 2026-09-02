@@ -73,8 +73,10 @@ private:
     static QString nightLightRecoveryFilePath();
     static ApplyResult readNightLightState(QByteArray *data);
     static ApplyResult writeNightLightState(const QByteArray &data);
-    static bool readNightLightRecovery(QByteArray *data);
-    static ApplyResult writeNightLightRecovery(const QByteArray &data);
+    static bool readNightLightRecovery(QByteArray *data, bool *enabled);
+    static ApplyResult writeNightLightRecovery(const QByteArray &data, bool enabled);
+    static ApplyResult queryNativeNightLight(bool *enabled, bool *openedSettings = nullptr);
+    static ApplyResult setNativeNightLight(bool enabled, bool closeSettings = false);
     static void clearNightLightRecovery();
     static QString recoveryFilePath();
     static QString recoveryGroup(const DisplayInfo &);
@@ -105,6 +107,9 @@ private:
     quint64 m_profileSequence = 0;
     bool m_recoveryComplete = false;
     QByteArray m_originalNightLightState;
+    bool m_originalNightLightEnabled = false;
+    mutable bool m_lastKnownNightLightEnabled = false;
+    mutable bool m_nightLightStateKnown = false;
     bool m_nightLightOwned = false;
     bool m_shutdown = false;
 };

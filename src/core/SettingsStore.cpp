@@ -25,6 +25,7 @@ AppSettings SettingsStore::load() const {
     result.autoVisualEffects = s.value(QStringLiteral("general/autoVisualEffects"), true).toBool();
     result.showWelcome = s.value(QStringLiteral("general/showWelcome"), true).toBool();
     result.trayDiscoveryShown = s.value(QStringLiteral("general/trayDiscoveryShown"), false).toBool();
+    result.trayDiscoveryVersion = s.value(QStringLiteral("general/trayDiscoveryVersion"), 0).toInt();
     result.trayDiscoveryExecutablePath = s.value(QStringLiteral("general/trayDiscoveryExecutablePath")).toString();
 
     const int count = s.beginReadArray(QStringLiteral("displays"));
@@ -80,6 +81,7 @@ void SettingsStore::save(const AppSettings &settings) const {
     s.setValue(QStringLiteral("general/autoVisualEffects"), settings.autoVisualEffects);
     s.setValue(QStringLiteral("general/showWelcome"), settings.showWelcome);
     s.setValue(QStringLiteral("general/trayDiscoveryShown"), settings.trayDiscoveryShown);
+    s.setValue(QStringLiteral("general/trayDiscoveryVersion"), settings.trayDiscoveryVersion);
     s.setValue(QStringLiteral("general/trayDiscoveryExecutablePath"), settings.trayDiscoveryExecutablePath);
 
     s.beginWriteArray(QStringLiteral("displays"));

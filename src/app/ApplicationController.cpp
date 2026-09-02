@@ -13,8 +13,6 @@ ApplicationController::ApplicationController(std::unique_ptr<PlatformServices> p
     m_colorPool.setMaxThreadCount(1);
     m_colorPool.setExpiryTimeout(5000);
     m_systemPool.setMaxThreadCount(1);m_systemPool.setExpiryTimeout(5000);
-    m_nightLightApplyTimer.setSingleShot(true);m_nightLightApplyTimer.setInterval(220);
-    connect(&m_nightLightApplyTimer,&QTimer::timeout,this,&ApplicationController::applyPendingNightLightState);
 }
 
 ApplicationController::~ApplicationController() { shutdown(); }
@@ -50,6 +48,7 @@ void ApplicationController::refreshDisplays() {
         return false;
     });
     m_displays = m_platform->displays();
+    std::stable_partition(m_displays.begin(),m_displays.end(),[](const DisplayInfo &display){return !display.builtIn;});
     const bool hasEink = std::any_of(m_displays.begin(), m_displays.end(), [&](const DisplayInfo &d) {
         return m_settings.forDisplay(d.stableId).isEink;
     });
@@ -140,6 +139,10 @@ void ApplicationController::setVisualEffects(bool enabled) {
 }
 
 void ApplicationController::setWindowsLightMode(bool enabled) {
+    if(!m_windowsLightModeOwned&&m_platform->windowsLightModeAvailable()) {
+        m_originalWindowsLightMode=m_platform->windowsLightModeEnabled();
+        m_windowsLightModeOwned=true;
+    }
     beginQuietOperation();m_systemPool.start(QRunnable::create([this,enabled]{
         const ApplyResult result=m_platform->setWindowsLightModeEnabled(enabled);
         QMetaObject::invokeMethod(this,[this,result]{
@@ -151,23 +154,21 @@ void ApplicationController::setWindowsLightMode(bool enabled) {
 
 void ApplicationController::setNightLightDisabled(bool disabled) {
     if(m_shutDown.load())return;
-    m_pendingNightLightDisabled=disabled;m_hasPendingNightLightState=true;m_nightLightApplyTimer.start();
-}
-
-void ApplicationController::applyPendingNightLightState() {
-    if(m_shutDown.load()||!m_hasPendingNightLightState)return;
-    const bool disabled=m_pendingNightLightDisabled;m_hasPendingNightLightState=false;
-    beginOperation();
-    const ApplyResult result=m_platform->setNightLightDisabled(disabled); report(result);
-    if(m_platform->nightLightControlAvailable()) {
-        m_lastNightLightDisabled=!m_platform->nightLightEnabled();m_nightLightStateKnown=true;
-        emit nightLightStateChanged(m_lastNightLightDisabled);
-    }
-    emit stateChanged();endOperation();
+    beginQuietOperation();m_systemPool.start(QRunnable::create([this,disabled]{
+        const ApplyResult result=m_platform->setNightLightDisabled(disabled);
+        QMetaObject::invokeMethod(this,[this,result]{
+            if(m_shutDown.load()){endQuietOperation();return;}report(result);
+            if(m_platform->nightLightControlAvailable()) {
+                m_lastNightLightDisabled=!m_platform->nightLightEnabled();m_nightLightStateKnown=true;
+                emit nightLightStateChanged(m_lastNightLightDisabled);
+            }
+            emit stateChanged();endQuietOperation();
+        },Qt::QueuedConnection);
+    }));
 }
 
 void ApplicationController::refreshNightLightState() {
-    if(m_shutDown.load()||m_hasPendingNightLightState||m_nightLightApplyTimer.isActive()||!m_platform->nightLightControlAvailable())return;
+    if(m_shutDown.load()||operationInProgress()||!m_platform->nightLightControlAvailable())return;
     const bool disabled=!m_platform->nightLightEnabled();
     if(!m_nightLightStateKnown||disabled!=m_lastNightLightDisabled) {
         m_lastNightLightDisabled=disabled;m_nightLightStateKnown=true;emit nightLightStateChanged(disabled);
@@ -192,8 +193,9 @@ void ApplicationController::setShowWelcome(bool enabled) {
     m_settings.showWelcome=enabled; persistAndNotify();
 }
 
-void ApplicationController::setTrayDiscoveryShown(bool shown,const QString &executablePath) {
+void ApplicationController::setTrayDiscoveryShown(bool shown,const QString &executablePath,int version) {
     m_settings.trayDiscoveryShown=shown;
+    m_settings.trayDiscoveryVersion=shown?version:0;
     if(!executablePath.isEmpty())m_settings.trayDiscoveryExecutablePath=executablePath;
     persistAndNotify();
 }
@@ -279,9 +281,6 @@ void ApplicationController::reapplyAll() {
 
 void ApplicationController::shutdown() {
     if (m_shutDown.exchange(true) || !m_platform) return;
-    if(m_nightLightApplyTimer.thread()==QThread::currentThread())m_nightLightApplyTimer.stop();
-    else QMetaObject::invokeMethod(&m_nightLightApplyTimer,"stop",Qt::BlockingQueuedConnection);
-    m_hasPendingNightLightState=false;
     waitForColorTasks();
     m_systemPool.waitForDone();
     const QVector<DisplayInfo> displaysSnapshot=m_displays;
@@ -290,6 +289,8 @@ void ApplicationController::shutdown() {
         if (d.ditheringControlSupported) m_platform->setDitheringDisabled(d,false);
     }
     m_platform->setVisualEffectsReduced(false);
+    if(m_windowsLightModeOwned)
+        m_platform->setWindowsLightModeEnabled(m_originalWindowsLightMode);
     m_platform->shutdown();
 }
 

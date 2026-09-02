@@ -3,6 +3,38 @@ project(EinkAssistant VERSION 2.3.0 LANGUAGES CXX)
 
 if(WIN32)
     enable_language(RC)
+
+    find_program(EINK_CSC_EXECUTABLE csc.exe
+        PATHS
+            "$ENV{WINDIR}/Microsoft.NET/Framework64/v4.0.30319"
+            "$ENV{WINDIR}/Microsoft.NET/Framework/v4.0.30319"
+        NO_DEFAULT_PATH)
+    file(GLOB EINK_UIAUTOMATION_CLIENT "$ENV{WINDIR}/Microsoft.NET/assembly/GAC_MSIL/UIAutomationClient/*/UIAutomationClient.dll")
+    file(GLOB EINK_UIAUTOMATION_TYPES "$ENV{WINDIR}/Microsoft.NET/assembly/GAC_MSIL/UIAutomationTypes/*/UIAutomationTypes.dll")
+    file(GLOB EINK_UIAUTOMATION_PROVIDER "$ENV{WINDIR}/Microsoft.NET/assembly/GAC_MSIL/UIAutomationProvider/*/UIAutomationProvider.dll")
+    if(NOT EINK_CSC_EXECUTABLE OR NOT EINK_UIAUTOMATION_CLIENT OR NOT EINK_UIAUTOMATION_TYPES OR NOT EINK_UIAUTOMATION_PROVIDER)
+        message(FATAL_ERROR "The Windows Night Light helper requires the built-in .NET Framework UI Automation assemblies.")
+    endif()
+    list(GET EINK_UIAUTOMATION_CLIENT 0 EINK_UIAUTOMATION_CLIENT_DLL)
+    list(GET EINK_UIAUTOMATION_TYPES 0 EINK_UIAUTOMATION_TYPES_DLL)
+    list(GET EINK_UIAUTOMATION_PROVIDER 0 EINK_UIAUTOMATION_PROVIDER_DLL)
+    set(EINK_NIGHT_LIGHT_HELPER "${CMAKE_BINARY_DIR}/bin/EinkNightLightControl.exe")
+    file(TO_NATIVE_PATH "${EINK_NIGHT_LIGHT_HELPER}" EINK_NIGHT_LIGHT_HELPER_NATIVE)
+    file(TO_NATIVE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/platform/windows/NightLightControl.cs" EINK_NIGHT_LIGHT_SOURCE_NATIVE)
+    file(TO_NATIVE_PATH "${EINK_UIAUTOMATION_CLIENT_DLL}" EINK_UIAUTOMATION_CLIENT_NATIVE)
+    file(TO_NATIVE_PATH "${EINK_UIAUTOMATION_TYPES_DLL}" EINK_UIAUTOMATION_TYPES_NATIVE)
+    file(TO_NATIVE_PATH "${EINK_UIAUTOMATION_PROVIDER_DLL}" EINK_UIAUTOMATION_PROVIDER_NATIVE)
+    add_custom_command(
+        OUTPUT "${EINK_NIGHT_LIGHT_HELPER}"
+        COMMAND "${EINK_CSC_EXECUTABLE}" /nologo /target:exe /optimize+
+            "/out:${EINK_NIGHT_LIGHT_HELPER_NATIVE}"
+            "/reference:${EINK_UIAUTOMATION_CLIENT_NATIVE}"
+            "/reference:${EINK_UIAUTOMATION_TYPES_NATIVE}"
+            "/reference:${EINK_UIAUTOMATION_PROVIDER_NATIVE}"
+            "${EINK_NIGHT_LIGHT_SOURCE_NATIVE}"
+        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/platform/windows/NightLightControl.cs"
+        VERBATIM)
+    add_custom_target(eink_night_light_helper ALL DEPENDS "${EINK_NIGHT_LIGHT_HELPER}")
 endif()
 
 set(CMAKE_CXX_STANDARD 17)
@@ -80,6 +112,7 @@ endif()
 
 add_executable(EinkAssistant WIN32 src/main.cpp)
 if(WIN32)
+    add_dependencies(EinkAssistant eink_night_light_helper)
     set(EINK_WINDOWS_MANIFEST "${CMAKE_CURRENT_SOURCE_DIR}/src/platform/windows/app.manifest")
     target_sources(EinkAssistant PRIVATE src/platform/windows/app.rc ${EINK_WINDOWS_MANIFEST})
     set_source_files_properties(${EINK_WINDOWS_MANIFEST} PROPERTIES HEADER_FILE_ONLY TRUE)

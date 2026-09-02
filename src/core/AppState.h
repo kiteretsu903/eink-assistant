@@ -7,6 +7,8 @@
 
 namespace eink {
 
+inline constexpr int kCurrentTrayDiscoveryVersion = 5;
+
 struct RgbBalance {
     double red = 1.0;
     double green = 1.0;
@@ -58,6 +60,7 @@ struct AppSettings {
     bool autoVisualEffects = true;
     bool showWelcome = true;
     bool trayDiscoveryShown = false;
+    int trayDiscoveryVersion = 0;
     QString trayDiscoveryExecutablePath;
     QVector<DisplaySettings> displays;
     QVector<SavedCurve> savedCurves = QVector<SavedCurve>(5);

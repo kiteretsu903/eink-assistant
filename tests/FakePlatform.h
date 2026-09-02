@@ -28,7 +28,7 @@ public:
     ApplyResult recoverInterruptedNightLightState() override { ++nightRecoveryCalls; operationLog<<QStringLiteral("night.recover"); return ApplyResult::ok(); }
     bool nightLightControlAvailable() const override { return directNightAvailable; }
     bool nightLightEnabled() const override { return !nightDisabled; }
-    ApplyResult setNightLightDisabled(bool value) override { if(!nightOwned){originalNightDisabled=nightDisabled;nightOwned=true;} nightDisabled=value; ++nightDisableCalls; operationLog<<(value?QStringLiteral("night.disable"):QStringLiteral("night.enable")); return ApplyResult::ok(); }
+    ApplyResult setNightLightDisabled(bool value) override { if(systemDelayMs>0)QThread::msleep(static_cast<unsigned long>(systemDelayMs));if(!nightOwned){originalNightDisabled=nightDisabled;nightOwned=true;} nightDisabled=value; ++nightDisableCalls; operationLog<<(value?QStringLiteral("night.disable"):QStringLiteral("night.enable")); return ApplyResult::ok(); }
     ApplyResult restoreNightLightState() override { if(nightOwned){nightDisabled=originalNightDisabled;nightOwned=false;++nightRestoreCalls;operationLog<<QStringLiteral("night.restore");} return ApplyResult::ok(); }
     bool nightLightAvailable() const override { return nightAvailable; }
     void openNightLightSettings() override { ++openedNightLight; }

@@ -15,16 +15,17 @@ same core and UI can be reused by a later Linux backend.
   Contrast, Video Enhance, Advanced curves and five saved presets, visual
   effects controls, display reconnection handling, four UI languages, and
   launch at login.
-- **Tray discovery:** on first launch, Windows 11 promotes only this
-  executable's registered icon through its private per-icon notification
-  setting. Windows 10 detects whether this process's icon is in overflow,
-  shows a notification preview, and asks the user to drag the book icon onto
-  the taskbar once; Windows does not provide an application-controlled
-  persistent promotion setting there. An illustrated callout points to the
-  notification area. Later user choices are respected because discovery runs
-  only once per executable path.
-- **Windows 10 May 2019 Update or above:** persistent Windows Light Mode. This
-  changes Windows mode only and leaves the separate app mode untouched.
+- **Tray discovery:** the package selects a version-specific private workaround.
+  Windows 7 through Windows 10 1703 use Explorer's legacy per-icon COM
+  preference. Windows 10 1709 through 22H2 strictly validates the persisted
+  `IconStreams` schema, backs it up, and changes only the exact executable's
+  record; Explorer may not reflect that persisted change until its next
+  restart. Windows 11 arms a registry notification before the icon is
+  registered and promotes the newly created, unconfigured exact-path entry.
+  Unknown formats fail closed and retain the normal overflow/welcome fallback.
+- **Windows 10 May 2019 Update or above:** session-only Windows Light Mode. It
+  changes Windows mode only, leaves app mode untouched, and restores the
+  pre-change value on quit.
 - **Windows 10 builds 19041 through 19045:** Saturation and RGB use the MHC2
   ICC profile path without querying or toggling Windows 11 ACM. This path is
   enabled in the same executable and was physically verified on the recorded

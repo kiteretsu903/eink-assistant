@@ -43,7 +43,6 @@ WelcomeDialog::WelcomeDialog(ApplicationController *controller,QWidget *parent)
         QString plainBody=body;plainBody.remove(QStringLiteral("**"));
         auto *text=new SmoothLabel(plainBody);text->setWordWrap(true);text->setStyleSheet(QStringLiteral("color:#4a4a4a;border:0;"));layout->addWidget(text);root->addWidget(card);
     };
-    addTip(L("welcome.windows.tray.title"),L("welcome.windows.tray"));
     addTip(L("welcome.bigme.title"),L("welcome.bigme.body"));
     addTip(L("welcome.other.title"),L("welcome.windows.other"));
     auto *bottom=new QHBoxLayout;auto *hide=new QCheckBox(L("welcome.hide"));hide->setObjectName(QStringLiteral("welcome-hide"));bottom->addWidget(hide);bottom->addStretch();

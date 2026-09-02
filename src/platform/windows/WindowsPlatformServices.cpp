@@ -10,7 +10,6 @@
 #include <QDateTime>
 #include <QFile>
 #include <QFileInfo>
-#include <QProcess>
 #include <QRandomGenerator>
 #include <QSettings>
 #include <QSaveFile>
@@ -47,12 +46,79 @@ bool parseBoolRegistry(HKEY root, const wchar_t *path, const wchar_t *name, DWOR
     return RegGetValueW(root,path,name,RRF_RT_REG_DWORD,&type,value,&size)==ERROR_SUCCESS;
 }
 
+struct ChildProcessResult {
+    bool launched = false;
+    bool timedOut = false;
+    DWORD error = ERROR_SUCCESS;
+    DWORD exitCode = static_cast<DWORD>(-1);
+};
+
+bool currentProcessElevated() {
+    HANDLE token=nullptr;if(!OpenProcessToken(GetCurrentProcess(),TOKEN_QUERY,&token))return false;
+    TOKEN_ELEVATION elevation{};DWORD bytes=0;
+    const bool elevated=GetTokenInformation(token,TokenElevation,&elevation,sizeof(elevation),&bytes)&&elevation.TokenIsElevated;
+    CloseHandle(token);return elevated;
+}
+
+QString quoteCommandLineArgument(const QString &argument) {
+    QString quoted=argument;quoted.replace(QLatin1Char('"'),QStringLiteral("\\\""));
+    return QLatin1Char('"')+quoted+QLatin1Char('"');
+}
+
+ChildProcessResult runNightLightHelperProcess(const QString &helper,const QStringList &arguments) {
+    ChildProcessResult result;
+    QString command=quoteCommandLineArgument(helper);
+    for(const QString &argument:arguments)command+=QLatin1Char(' ')+quoteCommandLineArgument(argument);
+    QVector<wchar_t> mutableCommand(command.size()+1);command.toWCharArray(mutableCommand.data());mutableCommand[command.size()]=0;
+    const QString workingDirectory=QFileInfo(helper).absolutePath();
+    STARTUPINFOW startup{};startup.cb=sizeof(startup);startup.dwFlags=STARTF_USESHOWWINDOW;startup.wShowWindow=SW_HIDE;
+    PROCESS_INFORMATION process{};BOOL launched=FALSE;
+
+    if(currentProcessElevated()) {
+        DWORD shellPid=0;const HWND shell=GetShellWindow();if(shell)GetWindowThreadProcessId(shell,&shellPid);
+        HANDLE shellProcess=shellPid?OpenProcess(PROCESS_CREATE_PROCESS,FALSE,shellPid):nullptr;
+        if(shellProcess) {
+            SIZE_T attributeBytes=0;
+            InitializeProcThreadAttributeList(nullptr,1,0,&attributeBytes);
+            QByteArray attributeStorage(static_cast<int>(attributeBytes),Qt::Uninitialized);
+            auto *attributes=reinterpret_cast<PPROC_THREAD_ATTRIBUTE_LIST>(attributeStorage.data());
+            STARTUPINFOEXW extended{};extended.StartupInfo=startup;extended.StartupInfo.cb=sizeof(extended);
+            if(InitializeProcThreadAttributeList(attributes,1,0,&attributeBytes)) {
+                extended.lpAttributeList=attributes;
+                if(UpdateProcThreadAttribute(attributes,0,PROC_THREAD_ATTRIBUTE_PARENT_PROCESS,
+                    &shellProcess,sizeof(shellProcess),nullptr,nullptr)) {
+                    launched=CreateProcessW(reinterpret_cast<LPCWSTR>(helper.utf16()),mutableCommand.data(),
+                        nullptr,nullptr,FALSE,CREATE_NO_WINDOW|EXTENDED_STARTUPINFO_PRESENT,nullptr,
+                        reinterpret_cast<LPCWSTR>(workingDirectory.utf16()),&extended.StartupInfo,&process);
+                }
+                if(!launched)result.error=GetLastError();
+                DeleteProcThreadAttributeList(attributes);
+            } else result.error=GetLastError();
+        }
+        else result.error=GetLastError();
+        if(shellProcess)CloseHandle(shellProcess);
+    } else {
+        launched=CreateProcessW(reinterpret_cast<LPCWSTR>(helper.utf16()),mutableCommand.data(),nullptr,nullptr,FALSE,
+            CREATE_NO_WINDOW,nullptr,reinterpret_cast<LPCWSTR>(workingDirectory.utf16()),&startup,&process);
+        if(!launched)result.error=GetLastError();
+    }
+
+    if(!launched)return result;
+    result.launched=true;
+    const DWORD wait=WaitForSingleObject(process.hProcess,15000);
+    if(wait==WAIT_TIMEOUT){result.timedOut=true;TerminateProcess(process.hProcess,69);WaitForSingleObject(process.hProcess,1000);}
+    else if(wait!=WAIT_OBJECT_0)result.error=GetLastError();
+    GetExitCodeProcess(process.hProcess,&result.exitCode);
+    CloseHandle(process.hThread);CloseHandle(process.hProcess);return result;
+}
+
 constexpr wchar_t kLaunchTaskName[] = L"E-Ink Assistant";
 constexpr wchar_t kLegacyRunPath[] = L"Software\\Microsoft\\Windows\\CurrentVersion\\Run";
-constexpr DWORD kDirectNightLightMinimumBuild = 19041;
+constexpr DWORD kDirectNightLightMinimumBuild = 15063;
 constexpr wchar_t kNightLightStatePath[] = L"Software\\Microsoft\\Windows\\CurrentVersion\\CloudStore\\Store\\DefaultAccount\\Current\\default$windows.data.bluelightreduction.bluelightreductionstate\\windows.data.bluelightreduction.bluelightreductionstate";
 constexpr wchar_t kNightLightStateValue[] = L"Data";
-const QByteArray kNightLightRecoveryMagic("EINKNL1\n",8);
+const QByteArray kNightLightRecoveryMagicV1("EINKNL1\n",8);
+const QByteArray kNightLightRecoveryMagicV2("EINKNL2\n",8);
 
 void updateNightLightTimestamps(NightLightStateRecord *record) {
     record->cloudTimestamp=static_cast<quint64>(QDateTime::currentSecsSinceEpoch());
@@ -424,18 +490,54 @@ ApplyResult WindowsPlatformServices::writeNightLightState(const QByteArray &data
     return code==ERROR_SUCCESS?ApplyResult::ok():ApplyResult::fail(errorMessage(QStringLiteral("Write Night Light state"),static_cast<DWORD>(code)));
 }
 
-bool WindowsPlatformServices::readNightLightRecovery(QByteArray *data) {
-    QFile file(nightLightRecoveryFilePath());if(!file.open(QIODevice::ReadOnly))return false;
-    const QByteArray contents=file.readAll();if(!contents.startsWith(kNightLightRecoveryMagic))return false;
-    const QByteArray original=contents.mid(kNightLightRecoveryMagic.size());NightLightStateRecord record;QString error;
-    if(!NightLightStateCodec::decode(original,&record,&error))return false;
-    if(data)*data=original;return true;
+ApplyResult WindowsPlatformServices::queryNativeNightLight(bool *enabled, bool *openedSettings) {
+    if(!enabled)return ApplyResult::fail(QStringLiteral("Night Light query output is missing."));
+    const QString helper=QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("EinkNightLightControl.exe"));
+    if(!QFileInfo::exists(helper))return ApplyResult::fail(QStringLiteral("The Windows Night Light control helper is missing."));
+    const ChildProcessResult child=runNightLightHelperProcess(helper,{QStringLiteral("query"),QStringLiteral("--quiet")});
+    if(!child.launched)return ApplyResult::fail(errorMessage(QStringLiteral("Start the Windows Night Light control helper"),child.error));
+    if(child.timedOut)return ApplyResult::fail(QStringLiteral("Windows Night Light did not expose its native switch in time."));
+    if(child.exitCode<10||child.exitCode>13)
+        return ApplyResult::fail(QStringLiteral("Windows Night Light native-state query failed (code %1).").arg(child.exitCode));
+    *enabled=child.exitCode>=12;
+    if(openedSettings)*openedSettings=(child.exitCode%2)==1;
+    return ApplyResult::ok();
 }
 
-ApplyResult WindowsPlatformServices::writeNightLightRecovery(const QByteArray &data) {
+ApplyResult WindowsPlatformServices::setNativeNightLight(bool enabled, bool closeSettings) {
+    const QString helper=QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("EinkNightLightControl.exe"));
+    if(!QFileInfo::exists(helper))return ApplyResult::fail(QStringLiteral("The Windows Night Light control helper is missing."));
+    QStringList arguments{enabled?QStringLiteral("on"):QStringLiteral("off"),QStringLiteral("--quiet")};
+    if(closeSettings)arguments<<QStringLiteral("--owned-settings")<<QStringLiteral("--close");
+    const ChildProcessResult child=runNightLightHelperProcess(helper,arguments);
+    if(!child.launched)return ApplyResult::fail(errorMessage(QStringLiteral("Start the Windows Night Light control helper"),child.error));
+    if(child.timedOut)return ApplyResult::fail(QStringLiteral("Windows Night Light did not apply the requested state in time."));
+    return child.exitCode==0?ApplyResult::ok()
+        :ApplyResult::fail(QStringLiteral("Windows Night Light native control failed (code %1).").arg(child.exitCode));
+}
+
+bool WindowsPlatformServices::readNightLightRecovery(QByteArray *data, bool *enabled) {
+    QFile file(nightLightRecoveryFilePath());if(!file.open(QIODevice::ReadOnly))return false;
+    const QByteArray contents=file.readAll();
+    bool originalEnabled=false;QByteArray original;
+    if(contents.startsWith(kNightLightRecoveryMagicV2)&&contents.size()>kNightLightRecoveryMagicV2.size()) {
+        const char state=contents.at(kNightLightRecoveryMagicV2.size());if(state!=0&&state!=1)return false;
+        originalEnabled=state==1;original=contents.mid(kNightLightRecoveryMagicV2.size()+1);
+    } else if(contents.startsWith(kNightLightRecoveryMagicV1)) {
+        original=contents.mid(kNightLightRecoveryMagicV1.size());
+    } else return false;
+    NightLightStateRecord record;QString error;
+    if(!NightLightStateCodec::decode(original,&record,&error))return false;
+    if(contents.startsWith(kNightLightRecoveryMagicV1))originalEnabled=record.enabled;
+    if(data)*data=original;if(enabled)*enabled=originalEnabled;return true;
+}
+
+ApplyResult WindowsPlatformServices::writeNightLightRecovery(const QByteArray &data, bool enabled) {
     const QString path=nightLightRecoveryFilePath();QDir().mkpath(QFileInfo(path).absolutePath());
     QSaveFile file(path);if(!file.open(QIODevice::WriteOnly))return ApplyResult::fail(QStringLiteral("Could not open the Night Light crash-recovery journal."));
-    if(file.write(kNightLightRecoveryMagic)!=kNightLightRecoveryMagic.size()||file.write(data)!=data.size()||!file.commit())
+    const char state=enabled?1:0;
+    if(file.write(kNightLightRecoveryMagicV2)!=kNightLightRecoveryMagicV2.size()||file.write(&state,1)!=1
+        ||file.write(data)!=data.size()||!file.commit())
         return ApplyResult::fail(QStringLiteral("Could not save the Night Light crash-recovery journal."));
     return ApplyResult::ok();
 }
@@ -869,26 +971,30 @@ void WindowsPlatformServices::openVisualEffectsSettings() {
 ApplyResult WindowsPlatformServices::recoverInterruptedNightLightState() {
     const QString journal=nightLightRecoveryFilePath();
     if(!QFileInfo::exists(journal))return ApplyResult::ok();
-    QByteArray original;
-    if(!readNightLightRecovery(&original))
+    QByteArray original;bool originalEnabled=false;
+    if(!readNightLightRecovery(&original,&originalEnabled))
         return ApplyResult::fail(QStringLiteral("The Night Light crash-recovery journal is invalid; no registry value was changed."));
     NightLightStateRecord originalRecord;QString parseError;
     if(!NightLightStateCodec::decode(original,&originalRecord,&parseError))
         return ApplyResult::fail(QStringLiteral("The Night Light crash-recovery state is invalid: ")+parseError);
-    updateNightLightTimestamps(&originalRecord);const ApplyResult restored=writeNightLightState(NightLightStateCodec::encode(originalRecord));if(!restored.success)return restored;
+    ApplyResult restored=setNativeNightLight(originalEnabled);if(!restored.success)return restored;
+    originalRecord.enabled=originalEnabled;updateNightLightTimestamps(&originalRecord);restored=writeNightLightState(NightLightStateCodec::encode(originalRecord));if(!restored.success)return restored;
     QByteArray verified;const ApplyResult readBack=readNightLightState(&verified);if(!readBack.success)return readBack;NightLightStateRecord verifiedRecord;
-    if(!NightLightStateCodec::decode(verified,&verifiedRecord,&parseError)||verifiedRecord.enabled!=originalRecord.enabled)
+    if(!NightLightStateCodec::decode(verified,&verifiedRecord,&parseError)||verifiedRecord.enabled!=originalEnabled)
         return ApplyResult::fail(QStringLiteral("Night Light crash recovery could not be verified."));
-    clearNightLightRecovery();m_originalNightLightState.clear();m_nightLightOwned=false;return ApplyResult::ok();
+    clearNightLightRecovery();m_originalNightLightState.clear();m_originalNightLightEnabled=originalEnabled;
+    m_lastKnownNightLightEnabled=originalEnabled;m_nightLightStateKnown=true;m_nightLightOwned=false;return ApplyResult::ok();
 }
 
 bool WindowsPlatformServices::nightLightControlAvailable() const {
     if(windowsBuild()<kDirectNightLightMinimumBuild)return false;
+    if(!QFileInfo::exists(QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("EinkNightLightControl.exe"))))return false;
     QByteArray data;if(!readNightLightState(&data).success)return false;
     NightLightStateRecord record;return NightLightStateCodec::decode(data,&record,nullptr);
 }
 
 bool WindowsPlatformServices::nightLightEnabled() const {
+    if(m_nightLightStateKnown)return m_lastKnownNightLightEnabled;
     QByteArray data;if(!readNightLightState(&data).success)return false;
     NightLightStateRecord record;return NightLightStateCodec::decode(data,&record,nullptr)&&record.enabled;
 }
@@ -900,11 +1006,15 @@ ApplyResult WindowsPlatformServices::setNightLightDisabled(bool disabled) {
     NightLightStateRecord record;QString parseError;
     if(!NightLightStateCodec::decode(current,&record,&parseError))
         return ApplyResult::fail(QStringLiteral("Night Light state validation failed: ")+parseError);
+    bool closeSettings=false;
     if(!m_nightLightOwned) {
-        result=writeNightLightRecovery(current);if(!result.success)return result;
-        m_originalNightLightState=current;m_nightLightOwned=true;
+        bool originalEnabled=false;
+        result=queryNativeNightLight(&originalEnabled,&closeSettings);if(!result.success)return result;
+        result=writeNightLightRecovery(current,originalEnabled);if(!result.success)return result;
+        m_originalNightLightState=current;m_originalNightLightEnabled=originalEnabled;m_nightLightOwned=true;
     }
     const bool targetEnabled=!disabled;
+    result=setNativeNightLight(targetEnabled,closeSettings);if(!result.success)return result;
     if(record.enabled!=targetEnabled) {
         record.enabled=targetEnabled;
         updateNightLightTimestamps(&record);
@@ -914,25 +1024,28 @@ ApplyResult WindowsPlatformServices::setNightLightDisabled(bool disabled) {
     NightLightStateRecord verifiedRecord;
     if(!NightLightStateCodec::decode(verified,&verifiedRecord,&parseError)||verifiedRecord.enabled!=targetEnabled)
         return ApplyResult::fail(QStringLiteral("Changing Night Light could not be verified."));
+    m_lastKnownNightLightEnabled=targetEnabled;m_nightLightStateKnown=true;
     return ApplyResult::ok();
 }
 
 ApplyResult WindowsPlatformServices::restoreNightLightState() {
-    QByteArray original=m_originalNightLightState;
+    QByteArray original=m_originalNightLightState;bool originalEnabled=m_originalNightLightEnabled;
     if(original.isEmpty()) {
         const QString journal=nightLightRecoveryFilePath();
         if(!QFileInfo::exists(journal))return ApplyResult::ok();
-        if(!readNightLightRecovery(&original))
+        if(!readNightLightRecovery(&original,&originalEnabled))
             return ApplyResult::fail(QStringLiteral("The Night Light crash-recovery journal is invalid; the original state was not restored."));
     }
     NightLightStateRecord originalRecord;QString parseError;
     if(!NightLightStateCodec::decode(original,&originalRecord,&parseError))
         return ApplyResult::fail(QStringLiteral("The saved original Night Light state is invalid: ")+parseError);
-    updateNightLightTimestamps(&originalRecord);const ApplyResult restored=writeNightLightState(NightLightStateCodec::encode(originalRecord));if(!restored.success)return restored;
+    ApplyResult restored=setNativeNightLight(originalEnabled);if(!restored.success)return restored;
+    originalRecord.enabled=originalEnabled;updateNightLightTimestamps(&originalRecord);restored=writeNightLightState(NightLightStateCodec::encode(originalRecord));if(!restored.success)return restored;
     QByteArray verified;const ApplyResult readBack=readNightLightState(&verified);if(!readBack.success)return readBack;NightLightStateRecord verifiedRecord;
-    if(!NightLightStateCodec::decode(verified,&verifiedRecord,&parseError)||verifiedRecord.enabled!=originalRecord.enabled)
+    if(!NightLightStateCodec::decode(verified,&verifiedRecord,&parseError)||verifiedRecord.enabled!=originalEnabled)
         return ApplyResult::fail(QStringLiteral("Restoring the original Night Light state could not be verified."));
-    clearNightLightRecovery();m_originalNightLightState.clear();m_nightLightOwned=false;return ApplyResult::ok();
+    clearNightLightRecovery();m_originalNightLightState.clear();m_originalNightLightEnabled=originalEnabled;
+    m_lastKnownNightLightEnabled=originalEnabled;m_nightLightStateKnown=true;m_nightLightOwned=false;return ApplyResult::ok();
 }
 
 bool WindowsPlatformServices::nightLightAvailable() const { return windowsBuild()>=15063; }

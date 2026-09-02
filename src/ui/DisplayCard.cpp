@@ -234,11 +234,7 @@ QWidget *DisplayCard::saturationSection(const DisplaySettings &state) {
     const bool available=m_controller->platform().saturationPlatformAvailable()&&m_info.colorAdjustmentSupported;
     auto *s=slider(0,300,qRound(state.saturation*100),QStringLiteral("saturation-slider"));s->setEnabled(available);connect(s,&QSlider::valueChanged,percent,[percent](int value){percent->setText(QStringLiteral("%1%").arg(value));});connect(s,&QSlider::sliderReleased,this,[this,s]{m_controller->setSaturation(m_info.stableId,s->value()/100.0,-1);});v->addWidget(s);
     auto *presets=new QHBoxLayout;auto *presetGroup=new QButtonGroup(w);presetGroup->setExclusive(true); const int values[]={0,50,100,130,150,200}; const char *keys[]={"preset.bw","preset.faded","preset.factory","preset.enhanced","preset.vivid","preset.anime"}; const char *names[]={"preset-bw","preset-faded","preset-factory","preset-enhanced","preset-vivid","preset-anime"};
-    for(int i=0;i<6;++i){auto *b=new ChoiceButton(L(keys[i]),QString::fromLatin1(names[i]),ChoiceButton::Position::Standalone);b->setEnabled(available);b->setChecked(state.saturationPreset==i);QFont checkedFont=b->font();checkedFont.setWeight(QFont::Black);const int checkedWidth=QFontMetrics(checkedFont).horizontalAdvance(b->text())+30;b->setMinimumWidth(checkedWidth);presetGroup->addButton(b,i);connect(b,&QPushButton::clicked,this,[this,i,values,s]{s->setValue(values[i]);m_controller->setSaturation(m_info.stableId,values[i]/100.0,i);});presets->addWidget(b,1);}v->addLayout(presets);
-    const char *caption=m_info.usesWindows10Mhc2?"saturation.mhc2.compat"
-        :(available?"saturation.acm":"saturation.unavailable");
-    auto *pipelineNote=label(L(caption),false,true);pipelineNote->setObjectName(QStringLiteral("saturation-pipeline-note"));
-    v->addWidget(pipelineNote);return w;
+    for(int i=0;i<6;++i){auto *b=new ChoiceButton(L(keys[i]),QString::fromLatin1(names[i]),ChoiceButton::Position::Standalone);b->setEnabled(available);b->setChecked(state.saturationPreset==i);QFont checkedFont=b->font();checkedFont.setWeight(QFont::Black);const int checkedWidth=QFontMetrics(checkedFont).horizontalAdvance(b->text())+30;b->setMinimumWidth(checkedWidth);presetGroup->addButton(b,i);connect(b,&QPushButton::clicked,this,[this,i,values,s]{s->setValue(values[i]);m_controller->setSaturation(m_info.stableId,values[i]/100.0,i);});presets->addWidget(b,1);}v->addLayout(presets);return w;
 }
 
 QWidget *DisplayCard::rgbSection(const DisplaySettings &state) {

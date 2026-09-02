@@ -214,7 +214,7 @@ dynamically.
 | Windows Light Mode | build 18362 (Windows 10 1903) | Entire section absent |
 | Saturation and RGB, Windows 11 ACM path | build 26100 plus modern profile APIs and per-display ACM support | Entire sections absent |
 | Saturation and RGB, Windows 10 MHC2 path | build 19041–19045, modern profile APIs, and MHC2 support when queryable | Entire sections absent below the gate; hardware/driver-dependent when the capability API is absent |
-| Tray discovery | Windows 11 per-icon registry; Windows 10 exact-icon overflow detection plus notification preview | User drags the icon from overflow once on Windows 10; fallback callout remains available |
+| Tray discovery | Windows 7–10 1703 private COM; Windows 10 1709–22H2 guarded `IconStreams`; Windows 11 registration-time per-icon watcher | Unknown/private formats fail closed; fallback callout remains available |
 | True per-monitor DPI | OS support required | Windows 7 uses system-DPI behavior |
 
 The Windows 11 path wording is **“Windows 11 24H2 or above.”** Do not shorten it
@@ -419,12 +419,13 @@ claim exact restoration until a captured-state implementation and test exist.
 
 ### 8.2 Windows Light Mode
 
-Windows Light Mode is a separate persistent section, available on build 18362
+Windows Light Mode is a separate session-only section, available on build 18362
 or later. It writes **only** `SystemUsesLightTheme`. It intentionally does not
 write `AppsUseLightTheme`.
 
-It does not follow e-ink connection state and is not reverted when the app
-quits. Both behaviors are explicit product decisions.
+It does not follow e-ink connection state. Opening the app never changes the
+setting. The first in-app change captures the current Windows value, and normal
+quit restores that exact value.
 
 ### 8.3 Night Light
 
@@ -631,31 +632,59 @@ The process is a tray application. Hiding the panel leaves it running.
 
 ### First-run visible-area promotion
 
-On Windows 11, the app inspects the current user's
-`HKCU\Control Panel\NotifyIconSettings` entries, matches the exact executable
-path, removes stale same-filename duplicates, and promotes only the current
-entry. This private method runs only for an executable path that has not already
-completed tray discovery.
+Windows 11 uses the registration-time behavior demonstrated by the MIT-licensed
+[`Aemony/NotifyIconPromote`](https://github.com/Aemony/NotifyIconPromote)
+project. Before `QSystemTrayIcon::show()`, the app
+opens `HKCU\Control Panel\NotifyIconSettings`, preserves the exact-path entry's
+existing `IsPromoted` choice, removes stale same-filename entries belonging to
+E-Ink Assistant, and arms
+`RegNotifyChangeKeyValue`. When Explorer creates the fresh exact-path entry, the
+watcher sets `IsPromoted=1` only while that entry is still unconfigured, then
+creates and removes a disposable value so Explorer observes the key's updated
+last-write state. If Explorer has not cataloged the icon, the app sends a
+one-shot `NIF_INFO` notification while the watcher remains armed; this follows
+the lazy-catalog workaround used by the MIT-licensed
+[`itsnateai/displayoff`](https://github.com/itsnateai/displayoff) project. A
+sole new `IconSnapshot`-only orphan can be claimed against the pre-registration
+subkey baseline, while multiple candidates fail closed. Registration is watched
+for up to 30 seconds because some shell builds publish the opaque entry late. A late write to an already-created
+entry is not treated as success, and an unavailable or still-pending result is
+not persisted as completion, so the app retries on its next launch. Tray
+discovery has a persisted algorithm version so existing installations retry
+once when this behavior changes.
 
-Windows 10 has no `NotifyIconSettings` per-icon model, and Windows reserves
-persistent promotion from overflow for the user. Its compatibility path
-recursively locates the notification and overflow toolbars and identifies the
-entry whose callback window belongs to the current process. If the icon is in
-overflow, the app shows a first-run notification preview and tells the user to
-drag the book icon onto the taskbar once. It does not rewrite the undocumented
-global `IconStreams` blob or the global “show all icons” setting. Windows 11
-uses exact-icon shell discovery as a fallback while waiting for its per-icon
-registry entry, without modifying unrelated icon records.
+On tested Windows 11 24H2 shells, a registry write can be persisted without the
+running taskbar consuming it. The definitive fallback is the live switch at
+**Settings > Personalization > Taskbar > Other system tray icons**. The app
+never clears a choice made through that UI on a later launch.
+
+Windows 7 through Windows 10 1703 use the private `ITrayNotify`/
+`ITrayNotifyWin8` preference interfaces with the build-appropriate ABI. An
+explicit user-hidden preference remains respected. The interface may be
+unavailable to an elevated Windows 7 process, so failure falls through safely.
+
+Windows 10 1709 through 22H2 uses the persisted `IconStreams` fallback because
+the older COM structure stopped working in Fall Creators Update. The fallback
+requires a 20-byte header, an exact count/length match, 1,640-byte records, and
+one exact executable-path match before changing preference byte 528 to
+`SHOW_ALWAYS`. Ambiguous entries or any format mismatch prevent the write. The
+original blob is saved once as `tray-iconstreams-backup.bin` in the app
+configuration directory. Explorer can retain an in-memory copy, so the new
+preference may become visible only after Explorer next restarts; the app does
+not forcibly terminate the desktop shell.
+
+All versions retain exact-icon shell discovery and the temporary notification
+preview/welcome fallback. The app never changes the global “show all icons”
+setting or a different executable's record.
 
 An overflow icon is already active and normally has `NIS_HIDDEN` clear.
 `Shell_NotifyIcon(NIM_MODIFY)` with `NIF_STATE`/`NIS_HIDDEN` therefore cannot
 change the separate Explorer user preference that decides whether the icon is
 in the visible area. The app must not treat that API's success as promotion.
-Older private `ITrayNotify::SetPreference` examples are not a safe fallback:
-the interface changed after Windows 10 Fall Creators Update and its legacy
-marshaled structure is crash-prone on current builds. The supported workaround
-is the temporary notification preview documented by Microsoft, followed by the
-user's one-time drag. Exact detection verifies whether the drag succeeded.
+The old `ITrayNotify` structure is never called on Windows 10 1709 or later and
+is never called on Windows 11, where it is known to be ineffective or
+crash-prone. Exact build dispatch is a process-load and memory-safety rule, not
+only a feature preference.
 
 The first-run welcome popup is illustrative but must point to the actual icon.
 The anchor path attempts to inspect Explorer's notification toolbar across all
@@ -682,6 +711,7 @@ Persisted general state includes:
 - launch at login;
 - Reduce Transparency & Motion and automatic-follow state;
 - first-run welcome/tray discovery state and executable path.
+- tray-discovery algorithm version, so corrected promotion logic can retry once.
 
 Persisted per-display state includes:
 
@@ -882,9 +912,10 @@ test environment.
    a visible saturation change, but other hardware still requires a physical
    check and exact restoration verification.
 4. **Tray discovery/precise anchoring is private.** Explorer internals can
-   change. Windows 10 has no supported automatic persistent promotion API, so
-   the app uses a temporary notification preview and the user drags the icon
-   from overflow once; fallback behavior must remain tested.
+   change. Windows 10's persisted database may require an Explorer restart to
+   take effect, and the Windows 11 registration record may not be published by
+   modified taskbars. Every path must fail closed and retain the normal
+   overflow/welcome fallback.
 5. **Visual-effects restoration is not a complete original-state snapshot.**
    It currently returns to the non-reduced state.
 6. **An already-running old build must be quit once during an upgrade.** Its

@@ -5,7 +5,6 @@
 #include "platform/PlatformServices.h"
 
 #include <QObject>
-#include <QTimer>
 #include <QThreadPool>
 #include <atomic>
 #include <memory>
@@ -44,7 +43,8 @@ public:
     void setLaunchAtLogin(bool enabled);
     void setLanguage(const QString &language);
     void setShowWelcome(bool enabled);
-    void setTrayDiscoveryShown(bool shown, const QString &executablePath=QString());
+    void setTrayDiscoveryShown(bool shown, const QString &executablePath=QString(),
+                               int version=kCurrentTrayDiscoveryVersion);
     void saveCurve(int slot, const ToneCurve &curve);
     void applySavedCurve(int slot, const QString &displayId);
     void renameCurve(int slot, const QString &name);
@@ -75,7 +75,6 @@ private:
     void waitForColorTasks();
     void persistAndNotify();
     void report(const ApplyResult &result);
-    void applyPendingNightLightState();
     void beginQuietOperation();
     void endQuietOperation();
 
@@ -90,9 +89,8 @@ private:
     QString m_lastError;
     bool m_lastNightLightDisabled = false;
     bool m_nightLightStateKnown = false;
-    bool m_hasPendingNightLightState = false;
-    bool m_pendingNightLightDisabled = false;
-    QTimer m_nightLightApplyTimer;
+    bool m_windowsLightModeOwned = false;
+    bool m_originalWindowsLightMode = false;
     QThreadPool m_colorPool;
     QThreadPool m_systemPool;
 };
