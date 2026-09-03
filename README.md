@@ -28,8 +28,7 @@ crushed shadow detail, and visible macOS dithering. E-Ink Assistant is a small
 menu bar app that addresses those problems per display, leaving your laptop
 screen alone. Color panels additionally get saturation and direct RGB controls.
 
-No permissions for the core display controls. No background service beyond the
-app itself. MIT licensed.
+MIT licensed.
 
 ## Latest release
 
