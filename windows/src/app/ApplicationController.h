@@ -6,10 +6,17 @@
 
 #include <QObject>
 #include <QThreadPool>
+#include <QTimer>
 #include <atomic>
 #include <memory>
 
 namespace eink {
+
+enum class ColorSafetyPhase {
+    Idle,
+    Preparing,
+    AwaitingConfirmation
+};
 
 class ApplicationController : public QObject {
     Q_OBJECT
@@ -30,6 +37,15 @@ public:
     void setEink(const QString &id, bool enabled);
     void setSaturation(const QString &id, double value, int preset = -1);
     void setRgb(const QString &id, const RgbBalance &rgb);
+    void setExperimentalColorEnabled(const QString &id, bool enabled);
+    void confirmExperimentalColor(const QString &id);
+    void rollbackExperimentalColor(const QString &id);
+    bool colorControlsEnabled(const QString &id) const;
+    bool colorExperimentAvailable(const QString &id) const;
+    bool colorExperimentDenied(const QString &id) const;
+    ColorSafetyPhase colorSafetyPhase(const QString &id) const;
+    int colorSafetySecondsRemaining(const QString &id) const;
+    void setColorSafetyTickIntervalForTests(int milliseconds);
     void setTextLevel(const QString &id, TextLevel level);
     void setEnhanceLevel(const QString &id, EnhanceLevel level);
     void setAdvanced(const QString &id, bool enabled);
@@ -44,6 +60,7 @@ public:
     void openGpuControlPanel(const QString &displayId);
     void setLanguage(const QString &language);
     void setShowWelcome(bool enabled);
+    void setHardwareSetupNoticeHidden(bool hidden);
     void setTrayDiscoveryShown(bool shown, const QString &executablePath=QString(),
                                int version=kCurrentTrayDiscoveryVersion);
     void saveCurve(int slot, const ToneCurve &curve);
@@ -68,12 +85,15 @@ signals:
     void nightLightOperationFinished();
     void visualEffectsStateChanged(bool reduced);
     void windowsLightModeStateChanged(bool enabled);
+    void colorSafetyStateChanged(const QString &displayId, ColorSafetyPhase phase, int secondsRemaining);
 
 private:
     const DisplayInfo *displayById(const QString &id) const;
     void applyCurve(const QString &id);
     void applyColor(const QString &id);
     void queueColorApply(const QString &id);
+    void advanceColorSafetyTest();
+    void finishColorSafetyRollback(const QString &id, bool denyFingerprint);
     void waitForColorTasks();
     void persistAndNotify();
     void report(const ApplyResult &result);
@@ -95,6 +115,11 @@ private:
     bool m_originalWindowsLightMode = false;
     QThreadPool m_colorPool;
     QThreadPool m_systemPool;
+    QTimer m_colorSafetyTimer;
+    QString m_colorSafetyDisplayId;
+    ColorSafetyPhase m_colorSafetyPhase = ColorSafetyPhase::Idle;
+    int m_colorSafetySecondsRemaining = 0;
+    int m_colorSafetyTickIntervalMs = 1000;
 };
 
 } // namespace eink

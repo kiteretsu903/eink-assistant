@@ -24,6 +24,7 @@ AppSettings SettingsStore::load() const {
     result.reduceVisualEffects = s.value(QStringLiteral("general/reduceVisualEffects"), false).toBool();
     result.autoVisualEffects = s.value(QStringLiteral("general/autoVisualEffects"), true).toBool();
     result.showWelcome = s.value(QStringLiteral("general/showWelcome"), true).toBool();
+    result.hideHardwareSetupNotice = s.value(QStringLiteral("general/hideHardwareSetupNotice"), false).toBool();
     result.trayDiscoveryShown = s.value(QStringLiteral("general/trayDiscoveryShown"), false).toBool();
     result.trayDiscoveryVersion = s.value(QStringLiteral("general/trayDiscoveryVersion"), 0).toInt();
     result.trayDiscoveryExecutablePath = s.value(QStringLiteral("general/trayDiscoveryExecutablePath")).toString();
@@ -40,6 +41,9 @@ AppSettings SettingsStore::load() const {
         d.rgb.red = s.value(QStringLiteral("red"), 1.0).toDouble();
         d.rgb.green = s.value(QStringLiteral("green"), 1.0).toDouble();
         d.rgb.blue = s.value(QStringLiteral("blue"), 1.0).toDouble();
+        d.experimentalColorEnabled = s.value(QStringLiteral("experimentalColorEnabled"), false).toBool();
+        d.confirmedColorFingerprint = s.value(QStringLiteral("confirmedColorFingerprint")).toString();
+        d.failedColorFingerprint = s.value(QStringLiteral("failedColorFingerprint")).toString();
         d.textLevel = static_cast<TextLevel>(s.value(QStringLiteral("textLevel"), 0).toInt());
         d.enhanceLevel = static_cast<EnhanceLevel>(s.value(QStringLiteral("enhanceLevel"), 0).toInt());
         d.advanced = s.value(QStringLiteral("advanced"), false).toBool();
@@ -80,6 +84,7 @@ void SettingsStore::save(const AppSettings &settings) const {
     s.setValue(QStringLiteral("general/reduceVisualEffects"), settings.reduceVisualEffects);
     s.setValue(QStringLiteral("general/autoVisualEffects"), settings.autoVisualEffects);
     s.setValue(QStringLiteral("general/showWelcome"), settings.showWelcome);
+    s.setValue(QStringLiteral("general/hideHardwareSetupNotice"), settings.hideHardwareSetupNotice);
     s.setValue(QStringLiteral("general/trayDiscoveryShown"), settings.trayDiscoveryShown);
     s.setValue(QStringLiteral("general/trayDiscoveryVersion"), settings.trayDiscoveryVersion);
     s.setValue(QStringLiteral("general/trayDiscoveryExecutablePath"), settings.trayDiscoveryExecutablePath);
@@ -96,6 +101,9 @@ void SettingsStore::save(const AppSettings &settings) const {
         s.setValue(QStringLiteral("red"), d.rgb.red);
         s.setValue(QStringLiteral("green"), d.rgb.green);
         s.setValue(QStringLiteral("blue"), d.rgb.blue);
+        s.setValue(QStringLiteral("experimentalColorEnabled"), d.experimentalColorEnabled);
+        s.setValue(QStringLiteral("confirmedColorFingerprint"), d.confirmedColorFingerprint);
+        s.setValue(QStringLiteral("failedColorFingerprint"), d.failedColorFingerprint);
         s.setValue(QStringLiteral("textLevel"), static_cast<int>(d.textLevel));
         s.setValue(QStringLiteral("enhanceLevel"), static_cast<int>(d.enhanceLevel));
         s.setValue(QStringLiteral("advanced"), d.advanced);

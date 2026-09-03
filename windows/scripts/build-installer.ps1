@@ -1,7 +1,7 @@
 param(
     [ValidateSet('Debug','Release')]
     [string]$Configuration = 'Release',
-    [string]$Version = '1.0',
+    [string]$Version = '1.1',
     [string]$QtRoot = 'C:\Users\Admin\Qt',
     [string]$BuildDirectory = 'build-installer',
     [string]$InnoSetupCompiler,
@@ -65,7 +65,6 @@ if (-not $InnoSetupCompiler) {
 if (-not $InnoSetupCompiler -or -not (Test-Path -LiteralPath $InnoSetupCompiler -PathType Leaf)) {
     throw 'Inno Setup 6 compiler was not found. Install JRSoftware.InnoSetup with WinGet, or pass -InnoSetupCompiler.'
 }
-
 $translations = @(
     [pscustomobject]@{
         Name = 'ChineseSimplified.isl'

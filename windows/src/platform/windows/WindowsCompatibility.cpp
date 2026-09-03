@@ -6,12 +6,16 @@ ColorPipeline chooseColorPipeline(quint32 build,
                                   bool modernProfileApisAvailable,
                                   bool mhc2CapabilityApiAvailable,
                                   bool mhc2Supported,
-                                  bool acmSupported) {
+                                  bool acmSupported,
+                                  bool matrixDdiSupported,
+                                  bool wddm26OrLater,
+                                  bool exactTargetMapped) {
     if (build >= 26100)
         return modernProfileApisAvailable && acmSupported
             ? ColorPipeline::Windows11Acm : ColorPipeline::Unavailable;
 
-    if (build < 19041 || build >= 22000 || !modernProfileApisAvailable)
+    if (build < 19041 || build >= 22000 || !modernProfileApisAvailable
+        || !matrixDdiSupported || !wddm26OrLater || !exactTargetMapped)
         return ColorPipeline::Unavailable;
 
     if (mhc2CapabilityApiAvailable)

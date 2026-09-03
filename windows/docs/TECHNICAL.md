@@ -1,9 +1,9 @@
 # E-Ink Assistant for Windows — Engineering Reference and Decision Record
 
 **Document status:** authoritative for the Windows port
-**Application version:** 1.0.x
-**Release status:** source baseline prepared; Windows 1.0 is not released
-**Last reconciled with the source tree:** 2026-09-01
+**Application version:** 1.1.x
+**Release status:** source baseline prepared; Windows 1.1 is not released
+**Last reconciled with the source tree:** 2026-09-02
 **Primary audience:** maintainers, release engineers, and later coding agents
 
 This document records the implemented Windows architecture, product decisions,
@@ -36,7 +36,7 @@ The application does not install a service, kernel driver, or vendor-specific
 display hack. It does not pretend that a screen overlay is equivalent to real
 display color calibration.
 
-Windows 1.0 is recorded consistently in CMake project metadata, the executable
+Windows 1.1 is recorded consistently in CMake project metadata, the executable
 manifest and version resource, and the visible panel header. This source-tree
 identity does not create a public release, tag, website update, or root-product
 changelog entry.
@@ -75,6 +75,8 @@ enumeration, accessibility settings, and the notification-area icon use public
 Windows and Qt APIs. The application does not write Explorer's private tray
 preference database or attempt to force its icon into the visible area. The
 first-run window shows the exact icon and gives manual drag-and-pin guidance.
+Its preview is rendered from the same vector path at 4x backing resolution so
+high-DPI scaling does not blur the glyph.
 
 No undocumented GPU dithering registry setting is used. Windows has no safe,
 universal, public per-display dithering control, so the Windows UI does not show
@@ -91,13 +93,11 @@ Management (ACM) must be supported by the selected display.
 The same executable selects a separate **Windows 10 MHC2 path** at runtime on
 builds 19041 through 19045. That path reuses the transactional MHC2
 profile/association work but never queries or changes Windows 11 ACM/WCG state.
-It requires the modern display-profile entry points in `mscms.dll`. If
-`ColorProfileGetDeviceCapabilities` is exported, the exact display must report
-MHC2 support. The tested Windows 10 build 19044 image does not export that
-capability entry point, so availability remains display- and driver-dependent.
-Visible saturation changes were physically verified on the test configuration
-recorded in section 15.4; this is evidence for that hardware, not a universal
-Windows 10 guarantee.
+It requires the modern display-profile entry points in `mscms.dll`, an exact
+DisplayConfig adapter/source/target mapping, WDDM 2.6 or later, and a positive
+per-target MatrixDDI capability result. If `ColorProfileGetDeviceCapabilities`
+is exported, the exact display must also report MHC2 support. Passing these
+checks produces a candidate, not proof that the driver applies MHC2 correctly.
 
 This is the closest universal Windows path to the macOS behavior. A transparent
 overlay was rejected because it changes composited pixels rather than the
@@ -107,9 +107,35 @@ capture behavior, and produces incorrect results in many applications.
 Saturation and RGB are composed into **one** generated profile. They are not
 separate independent transforms.
 
-The **Factory** preset means an identity profile at Saturation 100% and RGB
-100/100/100. It does not disable ACM. Keeping the neutral profile active avoids
-the visible flicker caused by toggling ACM off and on.
+Duplicate-display topology is treated as one color-control group. DisplayConfig
+is queried through the Windows 7-compatible active-path representation, and
+each target is retained for identity, EDID, output-format, and
+capability checks. Profile association remains source-scoped, and cloned
+physical targets share that source. Windows Settings explicitly defers display
+profile application in this topology, so the app marks Saturation and RGB
+unavailable, skips the safety test, and recommends switching to Extend. It does
+not offer a GPU-control-panel fallback for this topology-specific limitation.
+
+Only one target in a clone group may own e-ink tuning state. Gamma operations
+remain source-scoped, which is why the UI warns that Text Contrast, Video
+Enhance, and Advanced adjustments also affect the cloned peer.
+
+During cloning, Windows can report `wideColorSupported = false` while retaining
+`wideColorUserEnabled = true` for the selected target. That retained bit does
+not prove that an MHC2 matrix is being executed, so clone topology overrides it
+and fails the active color-profile gate. Outside clone mode, an already-active
+WCG/ACM pipeline remains accepted as usable.
+
+During rollback, `ColorProfileGetDisplayList` can expose an effective profile
+through both scopes even when only one scope owns the association. If removing
+that inherited entry returns `ERROR_PROFILE_NOT_ASSOCIATED_WITH_DEVICE`, cleanup
+treats it as an idempotent success and continues uninstalling the generated
+profile.
+
+Windows 10 MHC2 controls are off by default. The user must enable the
+experimental controls and complete a watchdog-backed visual test before an
+MHC2 profile is retained. The **Factory** preset then means an identity profile
+at Saturation 100% and RGB 100/100/100. On Windows 11 it does not disable ACM.
 
 ### 2.4 Tone curves use the display gamma ramp
 
@@ -119,11 +145,27 @@ per display, but the graphics driver may clamp, alter, or reject a requested
 ramp. The application captures the original ramp before the first change and
 restores it when tuning is removed or the app exits.
 
+In Duplicate mode the display DC represents the shared source, so tone-curve
+changes also affect every cloned target. The clone warning therefore covers
+text/video presets and advanced curves; Saturation and RGB are separately
+reported unavailable because Windows does not apply their profile in this mode.
+
 Text Contrast and Video Enhance are mutually exclusive because both own the
 same hardware gamma table. Advanced curve controls also feed the same curve
 pipeline.
 
-### 2.5 Manual startup is elevated; logon startup uses Task Scheduler
+### 2.5 Topology changes are transactional
+
+`WM_DISPLAYCHANGE`, `WM_DEVICECHANGE`, and power notifications are debounced for
+250 ms. When the adapter/source/target or clone membership changes, the
+controller cancels an active color safety test without rejecting its hardware
+fingerprint, waits for queued color work, restores the old source state, then
+publishes the new target list. The event handler reapplies saved settings only
+after that refresh. This covers both Duplicate-to-Extend and
+Extend-to-Duplicate transitions and prevents an old source association from
+being mistaken for the new topology.
+
+### 2.6 Manual startup is elevated; logon startup uses Task Scheduler
 
 The executable manifest requests `requireAdministrator`. Manual launch therefore
 shows a UAC prompt. This was an explicit product decision to make system color
@@ -155,18 +197,19 @@ when the main UI ran at medium integrity and now provides process isolation and
 recovery structure, but it is no longer the only elevation boundary because
 the main executable itself is elevated.
 
-### 2.6 Unsupported controls are hidden; actionable guidance may remain
+### 2.7 Unsupported controls are hidden; actionable guidance may remain
 
 Capability checks happen both in the UI and the Windows backend. A feature that
 is unavailable must not be constructed as a visible adjustment control, and the
 backend must still reject an accidental call. This two-layer rule prevents a UI
 error from reaching an unsupported API.
 
-Do not replace absence with a permanently disabled control. The saturation
-exception is an informational section: it explains why E-Ink Assistant cannot
-adjust the selected display, identifies that display's scanout GPU, and offers
-one verified vendor-panel launcher when installed. It never presents an
-unavailable E-Ink Assistant slider as usable.
+Do not replace absence with a permanently disabled slider. Saturation has two
+informational states: a Windows 10 candidate shows an experimental enable
+switch while keeping the actual sliders absent, and an unsupported/failed path
+shows only manual guidance. Both identify the scanout GPU and offer one verified
+vendor-panel launcher when installed. The manual guide remains visible while a
+candidate's experimental controls are off and disappears after confirmation.
 
 ## 3. Source layout and ownership
 
@@ -227,7 +270,7 @@ dynamically.
 | Disable Night Light | build 19041 (Windows 10 2004) plus strict payload validation | Recommendation, Settings path and native settings button |
 | Windows Light Mode | build 18362 (Windows 10 1903) | Entire section absent |
 | Saturation and RGB, Windows 11 ACM path | build 26100 plus modern profile APIs and per-display ACM support | Adjustment controls absent; selected e-ink display gets driver/manual guidance |
-| Saturation and RGB, Windows 10 MHC2 path | build 19041–19045, modern profile APIs, and MHC2 support when queryable | Adjustment controls absent below the gate; hardware/driver-dependent when the capability API is absent; selected e-ink display gets upgrade/manual guidance |
+| Saturation and RGB, Windows 10 MHC2 path | build 19041–19045, modern profile APIs, exact target mapping, WDDM 2.6+, MatrixDDI, and MHC2 support when queryable | Candidate controls default off; first enable requires a 5-second warning and 15-second watchdog-backed confirmation; unsupported and disabled states retain manual GPU-panel guidance |
 | Tray icon and first-run guidance | Windows 7 SP1 | Windows owns visible/overflow placement; the welcome window provides manual pinning steps |
 | True per-monitor DPI | OS support required | Windows 7 uses system-DPI behavior |
 
@@ -309,28 +352,53 @@ The backend repeats these checks. Color profile APIs such as
 `ColorProfileSetDisplayDefaultAssociation`, and related queries are loaded from
 `mscms.dll` at runtime to preserve the Windows 7 process-loader path.
 
-Builds 19041 through 19045 use a second runtime path in the same executable:
+Builds 19041 through 19045 use a second runtime path in the same executable.
+The hard-fail gate is deliberately limited to:
 
 1. all required modern profile list/default/association entry points must be
    present;
-2. `ColorProfileGetDeviceCapabilities`, when present, must return MHC2 support
-   for the exact adapter LUID and source ID;
-3. when that capability function is absent, the UI identifies the Windows 10
-   MHC2 path and warns that support remains hardware/driver-dependent;
-4. the generated MHC2 profile is installed and selected transactionally, but
-   ACM/WCG is neither queried nor toggled.
+2. the OS build must be at least 19041 and below 22000;
+3. the active path must map to an exact adapter LUID, source ID and target ID;
+4. the adapter must report WDDM 2.6 or later through
+   `D3DKMTQueryAdapterInfo(KMTQAITYPE_DRIVERVERSION)`;
+5. the undocumented per-target DisplayConfig request type `-12` must return
+   MatrixDDI bit 0 set;
+6. `ColorProfileGetDeviceCapabilities`, when present, must return MHC2 support.
+
+There is no UBR floor inside the 19041 family. A physically observed 19041.1
+system applied MHC2 correctly through Intel UHD 770 while the same display
+failed through Radeon RX 550, proving that the build revision alone is not a
+valid rejection rule.
+
+A passed platform gate is **Candidate**. Windows 10 stores no generated profile
+and exposes no Saturation/RGB sliders by default. The user may enable an
+experimental switch. A five-second warning precedes a 101% matrix test, then a
+separate watchdog process owns a fifteen-second rollback deadline. A centered
+in-window modal dims the panel, presents a large countdown, and asks the user to
+confirm that no abnormal darkening, color shift, or loss of visibility occurred.
+The confirmation action is deliberately bold and red. Confirmation records a
+compatibility fingerprint. Timeout or explicit **Roll back** restores the prior
+state and returns to Candidate without rejecting the fingerprint. Only a real
+test-apply or confirmation failure records the fingerprint as failed.
+
+The fingerprint hashes OS build/UBR, GPU device identity and driver version,
+monitor identity and EDID, source/target/output technology, output encoding and
+bit depth, Advanced Color state, WDDM version, and MatrixDDI result. A changed
+fingerprint returns to Candidate. A matching failed fingerprint is HardFail.
+The older `deniedColorFingerprint` persistence key is intentionally ignored so
+timeouts and voluntary rollbacks recorded by earlier builds do not block retry.
 
 API success cannot prove that scanout hardware applied the MHC2 matrix. The
-current Windows 10 test configuration has been physically verified, while
-other display/GPU combinations still require a visual check. Quit and crash
-recovery use the same association/default/profile journal as the Windows 11
-path.
+independent watchdog opens the existing recovery journal after timeout and
+restores the previous profile even if the tray process exits or stops
+responding. Quit and crash recovery use the same association/default/profile
+journal as the Windows 11 path.
 
-When neither color path is available, the saturation and RGB controls remain
-absent. The selected display instead shows one of two messages. Before build
-26100, Windows 11 24H2 or above is described only as something that *may* add
-support. On build 26100 or later, the message recommends updating the current
-graphics driver and does not promise that an OS upgrade will help.
+When neither color path is available, or when a Windows 10 fingerprint has a
+real test failure, the saturation and RGB controls remain absent and manual GPU-panel
+guidance remains. A Windows 10 candidate also shows that guidance while its
+experimental switch is off. After confirmation and while the switch is on, the
+manual guide is hidden.
 
 The fallback resolves the vendor from the exact display adapter LUID and opens
 only an installed matching panel. Discovery prefers registered AppsFolder
@@ -393,9 +461,16 @@ Never delete a profile that cannot be positively identified as generated by
 E-Ink Assistant. Never assume the original profile is system-wide; preserve its
 scope.
 
+The Windows 10 first-use watchdog is the same executable running in a hidden
+helper mode. A named event commits the test. If the event is not signaled within
+fifteen seconds, the helper runs interrupted-color recovery. The helper starts
+before the test profile is applied and bypasses the normal single-instance UI
+lock.
+
 ### 6.4 Factory behavior
 
-Factory is an active neutral profile. It must not:
+After a color path has been enabled, Factory is an active neutral profile. It
+must not:
 
 - turn ACM off;
 - detach the profile merely because every slider equals 100%;
@@ -411,7 +486,7 @@ Windows gamma ramp. The curve uses a smooth transition around the knee and
 black/white point remapping while remaining monotonic and preserving valid
 endpoints.
 
-Current Windows 1.0 presets are:
+Current Windows 1.1 presets are:
 
 | Group | Preset | Black | Gamma | Knee | White |
 | --- | --- | ---: | ---: | ---: | ---: |
@@ -627,7 +702,10 @@ window incorrectly. `MainPanel::showPanel(QScreen*)` therefore:
 
 The welcome window binds to the primary screen and positions inside its
 available bottom-right area, with a delayed reposition after its final size is
-known. It no longer depends on private tray-icon geometry.
+known. It no longer depends on private tray-icon geometry. After the user closes
+the welcome window, main-panel presentation is deferred by 100 ms so the
+dialog's trailing deactivate event is consumed while the panel is still hidden;
+normal focus-loss hiding remains active once the panel appears.
 
 ## 11. Responsiveness and busy feedback
 
@@ -639,6 +717,13 @@ for color work. Saturation/RGB profile operations are serialized because the
 Windows color store and per-display recovery records are transactional shared
 state. Hotplug reapply also enters this queue when invoked from the controller
 thread.
+
+The Windows 10 experimental color flow uses a centered modal overlay with a
+five-second UI countdown before the write and a fifteen-second confirmation
+countdown after it. The overlay blocks and visually dims the rest of the panel;
+focus-loss hiding is suspended only while this safety prompt is active.
+Countdown work does not block the GUI thread. The rollback authority lives in a
+separate process rather than a UI timer alone.
 
 Reduce Transparency & Motion and Windows Light Mode use a separate serialized
 system-settings pool. Their switches disappear immediately after a click and a
@@ -689,9 +774,10 @@ or the hidden-icons menu. E-Ink Assistant deliberately performs no private COM,
 `IconStreams`, `NotifyIconSettings`, toolbar-inspection, or shell-restart work
 to override that choice.
 
-The first-run welcome window places a dedicated tray section at the top. It
-renders the same monochrome book-pages glyph used by the live tray icon and
-asks the user to:
+The shortened first-run welcome window places three compact rows inside one
+white outlined card: tray pinning, the Bigme B251 Pro baseline, and a generic
+balanced-settings reminder. Its first row renders the same monochrome
+book-pages glyph used by the live tray icon and asks the user to:
 
 1. open hidden icons (`^`) at the right side of the taskbar;
 2. find the shown book-pages icon;
@@ -717,6 +803,8 @@ Persisted general state includes:
 - language;
 - launch at login;
 - Reduce Transparency & Motion and automatic-follow state;
+- permanent suppression of the main-panel hardware-setup reminder; choosing
+  **Got it** dismisses that reminder only for the current panel session;
 - first-run welcome preference; legacy tray-discovery values remain readable
   only for settings-file compatibility and do not trigger shell integration.
 
@@ -724,6 +812,8 @@ Persisted per-display state includes:
 
 - stable ID and e-ink selection;
 - saturation preset/value and RGB values;
+- whether experimental Windows 10 color controls are enabled;
+- the confirmed and real-failure Windows 10 compatibility fingerprints;
 - Text Contrast and Video Enhance selection;
 - Advanced curve values;
 - five saved custom curves.
@@ -747,7 +837,8 @@ Required toolchain:
 - MinGW 8.1 x64;
 - CMake;
 - Ninja;
-- PowerShell 7.
+- PowerShell 7;
+- Inno Setup 6.7 or later for the installer.
 
 From the repository's `windows/` directory:
 
@@ -770,6 +861,23 @@ The shipped runtime is x64. Do not run `windeployqt` blindly and accept its
 entire output: the current explicit dependency list is intentional for package
 size and auditability. If a new Qt module is linked, update both CMake and the
 package list.
+
+The installer does not use `AppMutex` as an unconditional startup block. Before
+files-in-use detection it signals `Local\EinkAssistant.QuitInstance.v1`; the
+running version 1.1-or-later process immediately hides its UI, restores owned
+display state through the normal shutdown path, and releases the single-instance
+mutex. Setup waits up to eight seconds. If graceful shutdown is unavailable or
+times out, Inno Setup's Restart Manager page offers to force-close the process
+and continue, with automatic application restart disabled. The force path is a
+fallback because termination can defer restoration until crash recovery on the
+next launch.
+
+The installer uses Inno Setup's `modern dynamic excludelightcontrols
+hidebevels` style at 115% wizard size. Light mode keeps neutral native control
+colors; dark mode follows the system. A high-resolution product icon replaces
+the built-in blue package artwork. This modernizes Setup and Uninstall without
+replacing the mature Win32 installation engine or dropping Windows 7. High
+Contrast and `/NOSTYLE` intentionally fall back to native accessible controls.
 
 If the canonical ZIP is open in Explorer or another program,
 `Compress-Archive -Force` can fail. Close the handle or use a uniquely named
@@ -832,6 +940,9 @@ E2E tests cover, among other cases:
 - hotplug stability and reapply;
 - tray `book.pages` glyph rendering;
 - Windows 10/default color-pipeline decisions and the legacy tray strategy;
+- Windows 10 candidate/default-off UI, modal five/fifteen-second confirmation,
+  confirmation persistence, fingerprint invalidation, retryable timeout/user
+  rollback, and actual test-failure denial;
 - vector selector/check icons;
 - first show binding to the requested screen;
 - wide layout, Factory clipping, continuous segmented mode rows, selected
@@ -888,6 +999,13 @@ changes were visible on the physical panel. This verifies the transform on
 that configuration only; profile restoration and additional GPU/display
 combinations remain release-check items.
 
+Additional A/B evidence (2026-09-02): on one Windows 10 19041.1 system, a Bigme
+B13 became nearly black when the MHC2 profile was applied through Radeon RX 550
+but worked after the cable was moved to Intel UHD 770. A separate Windows 10 AMD
+Radeon 780M system also works. This is why the product gate is per fingerprint
+and ends with visual confirmation rather than globally rejecting AMD, RX 550,
+or build 19041.1.
+
 ## 16. Resource and performance policy
 
 The low-memory strategy is architectural:
@@ -927,18 +1045,19 @@ test environment.
    executable requires elevation, even when the user only opens the panel.
 2. **Gamma behavior is driver-dependent.** `SetDeviceGammaRamp` does not promise
    identical hardware response across GPUs and HDR modes.
-3. **Windows 10 MHC2 remains hardware-dependent.** Build 19044 lacks the
-   capability entry point on the tested image. The test configuration produced
-   a visible saturation change, but other hardware still requires a physical
-   check and exact restoration verification.
+3. **Windows 10 MHC2 remains hardware-dependent.** The documented capability
+entry point is absent on tested Windows 10 images, and MatrixDDI can be
+advertised even when a driver renders incorrectly. The experimental watchdog
+and per-fingerprint confirmation remain mandatory.
 4. **Tray placement is user-controlled.** Windows may initially place the icon
    in hidden icons. The welcome guide shows the exact glyph and manual drag
    path; the app does not force promotion.
 5. **Visual-effects restoration is not a complete original-state snapshot.**
    It currently returns to the non-reduced state.
-6. **An already-running old build must be quit once during an upgrade.** Its
-   single-instance lock prevents the new executable from initializing and
-   reconciling the scheduled-task path until the older process exits.
+6. **Upgrading a pre-1.1 running build may require forced closure.** Those builds
+   do not expose the graceful installer-exit event. Restart Manager can close
+   them so Setup may continue, but display-state restoration can be deferred
+   until the updated app launches and runs crash recovery.
 7. **Windows 7 is code-path tested, not exhaustively hardware certified.** Qt,
    driver, TLS/certificate, and GPU differences still require a real VM or
    machine release check.
@@ -1008,14 +1127,17 @@ Do not:
 - [ ] Verify Launch at Login task XML has no AC-power restrictions and starts
       elevated without an interactive UAC prompt.
 - [ ] Verify the first-run window has no arrow, shows the exact book-pages tray
-      glyph, and gives clear manual hidden-icons pinning steps in all locales.
+      glyph sharply, uses one compact white card, and gives clear manual
+      hidden-icons pinning steps in all locales.
+- [ ] Verify the main-panel hardware reminder appears above system controls;
+      **Got it** is session-only and **Never show it again** persists.
 - [ ] Inspect English, Simplified Chinese, Traditional Chinese, and Japanese at
       100%, 125%, 150%, and mixed-monitor DPI where available.
 - [ ] Package contains executable, minimal DLL/plugin set, licenses,
       `README.md`, `TECHNICAL.md`, and `THIRD-PARTY-NOTICES.md`.
 - [ ] Installer build validates that package, installs under Program Files,
-      registers uninstall metadata and shortcuts, and blocks replacement while
-      the running tray process owns its single-instance mutex.
+      registers uninstall metadata and shortcuts, requests graceful shutdown,
+      and offers force-close-and-continue if the running app remains.
 - [ ] Completion-page launch inherits Setup's administrative token; do not run
       the `requireAdministrator` executable with the original unelevated token.
 - [ ] Record ZIP SHA-256 and real-system verification notes.

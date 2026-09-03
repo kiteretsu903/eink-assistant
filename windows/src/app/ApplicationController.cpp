@@ -2,6 +2,7 @@
 
 #include <QMetaObject>
 #include <QRunnable>
+#include <QSet>
 #include <QThread>
 #include <algorithm>
 
@@ -13,6 +14,8 @@ ApplicationController::ApplicationController(std::unique_ptr<PlatformServices> p
     m_colorPool.setMaxThreadCount(1);
     m_colorPool.setExpiryTimeout(5000);
     m_systemPool.setMaxThreadCount(1);m_systemPool.setExpiryTimeout(5000);
+    m_colorSafetyTimer.setSingleShot(false);
+    connect(&m_colorSafetyTimer,&QTimer::timeout,this,&ApplicationController::advanceColorSafetyTest);
 }
 
 ApplicationController::~ApplicationController() { shutdown(); }
@@ -47,8 +50,39 @@ void ApplicationController::refreshDisplays() {
         for (const DisplaySettings &s : m_settings.displays) if (s.stableId==d.stableId) return s.isEink;
         return false;
     });
-    m_displays = m_platform->displays();
+    QVector<DisplayInfo> nextDisplays=m_platform->displays();
+    const bool topologyChanged=m_displays.size()!=nextDisplays.size()||std::any_of(m_displays.cbegin(),m_displays.cend(),[&](const DisplayInfo &oldDisplay){
+        const auto next=std::find_if(nextDisplays.cbegin(),nextDisplays.cend(),[&](const DisplayInfo &candidate){return candidate.stableId==oldDisplay.stableId;});
+        return next==nextDisplays.cend()||next->adapterHigh!=oldDisplay.adapterHigh||next->adapterLow!=oldDisplay.adapterLow
+            ||next->sourceId!=oldDisplay.sourceId||next->targetId!=oldDisplay.targetId
+            ||next->cloneMode!=oldDisplay.cloneMode||next->cloneTargetIds!=oldDisplay.cloneTargetIds;
+    });
+    if(topologyChanged&&!m_displays.isEmpty()) {
+        if(!m_colorSafetyDisplayId.isEmpty())finishColorSafetyRollback(m_colorSafetyDisplayId,false);
+        waitForColorTasks();
+        const QVector<DisplayInfo> oldDisplays=m_displays;
+        for(const DisplayInfo &display:oldDisplays) {
+            report(m_platform->restoreToneCurve(display));report(m_platform->restoreColor(display));
+            if(display.ditheringControlSupported)report(m_platform->setDitheringDisabled(display,false));
+        }
+    }
+    bool migratedDisplaySettings=false;
+    for(const DisplayInfo &display:nextDisplays) {
+        const auto canonical=std::find_if(m_settings.displays.cbegin(),m_settings.displays.cend(),[&](const DisplaySettings &settings){return settings.stableId==display.stableId;});
+        if(canonical!=m_settings.displays.cend()||display.legacyStableId.isEmpty()||display.legacyStableId==display.stableId)continue;
+        auto legacy=std::find_if(m_settings.displays.begin(),m_settings.displays.end(),[&](const DisplaySettings &settings){return settings.stableId==display.legacyStableId;});
+        if(legacy!=m_settings.displays.end()){legacy->stableId=display.stableId;migratedDisplaySettings=true;}
+    }
+    m_displays=std::move(nextDisplays);
     std::stable_partition(m_displays.begin(),m_displays.end(),[](const DisplayInfo &display){return !display.builtIn;});
+    QSet<QString> cloneOwners;bool normalizedCloneSettings=false;
+    for(const DisplayInfo &display:m_displays) {
+        DisplaySettings &settings=m_settings.forDisplay(display.stableId);
+        if(!display.cloneMode||!settings.isEink)continue;
+        if(cloneOwners.contains(display.cloneGroupKey)){settings.isEink=false;normalizedCloneSettings=true;}
+        else cloneOwners.insert(display.cloneGroupKey);
+    }
+    if(migratedDisplaySettings||normalizedCloneSettings)m_store.save(m_settings);
     const bool hasEink = std::any_of(m_displays.begin(), m_displays.end(), [&](const DisplayInfo &d) {
         return m_settings.forDisplay(d.stableId).isEink;
     });
@@ -62,8 +96,15 @@ void ApplicationController::setEink(const QString &id, bool enabled) {
     DisplaySettings &s = settingsFor(id);
     s.isEink = enabled;
     const DisplayInfo *d = displayById(id);
+    bool clearedClonePeer=false;
     if (d) {
         if (enabled) {
+            if(d->cloneMode)for(const DisplayInfo &peer:m_displays) {
+                if(peer.stableId==id||peer.cloneGroupKey!=d->cloneGroupKey)continue;
+                DisplaySettings &peerSettings=settingsFor(peer.stableId);if(!peerSettings.isEink)continue;
+                peerSettings.isEink=false;clearedClonePeer=true;report(m_platform->restoreToneCurve(peer));queueColorApply(peer.stableId);
+                if(peer.ditheringControlSupported)report(m_platform->setDitheringDisabled(peer,false));
+            }
             queueColorApply(id); applyCurve(id);
             if (s.reduceShaking && d->ditheringControlSupported)
                 report(m_platform->setDitheringDisabled(*d, true));
@@ -81,20 +122,125 @@ void ApplicationController::setEink(const QString &id, bool enabled) {
         report(m_platform->setVisualEffectsReduced(any));
     }
     persistAndNotify();
+    if(clearedClonePeer)emit displaysChanged();
     endOperation();
 }
 
 void ApplicationController::setSaturation(const QString &id, double value, int preset) {
+    if(!colorControlsEnabled(id))return;
     DisplaySettings &s=settingsFor(id); s.saturation=std::max(0.0,std::min(value,3.0)); s.saturationPreset=preset;
     persistAndNotify(); queueColorApply(id);
 }
 
 void ApplicationController::setRgb(const QString &id, const RgbBalance &rgb) {
+    if(!colorControlsEnabled(id))return;
     DisplaySettings &s=settingsFor(id);
     s.rgb.red=std::max(0.0,std::min(rgb.red,2.0));
     s.rgb.green=std::max(0.0,std::min(rgb.green,2.0));
     s.rgb.blue=std::max(0.0,std::min(rgb.blue,2.0));
     persistAndNotify(); queueColorApply(id);
+}
+
+bool ApplicationController::colorControlsEnabled(const QString &id) const {
+    const DisplayInfo *display=displayById(id);
+    if(!display||display->cloneMode||!m_platform->saturationPlatformAvailable()||!display->colorAdjustmentSupported)return false;
+    if(!display->usesWindows10Mhc2)return true;
+    const auto setting=std::find_if(m_settings.displays.cbegin(),m_settings.displays.cend(),[&](const DisplaySettings &value){return value.stableId==id;});
+    return setting!=m_settings.displays.cend()&&setting->experimentalColorEnabled
+        &&!display->colorCapabilityFingerprint.isEmpty()
+        &&setting->confirmedColorFingerprint==display->colorCapabilityFingerprint
+        &&setting->failedColorFingerprint!=display->colorCapabilityFingerprint;
+}
+
+bool ApplicationController::colorExperimentDenied(const QString &id) const {
+    const DisplayInfo *display=displayById(id);if(!display||display->colorCapabilityFingerprint.isEmpty())return false;
+    const auto setting=std::find_if(m_settings.displays.cbegin(),m_settings.displays.cend(),[&](const DisplaySettings &value){return value.stableId==id;});
+    return setting!=m_settings.displays.cend()&&setting->failedColorFingerprint==display->colorCapabilityFingerprint;
+}
+
+bool ApplicationController::colorExperimentAvailable(const QString &id) const {
+    const DisplayInfo *display=displayById(id);
+    return display&&!display->cloneMode&&display->usesWindows10Mhc2&&display->colorAdjustmentSupported
+        &&!display->colorCapabilityFingerprint.isEmpty()&&!colorExperimentDenied(id);
+}
+
+ColorSafetyPhase ApplicationController::colorSafetyPhase(const QString &id) const {
+    return id==m_colorSafetyDisplayId?m_colorSafetyPhase:ColorSafetyPhase::Idle;
+}
+
+int ApplicationController::colorSafetySecondsRemaining(const QString &id) const {
+    return id==m_colorSafetyDisplayId?m_colorSafetySecondsRemaining:0;
+}
+
+void ApplicationController::setColorSafetyTickIntervalForTests(int milliseconds) {
+    m_colorSafetyTickIntervalMs=std::max(1,milliseconds);
+}
+
+void ApplicationController::setExperimentalColorEnabled(const QString &id,bool enabled) {
+    const DisplayInfo *display=displayById(id);if(!display||!display->usesWindows10Mhc2)return;
+    DisplaySettings &settings=settingsFor(id);
+    if(!enabled) {
+        if(colorSafetyPhase(id)!=ColorSafetyPhase::Idle)return;
+        settings.experimentalColorEnabled=false;persistAndNotify();emit colorSafetyStateChanged(id,ColorSafetyPhase::Idle,0);queueColorApply(id);return;
+    }
+    if(!colorExperimentAvailable(id)||colorSafetyPhase(id)!=ColorSafetyPhase::Idle)return;
+    if(settings.confirmedColorFingerprint==display->colorCapabilityFingerprint) {
+        settings.experimentalColorEnabled=true;persistAndNotify();emit colorSafetyStateChanged(id,ColorSafetyPhase::Idle,0);queueColorApply(id);return;
+    }
+    if(!m_colorSafetyDisplayId.isEmpty())return;
+    m_colorSafetyDisplayId=id;m_colorSafetyPhase=ColorSafetyPhase::Preparing;m_colorSafetySecondsRemaining=5;
+    m_colorSafetyTimer.start(m_colorSafetyTickIntervalMs);
+    emit colorSafetyStateChanged(id,m_colorSafetyPhase,m_colorSafetySecondsRemaining);
+}
+
+void ApplicationController::advanceColorSafetyTest() {
+    if(m_colorSafetyDisplayId.isEmpty()){m_colorSafetyTimer.stop();return;}
+    const QString id=m_colorSafetyDisplayId;
+    if(--m_colorSafetySecondsRemaining>0) {
+        emit colorSafetyStateChanged(id,m_colorSafetyPhase,m_colorSafetySecondsRemaining);return;
+    }
+    const DisplayInfo *display=displayById(id);
+    if(!display){finishColorSafetyRollback(id,false);return;}
+    if(m_colorSafetyPhase==ColorSafetyPhase::Preparing) {
+        const ApplyResult result=m_platform->beginColorSafetyTest(*display,1.01,RgbBalance{},15);
+        if(!result.success){report(result);finishColorSafetyRollback(id,true);return;}
+        m_colorSafetyPhase=ColorSafetyPhase::AwaitingConfirmation;m_colorSafetySecondsRemaining=15;
+        emit colorSafetyStateChanged(id,m_colorSafetyPhase,m_colorSafetySecondsRemaining);return;
+    }
+    finishColorSafetyRollback(id,false);
+}
+
+void ApplicationController::confirmExperimentalColor(const QString &id) {
+    if(id!=m_colorSafetyDisplayId||m_colorSafetyPhase!=ColorSafetyPhase::AwaitingConfirmation)return;
+    const QString stableId=id;const DisplayInfo *display=displayById(stableId);if(!display){finishColorSafetyRollback(stableId,false);return;}
+    const ApplyResult result=m_platform->confirmColorSafetyTest(*display);
+    if(!result.success){report(result);finishColorSafetyRollback(stableId,true);return;}
+    m_colorSafetyTimer.stop();m_colorSafetyPhase=ColorSafetyPhase::Idle;m_colorSafetySecondsRemaining=0;m_colorSafetyDisplayId.clear();
+    DisplaySettings &settings=settingsFor(stableId);settings.experimentalColorEnabled=true;
+    settings.confirmedColorFingerprint=display->colorCapabilityFingerprint;settings.failedColorFingerprint.clear();
+    settings.saturation=1.0;settings.saturationPreset=2;settings.rgb=RgbBalance{};
+    persistAndNotify();emit colorSafetyStateChanged(stableId,ColorSafetyPhase::Idle,0);queueColorApply(stableId);
+}
+
+void ApplicationController::finishColorSafetyRollback(const QString &id,bool denyFingerprint) {
+    const QString stableId=id;
+    m_colorSafetyTimer.stop();
+    m_colorSafetyPhase=ColorSafetyPhase::Idle;m_colorSafetySecondsRemaining=0;m_colorSafetyDisplayId.clear();
+    if(const DisplayInfo *display=displayById(stableId)) {
+        report(m_platform->rollbackColorSafetyTest(*display));
+        DisplaySettings &settings=settingsFor(stableId);settings.experimentalColorEnabled=false;
+        if(denyFingerprint&&!display->colorCapabilityFingerprint.isEmpty()) {
+            settings.failedColorFingerprint=display->colorCapabilityFingerprint;
+            settings.confirmedColorFingerprint.clear();
+        }
+        persistAndNotify();
+    }
+    emit colorSafetyStateChanged(stableId,ColorSafetyPhase::Idle,0);
+}
+
+void ApplicationController::rollbackExperimentalColor(const QString &id) {
+    if(id==m_colorSafetyDisplayId&&m_colorSafetyPhase==ColorSafetyPhase::AwaitingConfirmation)
+        finishColorSafetyRollback(id,false);
 }
 
 void ApplicationController::setTextLevel(const QString &id, TextLevel level) {
@@ -199,6 +345,10 @@ void ApplicationController::setShowWelcome(bool enabled) {
     m_settings.showWelcome=enabled; persistAndNotify();
 }
 
+void ApplicationController::setHardwareSetupNoticeHidden(bool hidden) {
+    m_settings.hideHardwareSetupNotice=hidden;persistAndNotify();
+}
+
 void ApplicationController::setTrayDiscoveryShown(bool shown,const QString &executablePath,int version) {
     m_settings.trayDiscoveryShown=shown;
     m_settings.trayDiscoveryVersion=shown?version:0;
@@ -237,7 +387,7 @@ void ApplicationController::applyCurve(const QString &id) {
 void ApplicationController::applyColor(const QString &id) {
     const DisplayInfo *found=displayById(id); if (!found) return;const DisplayInfo d=*found;
     const DisplaySettings &s=settingsFor(id);
-    const bool profileAvailable=m_platform->saturationPlatformAvailable()&&d.colorAdjustmentSupported;
+    const bool profileAvailable=colorControlsEnabled(id);
     if (!s.isEink||!profileAvailable) report(m_platform->restoreColor(d));
     else report(m_platform->applyColor(d,s.saturation,s.rgb));
 }
@@ -249,7 +399,7 @@ void ApplicationController::queueColorApply(const QString &id) {
     const DisplayInfo displayCopy=*display;
     const double saturation=settings.saturation;
     const RgbBalance rgb=settings.rgb;
-    const bool shouldRestore=!settings.isEink||!m_platform->saturationPlatformAvailable()||!displayCopy.colorAdjustmentSupported;
+    const bool shouldRestore=!settings.isEink||!colorControlsEnabled(id);
     m_colorPool.start(QRunnable::create([this,id,displayCopy,saturation,rgb,shouldRestore]{
         const ApplyResult result=shouldRestore?m_platform->restoreColor(displayCopy):m_platform->applyColor(displayCopy,saturation,rgb);
         QMetaObject::invokeMethod(this,[this,id,result]{
@@ -287,6 +437,12 @@ void ApplicationController::reapplyAll() {
 
 void ApplicationController::shutdown() {
     if (m_shutDown.exchange(true) || !m_platform) return;
+    m_colorSafetyTimer.stop();
+    if(!m_colorSafetyDisplayId.isEmpty()) {
+        const QString id=m_colorSafetyDisplayId;
+        if(const DisplayInfo *display=displayById(id))m_platform->rollbackColorSafetyTest(*display);
+        m_colorSafetyDisplayId.clear();m_colorSafetyPhase=ColorSafetyPhase::Idle;m_colorSafetySecondsRemaining=0;
+    }
     waitForColorTasks();
     m_systemPool.waitForDone();
     const QVector<DisplayInfo> displaysSnapshot=m_displays;

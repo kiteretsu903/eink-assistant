@@ -4,7 +4,7 @@
 > [`docs/TECHNICAL.md`](docs/TECHNICAL.md). It is the authoritative record
 > of Windows architecture, feature gates, lifecycle rules, tests, and decisions.
 
-**Version status:** Windows 1.0 source baseline, currently unreleased.
+**Version status:** Windows 1.1 source baseline, currently unreleased.
 
 This directory contains the native Windows edition of E-Ink Assistant. It uses
 Qt 5.15 Widgets rather than a browser runtime, keeps the original high-contrast
@@ -19,25 +19,41 @@ same core and UI can be reused by a later Linux backend.
   launch at login.
 - **Tray icon:** Windows decides whether the icon begins in the visible area or
   hidden-icons menu. The app does not modify private Explorer preferences. Its
-  welcome window shows the exact monochrome book-pages icon and explains how
-  to drag it into the visible notification area once for easier access.
+  compact welcome window shows the exact monochrome book-pages icon sharply
+  and explains how to drag it into the visible notification area once for
+  easier access.
+- **Hardware baseline reminder:** the top of the main panel briefly recommends
+  balanced or slightly lower monitor hardware contrast. **Got it** hides it for
+  the session; **Never show it again** persists the choice.
 - **Windows 10 May 2019 Update or above:** session-only Windows Light Mode. It
   changes Windows mode only, leaves app mode untouched, and restores the
   pre-change value on quit.
-- **Windows 10 builds 19041 through 19045:** Saturation and RGB use the MHC2
-  ICC profile path without querying or toggling Windows 11 ACM. This path is
-  enabled in the same executable and was physically verified on the recorded
-  AMD Radeon 780M / ICNM 8001H0 test system; other hardware remains
-  driver-dependent.
+- **Windows 10 builds 19041 through 19045:** eligible display paths require the
+  profile APIs, an exact GPU/source/target mapping, WDDM 2.6 or later, and a
+  positive per-target MatrixDDI result. Saturation and RGB remain off by default.
+  First enable shows a centered, dimming five-second warning, applies a small
+  test under an independent fifteen-second rollback watchdog, and requires the
+  user to confirm that the display remains normal. Timeout or manual rollback
+  restores the display and remains retryable; only an actual apply/confirm
+  failure rejects that OS/GPU/driver/output/display fingerprint.
 - **Windows 11 24H2 or above:** Saturation and RGB use the ACM path through
   per-display ICC profiles and **Automatically manage color for apps**, plus guarded
   system-wide **Disable Night Light** control. The Night Light option appears
   only when the live CloudStore state passes strict format validation.
-- **Unsupported saturation path:** the sliders remain absent. For a selected
-  e-ink display, the app identifies the exact scanout GPU and can open an
-  installed matching NVIDIA, Intel, or AMD control panel. Before 24H2 the copy
-  says upgrading may help; on 24H2 or above it recommends a graphics-driver
-  update without promising compatibility.
+- **Manual saturation path:** the GPU control-panel guide appears for fully
+  unsupported displays and for Windows 10 candidates while experimental color
+  controls are off. It disappears while confirmed controls are enabled. The app
+  identifies the exact scanout GPU and can open an installed matching NVIDIA,
+  Intel, or AMD control panel.
+- **Duplicate-display mode:** every active DisplayConfig target is enumerated.
+  Windows does not apply per-display ICC/MHC2 color changes while a source is
+  duplicated, so Saturation and RGB are unavailable and the UI recommends
+  switching to Extend instead of offering a GPU-panel fallback. Other tuning
+  warns which cloned display will also be affected. Only one display in that
+  clone group can own the tuning controls. Switching between Duplicate and
+  Extend aborts an active safety test, restores the old source, refreshes the
+  mapping after a short debounce, and reapplies saved e-ink settings to the new
+  topology.
 - **Reduce Shaking:** not shown on Windows because there is no safe public
   per-display dithering API. The application does not use undocumented
   vendor-registry changes.
@@ -55,7 +71,7 @@ Qt 5.15.2 is intentionally pinned because it is the last broadly deployable Qt
 generation that supports Windows 7. The release uses dynamically linked Qt
 libraries, preserving LGPL relinking rights.
 
-The Windows 1.0 build is x64. On the development machine, a packaged tray app
+The Windows 1.1 build is x64. On the development machine, a packaged tray app
 measured **39.58 MiB working set** and **23.03 MiB private memory** after two
 seconds idle. Results vary with Windows, the display count, and Qt's shared DLL
 pages, but no web engine, QML runtime, service, or independently installed
@@ -75,7 +91,7 @@ Shared localization and product artwork live in the repository-level
 `../Resources/` directory. The macOS source is isolated under `../macos/`.
 
 Documentation is indexed in [`docs/README.md`](docs/README.md), and the
-unreleased 1.0 summary is in [`CHANGELOG.md`](CHANGELOG.md).
+unreleased 1.1 summary is in [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Build
 
@@ -92,8 +108,8 @@ Windows 10 MHC2 and Windows 11 24H2+ ACM runtime paths.
 
 ### Installer
 
-The repository includes an Inno Setup 6 definition and repeatable installer
-build script. After installing Inno Setup 6, run from `windows/`:
+The repository includes an Inno Setup 6.7+ definition and repeatable installer
+build script. After installing Inno Setup 6.7 or later, run from `windows/`:
 
 ```powershell
 ./scripts/build-installer.ps1
@@ -101,21 +117,26 @@ build script. After installing Inno Setup 6, run from `windows/`:
 
 The script first performs the normal Release build and full automated test
 baseline, validates every required deployed file, and then writes
-`artifacts/installer/E-Ink-Assistant-Windows-1.0-Setup.exe`. Pass
+`artifacts/installer/E-Ink-Assistant-Windows-1.1-Setup.exe`. Pass
 `-CopyToDesktop` to also place a copy on the current user's desktop, or
 `-SkipApplicationBuild` to package an already-validated payload.
 
 The installer UI supports English, Simplified Chinese, Traditional Chinese,
-and Japanese. The two Chinese Inno Setup translations are downloaded from a
-pinned upstream source revision on first use, verified against committed
-SHA-256 values, and cached under `artifacts/installer-languages/`.
+and Japanese. It uses a neutral modern style with native light-theme controls,
+a borderless page treatment, automatic dark appearance, and the product icon
+instead of Inno Setup's blue package artwork, while retaining the Windows
+7-compatible installer engine. The two Chinese Inno Setup
+translations are downloaded from a pinned upstream source revision on first
+use, verified against committed SHA-256 values, and cached under
+`artifacts/installer-languages/`.
 
 The installer is per-machine and requires administrator approval. It installs
 under Program Files, creates an uninstall entry and Start menu shortcut, and
-offers an optional desktop shortcut. Setup refuses to replace files while the
-tray application still owns its single-instance mutex, allowing the user to
-quit normally so temporary display state is restored before upgrade or
-uninstall. When the completion-page launch option is selected, the program
+offers an optional desktop shortcut. During an update, Setup first asks version
+1.1 or later to exit normally and waits up to eight seconds for display-state
+restoration. If the app cannot close, the Preparing to Install page offers to
+force-close it and continue the update; use that fallback only when graceful
+shutdown fails. When the completion-page launch option is selected, the program
 inherits Setup's administrative token because its executable manifest requires
 elevation.
 
@@ -126,6 +147,8 @@ The build runs:
 - mathematical and persistence tests for tone curves, ICC profiles, state and
   localization, including reference-vector tests for the Night Light codec;
 - a complete UI journey against a fake display backend;
+- duplicate-to-extend and extend-to-duplicate transitions, including safety
+  rollback, single-owner enforcement, and the clone-impact warning;
 - a simulated Windows 7 capability path that verifies unsupported color rows
   are absent while tone controls remain usable.
 

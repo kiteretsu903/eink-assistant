@@ -10,6 +10,8 @@ namespace eink {
 constexpr int DisplayConfigGetAdvancedColorInfo2 = 15;
 constexpr int DisplayConfigSetHdrState = 16;
 constexpr int DisplayConfigSetWcgState = 17;
+constexpr int DisplayConfigGetAdvancedColorInfo = 9;
+constexpr int DisplayConfigGetColorManagementCaps = -12;
 
 struct DisplayConfigAdvancedColorInfo2 {
     DISPLAYCONFIG_DEVICE_INFO_HEADER header;
@@ -27,6 +29,39 @@ struct DisplayConfigSetWcg {
     DISPLAYCONFIG_DEVICE_INFO_HEADER header;
     UINT32 value;
 };
+
+struct DisplayConfigAdvancedColorInfo {
+    DISPLAYCONFIG_DEVICE_INFO_HEADER header;
+    UINT32 value;
+    UINT32 colorEncoding;
+    UINT32 bitsPerColorChannel;
+    bool advancedColorEnabled() const { return (value & (1u << 1)) != 0; }
+};
+
+struct DisplayConfigColorManagementCaps {
+    DISPLAYCONFIG_DEVICE_INFO_HEADER header;
+    INT32 value;
+    bool matrixDdiSupported() const { return (value & 1) != 0; }
+};
+
+using D3dkmtHandle = UINT;
+struct D3dkmtOpenAdapterFromLuid {
+    LUID adapterLuid;
+    D3dkmtHandle adapter;
+};
+struct D3dkmtQueryAdapterInfo {
+    D3dkmtHandle adapter;
+    UINT type;
+    void *data;
+    UINT dataSize;
+};
+struct D3dkmtCloseAdapter { D3dkmtHandle adapter; };
+using D3dkmtOpenAdapterFromLuidFn = LONG (WINAPI *)(D3dkmtOpenAdapterFromLuid *);
+using D3dkmtQueryAdapterInfoFn = LONG (WINAPI *)(D3dkmtQueryAdapterInfo *);
+using D3dkmtCloseAdapterFn = LONG (WINAPI *)(D3dkmtCloseAdapter *);
+
+constexpr UINT KmtQueryDriverVersion = 13;
+constexpr int Wddm26 = 2600;
 
 enum class WcsDeviceCapabilitiesType : INT {
     VideoCardGammaTable = 1,

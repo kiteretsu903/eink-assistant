@@ -25,7 +25,8 @@ private:
     QWidget *textSelector(const DisplaySettings &state);
     QWidget *enhanceSelector(const DisplaySettings &state);
     QWidget *saturationSection(const DisplaySettings &state);
-    QWidget *unsupportedSaturationSection();
+    QWidget *experimentalColorSection(const DisplaySettings &state);
+    QWidget *unsupportedSaturationSection(bool candidateDisabled = false, bool cloneMode = false);
     QWidget *rgbSection(const DisplaySettings &state);
     QWidget *advancedSection(const DisplaySettings &state);
     QWidget *curveSection(const DisplaySettings &state);

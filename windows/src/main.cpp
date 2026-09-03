@@ -46,7 +46,7 @@ static int runColorSelfTest(const QString &resultPath) {
     WindowsPlatformServices platform;
     const QVector<DisplayInfo> displays=platform.displays();
     if(displays.isEmpty()){report<<"FAIL: no active displays\n";return 21;}
-    const auto it=std::find_if(displays.begin(),displays.end(),[](const DisplayInfo &d){return d.colorAdjustmentSupported;});
+    const auto it=std::find_if(displays.begin(),displays.end(),[](const DisplayInfo &d){return !d.cloneMode&&d.colorAdjustmentSupported;});
     if(it==displays.end()){report<<"FAIL: no supported color-profile display\n";return 22;}
     const DisplayInfo display=*it;
     const bool originalAcm=display.acmEnabled;
@@ -221,7 +221,7 @@ static int runColorRecoveryTest(const QString &statePath) {
 #ifdef Q_OS_WIN
 class DisplayEventFilter final : public QObject, public QAbstractNativeEventFilter {
 public:
-    explicit DisplayEventFilter(ApplicationController *controller):m_controller(controller){m_refresh.setSingleShot(true);m_refresh.setInterval(800);QObject::connect(&m_refresh,&QTimer::timeout,this,[this]{if(m_controller->operationInProgress()){m_refresh.start();return;}m_controller->beginOperation();m_controller->refreshDisplays();m_controller->reapplyAll();m_controller->endOperation();});}
+    explicit DisplayEventFilter(ApplicationController *controller):m_controller(controller){m_refresh.setSingleShot(true);m_refresh.setInterval(250);QObject::connect(&m_refresh,&QTimer::timeout,this,[this]{if(m_controller->operationInProgress()){m_refresh.start();return;}m_controller->beginOperation();m_controller->refreshDisplays();m_controller->reapplyAll();m_controller->endOperation();});}
     void stop(){m_refresh.stop();m_enabled=false;}
     bool nativeEventFilter(const QByteArray &,void *message,long *) override {
         const auto *msg=static_cast<MSG*>(message);
@@ -243,6 +243,10 @@ int main(int argc,char **argv) {
         if(std::strcmp(argv[index],"--color-broker")==0) {
             QCoreApplication brokerApp(argc,argv);
             return WindowsPlatformServices::runColorBroker(QString::fromLocal8Bit(argv[index+1]));
+        }
+        if(std::strcmp(argv[index],"--color-safety-watchdog")==0&&index+3<argc) {
+            QCoreApplication watchdogApp(argc,argv);
+            return WindowsPlatformServices::runColorSafetyWatchdog(QString::fromLocal8Bit(argv[index+1]),QString::fromLocal8Bit(argv[index+3]).toInt(),QString::fromLocal8Bit(argv[index+2]));
         }
         if(std::strcmp(argv[index],"--color-self-test")==0) {
             QCoreApplication selfTestApp(argc,argv);
@@ -281,16 +285,23 @@ int main(int argc,char **argv) {
 #endif
 #ifdef Q_OS_WIN
     HANDLE showInstanceEvent=nullptr;
+    HANDLE quitInstanceEvent=nullptr;
     HANDLE singleInstanceMutex=nullptr;
     showInstanceEvent=CreateEventW(nullptr,FALSE,FALSE,L"Local\\EinkAssistant.ShowInstance.v1");
+    quitInstanceEvent=CreateEventW(nullptr,FALSE,FALSE,L"Local\\EinkAssistant.QuitInstance.v1");
     singleInstanceMutex=CreateMutexW(nullptr,FALSE,L"Local\\EinkAssistant.SingleInstance.v1");
     if(singleInstanceMutex&&GetLastError()==ERROR_ALREADY_EXISTS) {
-        if(HWND existing=FindWindowW(nullptr,L"E-Ink Assistant")) {
-            DWORD existingPid=0;GetWindowThreadProcessId(existing,&existingPid);
-            if(existingPid)AllowSetForegroundWindow(existingPid);
+        const bool requestExistingExit=argc>1&&std::strcmp(argv[1],"--request-exit")==0;
+        if(requestExistingExit) {
+            if(quitInstanceEvent)SetEvent(quitInstanceEvent);
+        } else {
+            if(HWND existing=FindWindowW(nullptr,L"E-Ink Assistant")) {
+                DWORD existingPid=0;GetWindowThreadProcessId(existing,&existingPid);
+                if(existingPid)AllowSetForegroundWindow(existingPid);
+            }
+            if(showInstanceEvent)SetEvent(showInstanceEvent);
         }
-        if(showInstanceEvent)SetEvent(showInstanceEvent);
-        CloseHandle(singleInstanceMutex);if(showInstanceEvent)CloseHandle(showInstanceEvent);
+        CloseHandle(singleInstanceMutex);if(showInstanceEvent)CloseHandle(showInstanceEvent);if(quitInstanceEvent)CloseHandle(quitInstanceEvent);
         return 0;
     }
 #endif
@@ -336,11 +347,10 @@ int main(int argc,char **argv) {
     auto show=[&]{welcome.hide();if(panel.isVisible())panel.hide();else panel.showPanel();};QObject::connect(open,&QAction::triggered,&panel,[&]{welcome.hide();panel.showPanel();});QObject::connect(&tray,&QSystemTrayIcon::activated,&panel,[&](QSystemTrayIcon::ActivationReason reason){if(reason==QSystemTrayIcon::Trigger)show();});QObject::connect(quit,&QAction::triggered,&app,requestQuit);QObject::connect(&panel,&MainPanel::quitRequested,&app,requestQuit);QObject::connect(&app,&QCoreApplication::aboutToQuit,&controller,[&]{if(!quitting)controller.shutdown();});
 #ifdef Q_OS_WIN
     QTimer showInstanceTimer;showInstanceTimer.setInterval(75);
-    if(showInstanceEvent) {
+    if(showInstanceEvent||quitInstanceEvent) {
         QObject::connect(&showInstanceTimer,&QTimer::timeout,&panel,[&]{
-            if(WaitForSingleObject(showInstanceEvent,0)!=WAIT_OBJECT_0)return;
-            welcome.hide();panel.showPanel();
-            SetForegroundWindow(reinterpret_cast<HWND>(panel.winId()));
+            if(quitInstanceEvent&&WaitForSingleObject(quitInstanceEvent,0)==WAIT_OBJECT_0){requestQuit();return;}
+            if(showInstanceEvent&&WaitForSingleObject(showInstanceEvent,0)==WAIT_OBJECT_0){welcome.hide();panel.showPanel();SetForegroundWindow(reinterpret_cast<HWND>(panel.winId()));}
         });
         showInstanceTimer.start();
     }
@@ -348,7 +358,7 @@ int main(int argc,char **argv) {
     QObject::connect(&tray,&QSystemTrayIcon::messageClicked,&panel,[&]{welcome.hide();panel.showPanel();});
     QObject::connect(&controller,&ApplicationController::stateChanged,&tray,[&]{tray.setToolTip(L("app.title"));open->setText(L("app.title"));quit->setText(L("quit"));});
     tray.show();
-    QObject::connect(&welcome,&QDialog::finished,&panel,[&](int){panel.showPanel();});
+    QObject::connect(&welcome,&QDialog::finished,&panel,[&](int){panel.showPanelAfterTransientWindow();});
     const bool shouldShowWelcome=!backgroundLaunch&&controller.settings().showWelcome
         &&!arguments.contains(QStringLiteral("--skip-welcome"));
     bool welcomeRequested=false;
@@ -363,6 +373,7 @@ int main(int argc,char **argv) {
 #ifdef Q_OS_WIN
     if(singleInstanceMutex)CloseHandle(singleInstanceMutex);
     if(showInstanceEvent)CloseHandle(showInstanceEvent);
+    if(quitInstanceEvent)CloseHandle(quitInstanceEvent);
 #endif
     return result;
 }

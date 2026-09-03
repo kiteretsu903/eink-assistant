@@ -8,7 +8,7 @@
   attribution notices.
 - [`handoffs/`](handoffs/): archived machine-to-machine validation notes. They
   are retained as historical test evidence, not current build instructions.
-- [`../CHANGELOG.md`](../CHANGELOG.md): unreleased Windows 1.0 change summary.
+- [`../CHANGELOG.md`](../CHANGELOG.md): unreleased Windows 1.1 change summary.
 
-The current Windows source baseline is version 1.0. It is intentionally marked
+The current Windows source baseline is version 1.1. It is intentionally marked
 unreleased until a separate release task is requested.

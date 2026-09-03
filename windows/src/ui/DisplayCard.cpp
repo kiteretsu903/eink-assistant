@@ -23,12 +23,21 @@
 #include <QStyle>
 #include <QSlider>
 #include <QScrollBar>
+#include <QSignalBlocker>
 #include <QTimer>
 #include <QVBoxLayout>
 #include <QWheelEvent>
 
 namespace eink {
 namespace {
+
+QString displayLabel(const DisplayInfo &display) {
+    QString name=display.friendlyName.trimmed();
+    if(display.builtIn&&display.friendlyNameIsFallback)name=L("display.internal");
+    else if(name.isEmpty())name=L("display.unknown");
+    if(display.builtIn&&!display.friendlyNameIsFallback)name+=QStringLiteral("  ")+L("display.builtin");
+    return name;
+}
 
 class ScrollFriendlySlider final : public QSlider {
 public:
@@ -204,7 +213,18 @@ DisplayCard::DisplayCard(ApplicationController *controller, DisplayInfo info, bo
     :QFrame(parent),m_controller(controller),m_info(std::move(info)),m_rgbExpanded(rgbExpanded) {
     setObjectName(QStringLiteral("displayCard")); setFrameShape(QFrame::NoFrame);
     setStyleSheet(QStringLiteral("QFrame#displayCard { border:2px solid #202020; border-radius:7px; background:white; } QFrame#displayCard QLabel { border:0; }"));
-    m_layout=new QVBoxLayout(this);m_layout->setSizeConstraint(QLayout::SetMinimumSize);m_layout->setContentsMargins(14,14,14,14);m_layout->setSpacing(12);rebuild();
+    m_layout=new QVBoxLayout(this);m_layout->setSizeConstraint(QLayout::SetMinimumSize);m_layout->setContentsMargins(14,14,14,14);m_layout->setSpacing(12);
+    connect(m_controller,&ApplicationController::colorSafetyStateChanged,this,[this](const QString &id,ColorSafetyPhase phase,int){
+        if(id!=m_info.stableId)return;
+        for(auto *toggle:findChildren<QAbstractButton*>(QStringLiteral("experimental-color-switch"))) {
+            if(toggle->property("_einkPendingDelete").toBool())continue;
+            const QSignalBlocker blocker(toggle);
+            toggle->setChecked(m_controller->colorControlsEnabled(id)||phase!=ColorSafetyPhase::Idle);
+            toggle->setEnabled(phase==ColorSafetyPhase::Idle);
+        }
+        QTimer::singleShot(0,this,&DisplayCard::rebuild);
+    });
+    rebuild();
 }
 
 QLabel *DisplayCard::label(const QString &text,bool heading,bool secondary) {
@@ -215,17 +235,33 @@ void DisplayCard::addDivider(QVBoxLayout *layout) { layout->addWidget(ui::divide
 
 void DisplayCard::rebuild() {
     ui::clearLayout(m_layout); DisplaySettings &state=m_controller->settingsFor(m_info.stableId);
-    auto *check=new DisplaySelector(m_info.friendlyName+(m_info.builtIn?QStringLiteral("  ")+L("display.builtin"):QString{}),m_info.builtIn);
+    auto *check=new DisplaySelector(displayLabel(m_info),m_info.builtIn);
     check->setObjectName(QStringLiteral("eink-checkbox")); check->setProperty("displayId",m_info.stableId); check->setChecked(state.isEink);
     connect(check,&QCheckBox::toggled,this,[this](bool on){m_controller->setEink(m_info.stableId,on);QTimer::singleShot(0,this,&DisplayCard::rebuild);}); m_layout->addWidget(check);
     if(!state.isEink){m_layout->invalidate();updateGeometry();emit contentSizeChanged();return;}
+    if(m_info.cloneMode) {
+        QStringList peerNames;
+        for(const DisplayInfo &peer:m_controller->displays())
+            if(peer.stableId!=m_info.stableId&&peer.cloneGroupKey==m_info.cloneGroupKey)peerNames.push_back(displayLabel(peer));
+        if(peerNames.isEmpty())peerNames=m_info.clonePeerNames;
+        QString warning=L("display.cloneWarning");warning.replace(QStringLiteral("%1"),peerNames.join(QStringLiteral(", ")));
+        auto *cloneWarning=label(QStringLiteral("⚠ ")+warning);cloneWarning->setObjectName(QStringLiteral("clone-mode-warning"));
+        cloneWarning->setStyleSheet(QStringLiteral("color:#a64b00;font-weight:400;"));m_layout->addWidget(cloneWarning);addDivider(m_layout);
+    }
 
-    const bool colorAvailable=m_controller->platform().saturationPlatformAvailable()&&m_info.colorAdjustmentSupported;
-    if(colorAvailable){m_layout->addWidget(saturationSection(state));addDivider(m_layout);m_layout->addWidget(rgbSection(state));addDivider(m_layout);}
+    const bool colorEnabled=m_controller->colorControlsEnabled(m_info.stableId);
+    const bool experimentAvailable=m_controller->colorExperimentAvailable(m_info.stableId);
+    if(m_info.cloneMode) {
+        m_layout->addWidget(unsupportedSaturationSection(false,true));addDivider(m_layout);
+    } else if(m_info.usesWindows10Mhc2&&(experimentAvailable||colorEnabled)) {
+        m_layout->addWidget(experimentalColorSection(state));addDivider(m_layout);
+        if(colorEnabled){m_layout->addWidget(saturationSection(state));addDivider(m_layout);m_layout->addWidget(rgbSection(state));addDivider(m_layout);}
+        else {m_layout->addWidget(unsupportedSaturationSection(true));addDivider(m_layout);}
+    } else if(colorEnabled){m_layout->addWidget(saturationSection(state));addDivider(m_layout);m_layout->addWidget(rgbSection(state));addDivider(m_layout);}
     else {m_layout->addWidget(unsupportedSaturationSection());addDivider(m_layout);}
     if(!state.advanced){m_layout->addWidget(textSelector(state));addDivider(m_layout);m_layout->addWidget(enhanceSelector(state));addDivider(m_layout);}
     m_layout->addWidget(advancedSection(state)); addDivider(m_layout); m_layout->addWidget(curveSection(state));
-    if(isVisible())for(QWidget *child:findChildren<QWidget*>())child->show();
+    if(isVisible())for(QWidget *child:findChildren<QWidget*>())if(!child->property("_einkPendingDelete").toBool())child->show();
     m_layout->invalidate();m_layout->activate();updateGeometry();emit contentSizeChanged();
 }
 
@@ -238,16 +274,27 @@ QWidget *DisplayCard::saturationSection(const DisplaySettings &state) {
     for(int i=0;i<6;++i){auto *b=new ChoiceButton(L(keys[i]),QString::fromLatin1(names[i]),ChoiceButton::Position::Standalone);b->setEnabled(available);b->setChecked(state.saturationPreset==i);QFont checkedFont=b->font();checkedFont.setWeight(QFont::Black);const int checkedWidth=QFontMetrics(checkedFont).horizontalAdvance(b->text())+30;b->setMinimumWidth(checkedWidth);presetGroup->addButton(b,i);connect(b,&QPushButton::clicked,this,[this,i,values,s]{s->setValue(values[i]);m_controller->setSaturation(m_info.stableId,values[i]/100.0,i);});presets->addWidget(b,1);}v->addLayout(presets);return w;
 }
 
-QWidget *DisplayCard::unsupportedSaturationSection() {
+QWidget *DisplayCard::experimentalColorSection(const DisplaySettings &) {
+    auto *w=new QWidget;w->setObjectName(QStringLiteral("experimental-color-section"));auto *v=new QVBoxLayout(w);v->setContentsMargins(0,0,0,0);v->setSpacing(7);
+    const ColorSafetyPhase phase=m_controller->colorSafetyPhase(m_info.stableId);
+    const bool enabled=m_controller->colorControlsEnabled(m_info.stableId);
+    auto *row=new QHBoxLayout;auto *title=label(L("saturation.experimental.enable"),true);title->setWordWrap(false);row->addWidget(title);row->addStretch();
+    auto *toggle=new EinkSwitch;toggle->setObjectName(QStringLiteral("experimental-color-switch"));toggle->setProperty("displayId",m_info.stableId);toggle->setChecked(enabled||phase!=ColorSafetyPhase::Idle);toggle->setEnabled(phase==ColorSafetyPhase::Idle);
+    connect(toggle,&QAbstractButton::toggled,this,[this](bool on){m_controller->setExperimentalColorEnabled(m_info.stableId,on);});row->addWidget(toggle);v->addLayout(row);
+    return w;
+}
+
+QWidget *DisplayCard::unsupportedSaturationSection(bool candidateDisabled,bool cloneMode) {
     auto *w=new QWidget;w->setObjectName(QStringLiteral("saturation-unsupported"));auto *v=new QVBoxLayout(w);v->setContentsMargins(0,0,0,0);v->setSpacing(7);
     v->addWidget(label(L("saturation.title"),true));
-    auto *note=label(m_info.colorAdjustmentUpgradeMayHelp?L("saturation.unsupported.upgrade"):L("saturation.unsupported.driver"),false,true);
+    const bool upgradeMayHelp=m_info.colorAdjustmentUpgradeMayHelp&&!m_controller->colorExperimentDenied(m_info.stableId);
+    auto *note=label(cloneMode?L("saturation.unsupported.clone"):(candidateDisabled?L("saturation.manual"):(upgradeMayHelp?L("saturation.unsupported.upgrade"):L("saturation.unsupported.driver"))),false,true);
     note->setObjectName(QStringLiteral("saturation-unsupported-note"));v->addWidget(note);
-    if(!m_info.graphicsAdapterName.isEmpty()) {
+    if(!cloneMode&&!m_info.graphicsAdapterName.isEmpty()) {
         QString adapterText=L("saturation.connectedGpu");adapterText.replace(QStringLiteral("%1"),m_info.graphicsAdapterName);
         auto *adapter=label(adapterText,false,true);adapter->setObjectName(QStringLiteral("saturation-gpu-name"));v->addWidget(adapter);
     }
-    if(m_info.gpuControlPanelAvailable) {
+    if(!cloneMode&&m_info.gpuControlPanelAvailable) {
         const char *key=m_info.graphicsVendor==GraphicsVendor::Nvidia?"saturation.open.nvidia"
             :m_info.graphicsVendor==GraphicsVendor::Intel?"saturation.open.intel"
             :m_info.graphicsVendor==GraphicsVendor::Amd?"saturation.open.amd":"saturation.open.generic";

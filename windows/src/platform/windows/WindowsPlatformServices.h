@@ -12,7 +12,7 @@ namespace eink {
 
 class WindowsPlatformServices : public PlatformServices {
 public:
-    WindowsPlatformServices();
+    explicit WindowsPlatformServices(bool reconcileStartup = true);
     ~WindowsPlatformServices() override;
 
     ApplyResult recoverInterruptedColorState() override;
@@ -21,6 +21,10 @@ public:
     ApplyResult restoreToneCurve(const DisplayInfo &) override;
     ApplyResult applyColor(const DisplayInfo &, double saturation, const RgbBalance &) override;
     ApplyResult restoreColor(const DisplayInfo &) override;
+    ApplyResult beginColorSafetyTest(const DisplayInfo &, double saturation,
+                                     const RgbBalance &, int timeoutSeconds) override;
+    ApplyResult confirmColorSafetyTest(const DisplayInfo &) override;
+    ApplyResult rollbackColorSafetyTest(const DisplayInfo &) override;
     ApplyResult setDitheringDisabled(const DisplayInfo &, bool disabled) override;
     bool visualEffectsReduced() const override;
     ApplyResult setVisualEffectsReduced(bool reduced) override;
@@ -43,6 +47,8 @@ public:
     void shutdown() override;
 
     static int runColorBroker(const QString &pipeName);
+    static int runColorSafetyWatchdog(const QString &eventName, int timeoutSeconds,
+                                      const QString &readyEventName = QString());
     ApplyResult setAcmForDiagnostics(const DisplayInfo &display, bool enabled) { return setAcm(display,enabled); }
     QString defaultProfileForDiagnostics(const DisplayInfo &display) const { return defaultProfile(display); }
     QStringList generatedProfilesForDiagnostics(const DisplayInfo &display) const;
@@ -62,10 +68,11 @@ private:
 
     static quint32 windowsBuild();
     static QString errorMessage(const QString &operation, DWORD code = GetLastError());
-    static bool queryDisplayPath(const QString &deviceName, LUID *adapter, UINT32 *sourceId, UINT32 *targetId,
-                                 bool *builtIn = nullptr, QString *friendlyName = nullptr);
     static bool queryAcm(const DisplayInfo &, bool *supported, bool *enabled, QString *error = nullptr);
     static bool queryWindows10Mhc2(const DisplayInfo &, bool *supported, bool *verified, QString *error = nullptr);
+    static bool queryMatrixDdi(const DisplayInfo &, bool *supported);
+    static bool queryWddmVersion(const DisplayInfo &, int *version);
+    static void queryOutputFormat(const DisplayInfo &, UINT32 *encoding, UINT32 *bitsPerChannel, bool *advancedColorActive);
     static bool modernColorProfileApisAvailable();
     static ApplyResult setAcm(const DisplayInfo &, bool enabled);
     static QString defaultProfile(const DisplayInfo &);
@@ -96,6 +103,8 @@ private:
     ApplyResult brokerCommand(const QString &command, QString *response = nullptr);
     IccBaseProfile baseProfileFor(const DisplayInfo &, const ColorState &state) const;
     void closeBroker();
+    ApplyResult startColorSafetyWatchdog(int timeoutSeconds);
+    void finishColorSafetyWatchdog(bool commit);
 
     QHash<QString, QByteArray> m_originalGamma;
     QHash<QString, ColorState> m_colorStates;
@@ -103,6 +112,10 @@ private:
     std::unique_ptr<QTemporaryDir> m_profileTemp;
     HANDLE m_pipe = INVALID_HANDLE_VALUE;
     HANDLE m_brokerProcess = nullptr;
+    HANDLE m_colorSafetyEvent = nullptr;
+    HANDLE m_colorSafetyProcess = nullptr;
+    QString m_colorSafetyEventName;
+    QString m_colorSafetyDisplayId;
     QString m_pipeName;
     QString m_profileSessionId;
     quint64 m_profileSequence = 0;

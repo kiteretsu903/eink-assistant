@@ -47,6 +47,35 @@ bool parseBoolRegistry(HKEY root, const wchar_t *path, const wchar_t *name, DWOR
     return RegGetValueW(root,path,name,RRF_RT_REG_DWORD,&type,value,&size)==ERROR_SUCCESS;
 }
 
+QString machineRegistrySubkey(const QString &deviceKey) {
+    const QString prefix=QStringLiteral("\\Registry\\Machine\\");
+    return deviceKey.startsWith(prefix,Qt::CaseInsensitive)?deviceKey.mid(prefix.size()):QString{};
+}
+
+QString registryStringForDeviceKey(const QString &deviceKey,const wchar_t *name) {
+    const QString subkey=machineRegistrySubkey(deviceKey);if(subkey.isEmpty())return {};
+    DWORD size=0,type=0;
+    if(RegGetValueW(HKEY_LOCAL_MACHINE,reinterpret_cast<LPCWSTR>(subkey.utf16()),name,RRF_RT_REG_SZ,&type,nullptr,&size)!=ERROR_SUCCESS||size<sizeof(wchar_t))return {};
+    QVector<wchar_t> value(static_cast<int>(size/sizeof(wchar_t))+1);
+    if(RegGetValueW(HKEY_LOCAL_MACHINE,reinterpret_cast<LPCWSTR>(subkey.utf16()),name,RRF_RT_REG_SZ,&type,value.data(),&size)!=ERROR_SUCCESS)return {};
+    return QString::fromWCharArray(value.constData()).trimmed();
+}
+
+QString registryBinaryHashForDeviceKey(const QString &deviceKey,const wchar_t *name) {
+    const QString subkey=machineRegistrySubkey(deviceKey);if(subkey.isEmpty())return {};
+    DWORD size=0,type=0;
+    if(RegGetValueW(HKEY_LOCAL_MACHINE,reinterpret_cast<LPCWSTR>(subkey.utf16()),name,RRF_RT_REG_BINARY,&type,nullptr,&size)!=ERROR_SUCCESS||!size)return {};
+    QByteArray value(static_cast<int>(size),Qt::Uninitialized);
+    if(RegGetValueW(HKEY_LOCAL_MACHINE,reinterpret_cast<LPCWSTR>(subkey.utf16()),name,RRF_RT_REG_BINARY,&type,value.data(),&size)!=ERROR_SUCCESS)return {};
+    value.resize(static_cast<int>(size));
+    return QString::fromLatin1(QCryptographicHash::hash(value,QCryptographicHash::Sha256).toHex());
+}
+
+quint32 windowsUpdateRevision() {
+    DWORD value=0,size=sizeof(value),type=0;
+    return RegGetValueW(HKEY_LOCAL_MACHINE,L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",L"UBR",RRF_RT_REG_DWORD,&type,&value,&size)==ERROR_SUCCESS?value:0;
+}
+
 struct ChildProcessResult {
     bool launched = false;
     bool timedOut = false;
@@ -253,9 +282,10 @@ QString monitorModelName(const QString &deviceId) {
 
 } // namespace
 
-WindowsPlatformServices::WindowsPlatformServices()
+WindowsPlatformServices::WindowsPlatformServices(bool reconcileStartup)
     : m_profileTemp(new QTemporaryDir(QDir::tempPath()+QStringLiteral("/EinkAssistant-XXXXXX"))),
       m_profileSessionId(QString::number(QRandomGenerator::global()->generate64(),16)) {
+    if(!reconcileStartup)return;
     const bool scheduled=launchAtLogin();
     if(legacyRunEnabled()&&!scheduled)setLaunchAtLogin(true);
     else if(scheduled&&QFileInfo(QCoreApplication::applicationFilePath()).fileName().compare(QStringLiteral("EinkAssistant.exe"),Qt::CaseInsensitive)==0) {
@@ -284,95 +314,203 @@ QString WindowsPlatformServices::errorMessage(const QString &operation, DWORD co
     return operation+QStringLiteral(": ")+detail;
 }
 
-bool WindowsPlatformServices::queryDisplayPath(const QString &deviceName, LUID *adapter,
-                                                UINT32 *sourceId, UINT32 *targetId, bool *builtIn,
-                                                QString *friendlyName) {
-    UINT32 pathCount=0,modeCount=0;
-    LONG result=GetDisplayConfigBufferSizes(QDC_ONLY_ACTIVE_PATHS,&pathCount,&modeCount);
-    if(result!=ERROR_SUCCESS) return false;
-    QVector<DISPLAYCONFIG_PATH_INFO> paths(static_cast<int>(pathCount));
-    QVector<DISPLAYCONFIG_MODE_INFO> modes(static_cast<int>(modeCount));
-    result=QueryDisplayConfig(QDC_ONLY_ACTIVE_PATHS,&pathCount,paths.data(),&modeCount,modes.data(),nullptr);
-    if(result!=ERROR_SUCCESS) return false;
-    for(UINT32 i=0;i<pathCount;++i) {
-        DISPLAYCONFIG_SOURCE_DEVICE_NAME source{};
-        source.header.type=DISPLAYCONFIG_DEVICE_INFO_GET_SOURCE_NAME;
-        source.header.size=sizeof(source);
-        source.header.adapterId=paths[static_cast<int>(i)].sourceInfo.adapterId;
-        source.header.id=paths[static_cast<int>(i)].sourceInfo.id;
-        if(DisplayConfigGetDeviceInfo(&source.header)!=ERROR_SUCCESS) continue;
-        if(QString::fromWCharArray(source.viewGdiDeviceName).compare(deviceName,Qt::CaseInsensitive)!=0) continue;
-        if(adapter) *adapter=paths[static_cast<int>(i)].targetInfo.adapterId;
-        if(sourceId) *sourceId=paths[static_cast<int>(i)].sourceInfo.id;
-        if(targetId) *targetId=paths[static_cast<int>(i)].targetInfo.id;
-        if(builtIn) {
-            const auto tech=paths[static_cast<int>(i)].targetInfo.outputTechnology;
-            *builtIn=tech==DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INTERNAL
-                || tech==DISPLAYCONFIG_OUTPUT_TECHNOLOGY_DISPLAYPORT_EMBEDDED
-                || tech==DISPLAYCONFIG_OUTPUT_TECHNOLOGY_UDI_EMBEDDED;
-        }
-        if(friendlyName) {
-            DISPLAYCONFIG_TARGET_DEVICE_NAME target{};
-            target.header.type=DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME;
-            target.header.size=sizeof(target);
-            target.header.adapterId=paths[static_cast<int>(i)].targetInfo.adapterId;
-            target.header.id=paths[static_cast<int>(i)].targetInfo.id;
-            if(DisplayConfigGetDeviceInfo(&target.header)==ERROR_SUCCESS)
-                *friendlyName=QString::fromWCharArray(target.monitorFriendlyDeviceName).trimmed();
-        }
-        return true;
-    }
-    return false;
+namespace {
+
+struct ActiveDisplayPath {
+    QString sourceDeviceName;
+    QString friendlyName;
+    QString monitorDevicePath;
+    LUID adapter{};
+    UINT32 sourceId=0;
+    UINT32 targetId=0;
+    UINT32 outputTechnology=0;
+};
+
+struct AdapterDeviceDetails {
+    QString deviceId;
+    QString deviceKey;
+    QString name;
+};
+
+struct MonitorDeviceDetails {
+    QString deviceId;
+    QString deviceKey;
+    QString name;
+};
+
+QString sourceKey(const LUID &adapter,UINT32 sourceId) {
+    return QStringLiteral("%1:%2:%3").arg(adapter.HighPart).arg(adapter.LowPart).arg(sourceId);
 }
+
+QVector<ActiveDisplayPath> activeDisplayPaths() {
+    QVector<ActiveDisplayPath> result;
+    constexpr UINT32 flags=QDC_ONLY_ACTIVE_PATHS;
+    UINT32 pathCount=0,modeCount=0;
+    LONG status=GetDisplayConfigBufferSizes(flags,&pathCount,&modeCount);
+    if(status!=ERROR_SUCCESS)return result;
+    for(int retry=0;retry<4;++retry) {
+        QVector<DISPLAYCONFIG_PATH_INFO> paths(static_cast<int>(pathCount));
+        QVector<DISPLAYCONFIG_MODE_INFO> modes(static_cast<int>(modeCount));
+        status=QueryDisplayConfig(flags,&pathCount,paths.data(),&modeCount,modes.data(),nullptr);
+        if(status==ERROR_INSUFFICIENT_BUFFER) {
+            status=GetDisplayConfigBufferSizes(flags,&pathCount,&modeCount);
+            if(status!=ERROR_SUCCESS)break;
+            continue;
+        }
+        if(status!=ERROR_SUCCESS)break;
+        paths.resize(static_cast<int>(pathCount));
+        for(const DISPLAYCONFIG_PATH_INFO &path:paths) {
+            DISPLAYCONFIG_SOURCE_DEVICE_NAME source{};source.header.type=DISPLAYCONFIG_DEVICE_INFO_GET_SOURCE_NAME;
+            source.header.size=sizeof(source);source.header.adapterId=path.sourceInfo.adapterId;source.header.id=path.sourceInfo.id;
+            if(DisplayConfigGetDeviceInfo(&source.header)!=ERROR_SUCCESS)continue;
+            DISPLAYCONFIG_TARGET_DEVICE_NAME target{};target.header.type=DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME;
+            target.header.size=sizeof(target);target.header.adapterId=path.targetInfo.adapterId;target.header.id=path.targetInfo.id;
+            DisplayConfigGetDeviceInfo(&target.header);
+            ActiveDisplayPath item;item.sourceDeviceName=QString::fromWCharArray(source.viewGdiDeviceName);
+            item.friendlyName=QString::fromWCharArray(target.monitorFriendlyDeviceName).trimmed();
+            item.monitorDevicePath=QString::fromWCharArray(target.monitorDevicePath).trimmed();
+            item.adapter=path.targetInfo.adapterId;item.sourceId=path.sourceInfo.id;item.targetId=path.targetInfo.id;
+            item.outputTechnology=static_cast<UINT32>(path.targetInfo.outputTechnology);result.push_back(item);
+        }
+        return result;
+    }
+    return result;
+}
+
+QHash<QString,AdapterDeviceDetails> adapterDevices() {
+    QHash<QString,AdapterDeviceDetails> result;DISPLAY_DEVICEW adapter{};adapter.cb=sizeof(adapter);
+    for(DWORD index=0;EnumDisplayDevicesW(nullptr,index,&adapter,0);++index) {
+        if((adapter.StateFlags&DISPLAY_DEVICE_ACTIVE)&&!(adapter.StateFlags&DISPLAY_DEVICE_MIRRORING_DRIVER)) {
+            result.insert(QString::fromWCharArray(adapter.DeviceName).toUpper(),{
+                QString::fromWCharArray(adapter.DeviceID),QString::fromWCharArray(adapter.DeviceKey),
+                QString::fromWCharArray(adapter.DeviceString).trimmed()});
+        }
+        adapter={};adapter.cb=sizeof(adapter);
+    }
+    return result;
+}
+
+QVector<MonitorDeviceDetails> monitorDevices(const QString &sourceDeviceName) {
+    QVector<MonitorDeviceDetails> result;DISPLAY_DEVICEW monitor{};monitor.cb=sizeof(monitor);
+    for(DWORD index=0;EnumDisplayDevicesW(reinterpret_cast<LPCWSTR>(sourceDeviceName.utf16()),index,&monitor,EDD_GET_DEVICE_INTERFACE_NAME);++index) {
+        result.push_back({QString::fromWCharArray(monitor.DeviceID),QString::fromWCharArray(monitor.DeviceKey),
+                          QString::fromWCharArray(monitor.DeviceString).trimmed()});
+        monitor={};monitor.cb=sizeof(monitor);
+    }
+    return result;
+}
+
+int matchingMonitorIndex(const ActiveDisplayPath &path,const QVector<MonitorDeviceDetails> &monitors,const QSet<int> &used) {
+    const QString pathModel=monitorModelName(path.monitorDevicePath);
+    auto match=[&](bool requireModel,bool requireName) {
+        for(int index=0;index<monitors.size();++index) {
+            if(used.contains(index))continue;
+            if(requireModel&&(pathModel.isEmpty()||monitorModelName(monitors[index].deviceId)!=pathModel))continue;
+            if(requireName&&(path.friendlyName.isEmpty()||monitors[index].name.compare(path.friendlyName,Qt::CaseInsensitive)!=0))continue;
+            return index;
+        }
+        return -1;
+    };
+    int index=match(true,true);if(index<0)index=match(true,false);if(index<0)index=match(false,true);if(index<0)index=match(false,false);return index;
+}
+
+bool isGenericMonitorName(const QString &name) {
+    const QString normalized=name.simplified().toLower();
+    return normalized.isEmpty()
+        || normalized.contains(QStringLiteral("generic pnp monitor"))
+        || normalized.contains(QStringLiteral("generic non-pnp monitor"))
+        || normalized.contains(QStringLiteral("通用即插即用监视器"))
+        || normalized.contains(QStringLiteral("一般 pnp モニター"));
+}
+
+} // namespace
 
 QVector<DisplayInfo> WindowsPlatformServices::displays() {
     QVector<DisplayInfo> result;
     const quint32 build=windowsBuild();
+    const quint32 ubr=windowsUpdateRevision();
     QHash<int,bool> panelAvailability;
-    DISPLAY_DEVICEW adapterDevice{}; adapterDevice.cb=sizeof(adapterDevice);
-    for(DWORD index=0;EnumDisplayDevicesW(nullptr,index,&adapterDevice,0);++index) {
-        if(!(adapterDevice.StateFlags&DISPLAY_DEVICE_ACTIVE) || (adapterDevice.StateFlags&DISPLAY_DEVICE_MIRRORING_DRIVER)) {
-            adapterDevice={}; adapterDevice.cb=sizeof(adapterDevice); continue;
+    const QVector<ActiveDisplayPath> paths=activeDisplayPaths();const auto adapters=adapterDevices();
+    QHash<QString,QVector<int>> pathGroups;for(int index=0;index<paths.size();++index)pathGroups[sourceKey(paths[index].adapter,paths[index].sourceId)].push_back(index);
+    QHash<QString,QVector<MonitorDeviceDetails>> monitorCache;QHash<QString,QSet<int>> usedMonitors;QSet<QString> stableIds;
+    for(int pathIndex=0;pathIndex<paths.size();++pathIndex) {
+        const ActiveDisplayPath &path=paths[pathIndex];const QString sourceName=path.sourceDeviceName.toUpper();
+        if(!monitorCache.contains(sourceName))monitorCache.insert(sourceName,monitorDevices(path.sourceDeviceName));
+        const QVector<MonitorDeviceDetails> &monitors=monitorCache[sourceName];const int monitorIndex=matchingMonitorIndex(path,monitors,usedMonitors[sourceName]);
+        MonitorDeviceDetails monitor;if(monitorIndex>=0){monitor=monitors[monitorIndex];usedMonitors[sourceName].insert(monitorIndex);}
+        const AdapterDeviceDetails adapterDevice=adapters.value(sourceName);DisplayInfo info;
+        info.deviceName=path.sourceDeviceName;
+        info.adapterHigh=path.adapter.HighPart;info.adapterLow=path.adapter.LowPart;info.sourceId=path.sourceId;info.targetId=path.targetId;
+        const auto tech=static_cast<DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY>(path.outputTechnology);
+        info.builtIn=tech==DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INTERNAL||tech==DISPLAYCONFIG_OUTPUT_TECHNOLOGY_DISPLAYPORT_EMBEDDED||tech==DISPLAYCONFIG_OUTPUT_TECHNOLOGY_UDI_EMBEDDED;
+        const QString detectedName=!path.friendlyName.isEmpty()?path.friendlyName:monitor.name;
+        if(info.builtIn&&isGenericMonitorName(detectedName)) {
+            info.friendlyName=QStringLiteral("Internal Display");info.friendlyNameIsFallback=true;
+        } else {
+            info.friendlyName=detectedName;
         }
-        DISPLAY_DEVICEW monitor{}; monitor.cb=sizeof(monitor);
-        EnumDisplayDevicesW(adapterDevice.DeviceName,0,&monitor,EDD_GET_DEVICE_INTERFACE_NAME);
-        DisplayInfo info;
-        info.deviceName=QString::fromWCharArray(adapterDevice.DeviceName);
-        info.friendlyName=QString::fromWCharArray(monitor.DeviceString);
-        if(info.friendlyName.trimmed().isEmpty()) info.friendlyName=QString::fromWCharArray(adapterDevice.DeviceString);
-        info.stableId=QString::fromWCharArray(monitor.DeviceID);
-        if(info.stableId.isEmpty()) info.stableId=info.deviceName;
+        info.legacyStableId=monitor.deviceId;
+        info.stableId=!path.monitorDevicePath.isEmpty()?path.monitorDevicePath:monitor.deviceId;
+        if(info.stableId.isEmpty())info.stableId=QStringLiteral("DISPLAYPATH|%1|%2").arg(sourceKey(path.adapter,path.sourceId)).arg(path.targetId);
+        if(stableIds.contains(info.stableId))info.stableId+=QStringLiteral("|target:%1").arg(path.targetId);stableIds.insert(info.stableId);
         info.colorAdjustmentUpgradeMayHelp=build<26100;
-        info.graphicsVendor=windows::graphicsVendorFromDeviceId(QString::fromWCharArray(adapterDevice.DeviceID));
-        info.graphicsAdapterName=QString::fromWCharArray(adapterDevice.DeviceString).trimmed();
-        LUID luid{}; UINT32 source=0,target=0; bool internal=false; QString targetFriendlyName;
-        if(queryDisplayPath(info.deviceName,&luid,&source,&target,&internal,&targetFriendlyName)) {
-            info.adapterHigh=luid.HighPart; info.adapterLow=luid.LowPart; info.sourceId=source; info.targetId=target; info.builtIn=internal;
-            const windows::GraphicsAdapterDetails adapter=windows::graphicsAdapterForLuid(luid.HighPart,luid.LowPart);
+        info.graphicsVendor=windows::graphicsVendorFromDeviceId(adapterDevice.deviceId);info.graphicsAdapterName=adapterDevice.name;
+        const QString adapterDeviceId=adapterDevice.deviceId.trimmed();const QString driverVersion=registryStringForDeviceKey(adapterDevice.deviceKey,L"DriverVersion");
+        const QString edidHash=registryBinaryHashForDeviceKey(monitor.deviceKey,L"EDID");
+        info.cloneGroupKey=sourceKey(path.adapter,path.sourceId);const QVector<int> group=pathGroups.value(info.cloneGroupKey);info.cloneMode=group.size()>1;
+        for(const int memberIndex:group) {
+            info.cloneTargetIds.push_back(paths[memberIndex].targetId);
+        }
+        std::sort(info.cloneTargetIds.begin(),info.cloneTargetIds.end());
+        {
+            const windows::GraphicsAdapterDetails adapter=windows::graphicsAdapterForLuid(path.adapter.HighPart,path.adapter.LowPart);
             if(adapter.vendor!=GraphicsVendor::Unknown)info.graphicsVendor=adapter.vendor;
             if(!adapter.name.isEmpty())info.graphicsAdapterName=adapter.name;
-            if(!targetFriendlyName.isEmpty())info.friendlyName=targetFriendlyName;
-            else {
-                const QString modelName=monitorModelName(info.stableId);
-                if(!modelName.isEmpty())info.friendlyName=modelName;
-            }
+            if(info.friendlyName.isEmpty()){const QString modelName=monitorModelName(info.stableId);if(!modelName.isEmpty())info.friendlyName=modelName;}
+            if(info.friendlyName.isEmpty()){info.friendlyName=QStringLiteral("Display");info.friendlyNameIsFallback=true;}
             bool supported=false,enabled=false;
             if(queryAcm(info,&supported,&enabled)) { info.acmSupported=supported; info.acmEnabled=enabled; }
             bool mhc2Supported=false,mhc2Verified=false;
             queryWindows10Mhc2(info,&mhc2Supported,&mhc2Verified);
+            bool matrixDdi=false;const bool matrixDdiKnown=build>=19041&&queryMatrixDdi(info,&matrixDdi);
+            int wddmVersion=0;const bool wddmKnown=build>=19041&&queryWddmVersion(info,&wddmVersion);
+            info.matrixDdiSupported=matrixDdiKnown&&matrixDdi;info.wddmVersion=wddmVersion;
             const windows::ColorPipeline pipeline=windows::chooseColorPipeline(
                 build,modernColorProfileApisAvailable(),
                 mscmsProc<ColorProfileGetDeviceCapabilitiesFn>("ColorProfileGetDeviceCapabilities")!=nullptr,
-                mhc2Supported,info.acmSupported);
-            info.colorAdjustmentSupported=pipeline!=windows::ColorPipeline::Unavailable;
+                mhc2Supported,info.acmSupported,matrixDdiKnown&&matrixDdi,wddmKnown&&wddmVersion>=Wddm26,true);
+            info.colorAdjustmentSupported=pipeline!=windows::ColorPipeline::Unavailable&&!info.cloneMode;
             info.usesWindows10Mhc2=pipeline==windows::ColorPipeline::Windows10Mhc2;
+            if(info.usesWindows10Mhc2) {
+                QStringList groupMaterial;
+                for(const int memberIndex:group) {
+                    DisplayInfo member=info;member.targetId=paths[memberIndex].targetId;UINT32 encoding=0,bitsPerChannel=0;bool advancedColorActive=false;
+                    queryOutputFormat(member,&encoding,&bitsPerChannel,&advancedColorActive);
+                    groupMaterial.push_back(QStringLiteral("%1,%2,%3,%4,%5,%6").arg(paths[memberIndex].targetId)
+                        .arg(paths[memberIndex].outputTechnology).arg(paths[memberIndex].monitorDevicePath)
+                        .arg(encoding).arg(bitsPerChannel).arg(advancedColorActive));
+                }
+                groupMaterial.sort();const QString material=QStringList{
+                    QString::number(build),QString::number(ubr),adapterDeviceId,driverVersion,
+                    info.graphicsAdapterName,info.stableId,edidHash,QString::number(path.sourceId),
+                    QString::number(wddmVersion),QString::number(matrixDdi),groupMaterial.join(QLatin1Char(';'))
+                }.join(QLatin1Char('|'));
+                info.colorCapabilityFingerprint=QString::fromLatin1(QCryptographicHash::hash(material.toUtf8(),QCryptographicHash::Sha256).toHex());
+            }
         }
         const int vendorKey=static_cast<int>(info.graphicsVendor);
         if(!panelAvailability.contains(vendorKey))panelAvailability.insert(vendorKey,windows::gpuControlPanelAvailable(info.graphicsVendor));
         info.gpuControlPanelAvailable=panelAvailability.value(vendorKey);
         info.ditheringControlSupported=false;
         result.push_back(info);
-        adapterDevice={}; adapterDevice.cb=sizeof(adapterDevice);
+    }
+    for(DisplayInfo &display:result) {
+        display.clonePeerNames.clear();
+        if(!display.cloneMode)continue;
+        for(const DisplayInfo &peer:result) {
+            if(peer.stableId!=display.stableId&&peer.cloneGroupKey==display.cloneGroupKey)
+                display.clonePeerNames.push_back(peer.friendlyName);
+        }
     }
     return result;
 }
@@ -381,11 +519,12 @@ bool WindowsPlatformServices::queryAcm(const DisplayInfo &d, bool *supported, bo
     if(windowsBuild()<26100) { if(supported)*supported=false; if(enabled)*enabled=false; return true; }
     DisplayConfigAdvancedColorInfo2 packet{};
     packet.header.type=static_cast<DISPLAYCONFIG_DEVICE_INFO_TYPE>(DisplayConfigGetAdvancedColorInfo2);
-    packet.header.size=sizeof(packet); packet.header.adapterId.HighPart=d.adapterHigh;
-    packet.header.adapterId.LowPart=d.adapterLow; packet.header.id=d.targetId;
+    packet.header.size=sizeof(packet);packet.header.adapterId.HighPart=d.adapterHigh;
+    packet.header.adapterId.LowPart=d.adapterLow;packet.header.id=d.targetId;
     const LONG result=DisplayConfigGetDeviceInfo(&packet.header);
     if(result!=ERROR_SUCCESS) { if(error)*error=errorMessage(QStringLiteral("Query Auto Color Management"),result); return false; }
-    if(supported)*supported=packet.wideColorSupported(); if(enabled)*enabled=packet.wideColorEnabled(); return true;
+    const bool currentEnabled=packet.wideColorEnabled();
+    if(supported)*supported=packet.wideColorSupported()||currentEnabled;if(enabled)*enabled=currentEnabled;return true;
 }
 
 bool WindowsPlatformServices::modernColorProfileApisAvailable() {
@@ -428,12 +567,48 @@ bool WindowsPlatformServices::queryWindows10Mhc2(const DisplayInfo &d, bool *sup
     return true;
 }
 
+bool WindowsPlatformServices::queryMatrixDdi(const DisplayInfo &d,bool *supported) {
+    if(supported)*supported=false;
+    DisplayConfigColorManagementCaps packet{};
+    packet.header.type=static_cast<DISPLAYCONFIG_DEVICE_INFO_TYPE>(DisplayConfigGetColorManagementCaps);
+    packet.header.size=sizeof(packet);packet.header.adapterId.HighPart=d.adapterHigh;
+    packet.header.adapterId.LowPart=d.adapterLow;packet.header.id=d.targetId;
+    if(DisplayConfigGetDeviceInfo(&packet.header)!=ERROR_SUCCESS)return false;
+    if(supported)*supported=packet.matrixDdiSupported();return true;
+}
+
+bool WindowsPlatformServices::queryWddmVersion(const DisplayInfo &d,int *version) {
+    if(version)*version=0;
+    const HMODULE gdi=GetModuleHandleW(L"gdi32.dll");if(!gdi)return false;
+    const auto openFn=reinterpret_cast<D3dkmtOpenAdapterFromLuidFn>(GetProcAddress(gdi,"D3DKMTOpenAdapterFromLuid"));
+    const auto queryFn=reinterpret_cast<D3dkmtQueryAdapterInfoFn>(GetProcAddress(gdi,"D3DKMTQueryAdapterInfo"));
+    const auto closeFn=reinterpret_cast<D3dkmtCloseAdapterFn>(GetProcAddress(gdi,"D3DKMTCloseAdapter"));
+    if(!openFn||!queryFn||!closeFn)return false;
+    D3dkmtOpenAdapterFromLuid opened{};opened.adapterLuid.HighPart=d.adapterHigh;opened.adapterLuid.LowPart=d.adapterLow;
+    if(openFn(&opened)!=0||!opened.adapter)return false;
+    int driverVersion=0;D3dkmtQueryAdapterInfo query{};query.adapter=opened.adapter;query.type=KmtQueryDriverVersion;
+    query.data=&driverVersion;query.dataSize=sizeof(driverVersion);
+    const LONG status=queryFn(&query);D3dkmtCloseAdapter closed{opened.adapter};closeFn(&closed);
+    if(status!=0)return false;if(version)*version=driverVersion;return true;
+}
+
+void WindowsPlatformServices::queryOutputFormat(const DisplayInfo &d,UINT32 *encoding,UINT32 *bitsPerChannel,bool *advancedColorActive) {
+    if(encoding)*encoding=0;if(bitsPerChannel)*bitsPerChannel=0;if(advancedColorActive)*advancedColorActive=false;
+    DisplayConfigAdvancedColorInfo packet{};
+    packet.header.type=static_cast<DISPLAYCONFIG_DEVICE_INFO_TYPE>(DisplayConfigGetAdvancedColorInfo);
+    packet.header.size=sizeof(packet);packet.header.adapterId.HighPart=d.adapterHigh;
+    packet.header.adapterId.LowPart=d.adapterLow;packet.header.id=d.targetId;
+    if(DisplayConfigGetDeviceInfo(&packet.header)!=ERROR_SUCCESS)return;
+    if(encoding)*encoding=packet.colorEncoding;if(bitsPerChannel)*bitsPerChannel=packet.bitsPerColorChannel;
+    if(advancedColorActive)*advancedColorActive=packet.advancedColorEnabled();
+}
+
 ApplyResult WindowsPlatformServices::setAcm(const DisplayInfo &d, bool enabled) {
     if(windowsBuild()<26100) return ApplyResult::fail(QStringLiteral("Auto Color Management requires Windows 11 24H2 or above."));
     DisplayConfigSetWcg packet{};
     packet.header.type=static_cast<DISPLAYCONFIG_DEVICE_INFO_TYPE>(DisplayConfigSetWcgState);
-    packet.header.size=sizeof(packet); packet.header.adapterId.HighPart=d.adapterHigh;
-    packet.header.adapterId.LowPart=d.adapterLow; packet.header.id=d.targetId; packet.value=enabled?1u:0u;
+    packet.header.size=sizeof(packet);packet.header.adapterId.HighPart=d.adapterHigh;
+    packet.header.adapterId.LowPart=d.adapterLow;packet.header.id=d.targetId;packet.value=enabled?1u:0u;
     const LONG result=DisplayConfigSetDeviceInfo(&packet.header);
     return result==ERROR_SUCCESS?ApplyResult::ok():ApplyResult::fail(errorMessage(QStringLiteral("Change Auto Color Management"),result));
 }
@@ -599,7 +774,10 @@ ApplyResult WindowsPlatformServices::writeRecoveryRecord(const DisplayInfo &d, c
 
 bool WindowsPlatformServices::readRecoveryRecord(const DisplayInfo &d, ColorState *state) const {
     QSettings settings(recoveryFilePath(),QSettings::IniFormat); const QString group=recoveryGroup(d);
-    if(!settings.childGroups().contains(group))return false;
+    if(!settings.childGroups().contains(group)) {
+        if(d.legacyStableId.isEmpty()||d.legacyStableId==d.stableId)return false;
+        DisplayInfo legacy=d;legacy.stableId=d.legacyStableId;legacy.legacyStableId.clear();return readRecoveryRecord(legacy,state);
+    }
     settings.beginGroup(group);
     if(settings.value(QStringLiteral("stableId")).toString()!=d.stableId) { settings.endGroup(); return false; }
     state->previousProfile=settings.value(QStringLiteral("previousProfile")).toString();
@@ -610,7 +788,11 @@ bool WindowsPlatformServices::readRecoveryRecord(const DisplayInfo &d, ColorStat
 
 void WindowsPlatformServices::clearRecoveryRecord(const DisplayInfo &d) {
     QSettings settings(recoveryFilePath(),QSettings::IniFormat);
-    settings.remove(recoveryGroup(d)); settings.sync();
+    settings.remove(recoveryGroup(d));
+    if(!d.legacyStableId.isEmpty()&&d.legacyStableId!=d.stableId) {
+        DisplayInfo legacy=d;legacy.stableId=d.legacyStableId;settings.remove(recoveryGroup(legacy));
+    }
+    settings.sync();
 }
 
 QString WindowsPlatformServices::defaultProfile(const DisplayInfo &d) {
@@ -756,7 +938,7 @@ ApplyResult WindowsPlatformServices::recoverInterruptedColorState() {
 }
 
 ApplyResult WindowsPlatformServices::applyColor(const DisplayInfo &d, double saturation, const RgbBalance &balance) {
-    if(!saturationPlatformAvailable() || !d.colorAdjustmentSupported)
+    if(d.cloneMode||!saturationPlatformAvailable() || !d.colorAdjustmentSupported)
         return ApplyResult::fail(QStringLiteral("Saturation is unavailable for the active color pipeline on %1.").arg(d.friendlyName));
     ColorState pendingRecovery;
     if(!m_colorStates.contains(d.stableId)
@@ -802,6 +984,68 @@ ApplyResult WindowsPlatformServices::applyColor(const DisplayInfo &d, double sat
     state.currentProfile=fileName; return ApplyResult::ok();
 }
 
+ApplyResult WindowsPlatformServices::startColorSafetyWatchdog(int timeoutSeconds) {
+    if(m_colorSafetyEvent||m_colorSafetyProcess)return ApplyResult::fail(QStringLiteral("A color safety test is already active."));
+    m_colorSafetyEventName=QStringLiteral("Local\\EinkAssistant.ColorSafety.%1.%2")
+        .arg(GetCurrentProcessId()).arg(QRandomGenerator::global()->generate64(),0,16);
+    m_colorSafetyEvent=CreateEventW(nullptr,TRUE,FALSE,reinterpret_cast<LPCWSTR>(m_colorSafetyEventName.utf16()));
+    if(!m_colorSafetyEvent)return ApplyResult::fail(errorMessage(QStringLiteral("Create color safety watchdog event")));
+    const QString readyEventName=m_colorSafetyEventName+QStringLiteral(".Ready");
+    const HANDLE readyEvent=CreateEventW(nullptr,TRUE,FALSE,reinterpret_cast<LPCWSTR>(readyEventName.utf16()));
+    if(!readyEvent){const ApplyResult result=ApplyResult::fail(errorMessage(QStringLiteral("Create color safety watchdog ready event")));CloseHandle(m_colorSafetyEvent);m_colorSafetyEvent=nullptr;m_colorSafetyEventName.clear();return result;}
+    const QString executable=QCoreApplication::applicationFilePath();
+    QString command=quoteCommandLineArgument(executable)+QStringLiteral(" --color-safety-watchdog ")
+        +quoteCommandLineArgument(m_colorSafetyEventName)+QLatin1Char(' ')+quoteCommandLineArgument(readyEventName)
+        +QLatin1Char(' ')+QString::number(std::max(1,timeoutSeconds));
+    QVector<wchar_t> mutableCommand(command.size()+1);command.toWCharArray(mutableCommand.data());mutableCommand[command.size()]=0;
+    STARTUPINFOW startup{};startup.cb=sizeof(startup);startup.dwFlags=STARTF_USESHOWWINDOW;startup.wShowWindow=SW_HIDE;
+    PROCESS_INFORMATION process{};
+    const BOOL launched=CreateProcessW(reinterpret_cast<LPCWSTR>(executable.utf16()),mutableCommand.data(),nullptr,nullptr,FALSE,
+        CREATE_NO_WINDOW,nullptr,reinterpret_cast<LPCWSTR>(QFileInfo(executable).absolutePath().utf16()),&startup,&process);
+    if(!launched) {
+        const ApplyResult result=ApplyResult::fail(errorMessage(QStringLiteral("Start color safety watchdog")));
+        CloseHandle(readyEvent);CloseHandle(m_colorSafetyEvent);m_colorSafetyEvent=nullptr;m_colorSafetyEventName.clear();return result;
+    }
+    CloseHandle(process.hThread);m_colorSafetyProcess=process.hProcess;
+    const DWORD ready=WaitForSingleObject(readyEvent,3000);CloseHandle(readyEvent);
+    if(ready!=WAIT_OBJECT_0) {
+        TerminateProcess(m_colorSafetyProcess,84);WaitForSingleObject(m_colorSafetyProcess,1000);
+        CloseHandle(m_colorSafetyProcess);m_colorSafetyProcess=nullptr;CloseHandle(m_colorSafetyEvent);m_colorSafetyEvent=nullptr;m_colorSafetyEventName.clear();
+        return ApplyResult::fail(QStringLiteral("The color safety watchdog did not become ready."));
+    }
+    return ApplyResult::ok();
+}
+
+void WindowsPlatformServices::finishColorSafetyWatchdog(bool commit) {
+    if(commit&&m_colorSafetyEvent)SetEvent(m_colorSafetyEvent);
+    if(commit&&m_colorSafetyProcess)WaitForSingleObject(m_colorSafetyProcess,1500);
+    if(m_colorSafetyProcess){CloseHandle(m_colorSafetyProcess);m_colorSafetyProcess=nullptr;}
+    if(m_colorSafetyEvent){CloseHandle(m_colorSafetyEvent);m_colorSafetyEvent=nullptr;}
+    m_colorSafetyEventName.clear();m_colorSafetyDisplayId.clear();
+}
+
+ApplyResult WindowsPlatformServices::beginColorSafetyTest(const DisplayInfo &d,double saturation,const RgbBalance &balance,int timeoutSeconds) {
+    if(!d.usesWindows10Mhc2||!d.colorAdjustmentSupported)return ApplyResult::fail(QStringLiteral("This Windows 10 display path did not pass the MHC2 candidate gate."));
+    const ApplyResult watchdog=startColorSafetyWatchdog(timeoutSeconds);if(!watchdog.success)return watchdog;
+    m_colorSafetyDisplayId=d.stableId;
+    const ApplyResult applied=applyColor(d,saturation,balance);
+    if(!applied.success) {
+        const ApplyResult restored=restoreColor(d);finishColorSafetyWatchdog(restored.success);
+    }
+    return applied;
+}
+
+ApplyResult WindowsPlatformServices::confirmColorSafetyTest(const DisplayInfo &d) {
+    if(m_colorSafetyDisplayId!=d.stableId)return ApplyResult::fail(QStringLiteral("No matching color safety test is active."));
+    finishColorSafetyWatchdog(true);return ApplyResult::ok();
+}
+
+ApplyResult WindowsPlatformServices::rollbackColorSafetyTest(const DisplayInfo &d) {
+    if(!m_colorSafetyDisplayId.isEmpty()&&m_colorSafetyDisplayId!=d.stableId)
+        return ApplyResult::fail(QStringLiteral("A different display owns the active color safety test."));
+    const ApplyResult restored=restoreColor(d);finishColorSafetyWatchdog(restored.success);return restored;
+}
+
 ApplyResult WindowsPlatformServices::removeProfileAssociation(const DisplayInfo &d, const QString &profile, int scope) {
     const int requestedScope=scope<0?profileScope(d):scope;
     if(requestedScope==WcsScopeSystemWide) {
@@ -812,7 +1056,12 @@ ApplyResult WindowsPlatformServices::removeProfileAssociation(const DisplayInfo 
     if(!fn) return ApplyResult::fail(QStringLiteral("Modern Windows color profile APIs are unavailable."));
     LUID luid{}; luid.HighPart=d.adapterHigh; luid.LowPart=d.adapterLow;
     const HRESULT hr=fn(requestedScope,reinterpret_cast<LPCWSTR>(profile.utf16()),luid,d.sourceId,FALSE);
-    return SUCCEEDED(hr)?ApplyResult::ok():ApplyResult::fail(QStringLiteral("Remove color profile association failed (0x%1).").arg(static_cast<quint32>(hr),8,16,QLatin1Char('0')));
+    // ColorProfileGetDisplayList can expose an effective profile through both
+    // scopes even though only one scope owns the association.  Removing the
+    // inherited copy then reports "not associated"; that is already the
+    // cleanup state we wanted and must remain an idempotent success.
+    if(SUCCEEDED(hr)||hr==HRESULT_FROM_WIN32(ERROR_PROFILE_NOT_ASSOCIATED_WITH_DEVICE))return ApplyResult::ok();
+    return ApplyResult::fail(QStringLiteral("Remove color profile association failed (0x%1).").arg(static_cast<quint32>(hr),8,16,QLatin1Char('0')));
 }
 
 ApplyResult WindowsPlatformServices::setDefaultProfile(const DisplayInfo &d, const QString &profile, int scope) {
@@ -1117,9 +1366,29 @@ void WindowsPlatformServices::shutdown() {
     if(m_shutdown)return;
     restoreNightLightState();
     m_shutdown=true;
-    const QVector<DisplayInfo> current=displays();
-    for(const DisplayInfo &d:current) { restoreToneCurve(d); restoreColor(d); }
+    const QVector<DisplayInfo> current=displays();bool safetyRestored=true;
+    for(const DisplayInfo &d:current) {
+        restoreToneCurve(d);const ApplyResult restored=restoreColor(d);
+        if(d.stableId==m_colorSafetyDisplayId&&!restored.success)safetyRestored=false;
+    }
+    if(m_colorSafetyEvent||m_colorSafetyProcess)finishColorSafetyWatchdog(safetyRestored);
     closeBroker();
+}
+
+int WindowsPlatformServices::runColorSafetyWatchdog(const QString &eventName,int timeoutSeconds,const QString &readyEventName) {
+    const HANDLE event=OpenEventW(SYNCHRONIZE,FALSE,reinterpret_cast<LPCWSTR>(eventName.utf16()));
+    if(!event)return 81;
+    if(!readyEventName.isEmpty()) {
+        const HANDLE ready=OpenEventW(EVENT_MODIFY_STATE,FALSE,reinterpret_cast<LPCWSTR>(readyEventName.utf16()));
+        if(!ready){CloseHandle(event);return 84;}SetEvent(ready);CloseHandle(ready);
+    }
+    const DWORD wait=WaitForSingleObject(event,static_cast<DWORD>(std::max(1,timeoutSeconds))*1000);
+    CloseHandle(event);
+    if(wait==WAIT_OBJECT_0)return 0;
+    if(wait!=WAIT_TIMEOUT)return 82;
+    WindowsPlatformServices platform(false);
+    const ApplyResult recovered=platform.recoverInterruptedColorState();
+    platform.shutdown();return recovered.success?0:83;
 }
 
 int WindowsPlatformServices::runColorBroker(const QString &pipeName) {
@@ -1153,7 +1422,7 @@ int WindowsPlatformServices::runColorBroker(const QString &pipeName) {
                     }
                 }
             } else if(parts.value(0)==QStringLiteral("REMOVE") && parts.size()>=6) {
-                const QString name=parts[1];LUID luid{};luid.HighPart=parts[2].toInt();luid.LowPart=parts[3].toUInt();const UINT32 source=parts[4].toUInt();const int scope=parts[5].toInt();const auto remove=mscmsProc<ColorProfileRemoveDisplayAssociationFn>("ColorProfileRemoveDisplayAssociation");const HRESULT hr=remove?remove(scope,reinterpret_cast<LPCWSTR>(name.utf16()),luid,source,FALSE):E_NOTIMPL;if(FAILED(hr))reply=QStringLiteral("ERR Remove ICC profile association failed (0x%1)").arg(static_cast<quint32>(hr),8,16,QLatin1Char('0'));
+                const QString name=parts[1];LUID luid{};luid.HighPart=parts[2].toInt();luid.LowPart=parts[3].toUInt();const UINT32 source=parts[4].toUInt();const int scope=parts[5].toInt();const auto remove=mscmsProc<ColorProfileRemoveDisplayAssociationFn>("ColorProfileRemoveDisplayAssociation");const HRESULT hr=remove?remove(scope,reinterpret_cast<LPCWSTR>(name.utf16()),luid,source,FALSE):E_NOTIMPL;if(FAILED(hr)&&hr!=HRESULT_FROM_WIN32(ERROR_PROFILE_NOT_ASSOCIATED_WITH_DEVICE))reply=QStringLiteral("ERR Remove ICC profile association failed (0x%1)").arg(static_cast<quint32>(hr),8,16,QLatin1Char('0'));
             } else if(parts.value(0)==QStringLiteral("SETDEFAULT") && parts.size()>=6) {
                 const QString name=parts[1];LUID luid{};luid.HighPart=parts[2].toInt();luid.LowPart=parts[3].toUInt();const UINT32 source=parts[4].toUInt();const int scope=parts[5].toInt();const auto setDefault=mscmsProc<ColorProfileSetDisplayDefaultAssociationFn>("ColorProfileSetDisplayDefaultAssociation");const HRESULT hr=setDefault?setDefault(scope,reinterpret_cast<LPCWSTR>(name.utf16()),ColorProfileTypeIcc,ColorProfileSubtypeStandard,luid,source):E_NOTIMPL;if(FAILED(hr))reply=QStringLiteral("ERR Restore default ICC profile failed (0x%1)").arg(static_cast<quint32>(hr),8,16,QLatin1Char('0'));
             } else if(parts.value(0)==QStringLiteral("UNINSTALL") && parts.size()>=2) {

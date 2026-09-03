@@ -6,6 +6,7 @@
 #include <QLayout>
 #include <QPainter>
 #include <QPushButton>
+#include <QVariant>
 #include <QtMath>
 
 namespace eink::ui {
@@ -73,6 +74,7 @@ QPushButton *outlinedButton(const QString &text, const QString &objectName) {
 void clearLayout(QLayout *layout) {
     while(QLayoutItem *item=layout->takeAt(0)) {
         if(QWidget *widget=item->widget()) {
+            widget->setProperty("_einkPendingDelete",true);
             widget->hide();
             widget->deleteLater();
             delete item;

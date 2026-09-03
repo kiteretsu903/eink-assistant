@@ -3,6 +3,7 @@
 #include "ToneCurve.h"
 
 #include <QString>
+#include <QStringList>
 #include <QVector>
 
 namespace eink {
@@ -25,8 +26,10 @@ enum class GraphicsVendor {
 
 struct DisplayInfo {
     QString stableId;
+    QString legacyStableId;
     QString deviceName;
     QString friendlyName;
+    bool friendlyNameIsFallback = false;
     bool builtIn = false;
     bool ditheringControlSupported = false;
     bool colorAdjustmentSupported = false;
@@ -34,6 +37,9 @@ struct DisplayInfo {
     bool acmSupported = false;
     bool acmEnabled = false;
     bool colorAdjustmentUpgradeMayHelp = false;
+    bool matrixDdiSupported = false;
+    int wddmVersion = 0;
+    QString colorCapabilityFingerprint;
     GraphicsVendor graphicsVendor = GraphicsVendor::Unknown;
     QString graphicsAdapterName;
     bool gpuControlPanelAvailable = false;
@@ -41,6 +47,10 @@ struct DisplayInfo {
     quint32 adapterLow = 0;
     quint32 sourceId = 0;
     quint32 targetId = 0;
+    bool cloneMode = false;
+    QString cloneGroupKey;
+    QStringList clonePeerNames;
+    QVector<quint32> cloneTargetIds;
 };
 
 struct DisplaySettings {
@@ -50,6 +60,9 @@ struct DisplaySettings {
     double saturation = 1.0;
     int saturationPreset = 2;
     RgbBalance rgb;
+    bool experimentalColorEnabled = false;
+    QString confirmedColorFingerprint;
+    QString failedColorFingerprint;
     TextLevel textLevel = TextLevel::Off;
     EnhanceLevel enhanceLevel = EnhanceLevel::Off;
     bool advanced = false;
@@ -70,6 +83,7 @@ struct AppSettings {
     bool reduceVisualEffects = false;
     bool autoVisualEffects = true;
     bool showWelcome = true;
+    bool hideHardwareSetupNotice = false;
     bool trayDiscoveryShown = false;
     int trayDiscoveryVersion = 0;
     QString trayDiscoveryExecutablePath;

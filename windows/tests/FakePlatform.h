@@ -16,6 +16,9 @@ public:
     ApplyResult restoreToneCurve(const DisplayInfo &) override;
     ApplyResult applyColor(const DisplayInfo &,double,const RgbBalance &) override;
     ApplyResult restoreColor(const DisplayInfo &) override;
+    ApplyResult beginColorSafetyTest(const DisplayInfo &,double,const RgbBalance &,int) override;
+    ApplyResult confirmColorSafetyTest(const DisplayInfo &) override;
+    ApplyResult rollbackColorSafetyTest(const DisplayInfo &) override;
     ApplyResult setDitheringDisabled(const DisplayInfo &,bool) override;
     bool visualEffectsReduced() const override { return effectsReduced; }
     ApplyResult setVisualEffectsReduced(bool value) override { if(systemDelayMs>0)QThread::msleep(static_cast<unsigned long>(systemDelayMs));effectsReduced=value; ++effectsCalls; return ApplyResult::ok(); }
@@ -41,13 +44,14 @@ public:
     QHash<QString,ToneCurve> curves;
     QHash<QString,double> saturations;
     QHash<QString,RgbBalance> balances;
-    int recoveryCalls=0,nightRecoveryCalls=0,nightDisableCalls=0,nightRestoreCalls=0,curveApplyCalls=0,curveRestoreCalls=0,colorApplyCalls=0,colorRestoreCalls=0,ditherCalls=0,effectsCalls=0,lightModeCalls=0;
+    int recoveryCalls=0,nightRecoveryCalls=0,nightDisableCalls=0,nightRestoreCalls=0,curveApplyCalls=0,curveRestoreCalls=0,colorApplyCalls=0,colorRestoreCalls=0,colorSafetyBeginCalls=0,colorSafetyConfirmCalls=0,colorSafetyRollbackCalls=0,ditherCalls=0,effectsCalls=0,lightModeCalls=0;
     bool effectsReduced=false,lightMode=false,nightDisabled=false,originalNightDisabled=false,nightOwned=false,login=false,saturationAvailable=true,lightModeAvailable=true,nightAvailable=true,directNightAvailable=true,shutDown=false;
     int openedSettings=0,openedNightLight=0;
     int gpuPanelOpenCalls=0;
     QString lastGpuPanelDisplayId;
     ApplyResult gpuPanelOpenResult=ApplyResult::ok();
     ApplyResult nightLightSetResult=ApplyResult::ok();
+    ApplyResult colorSafetyBeginResult=ApplyResult::ok();
     int systemDelayMs=0;
     QStringList operationLog;
 };

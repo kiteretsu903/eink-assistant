@@ -20,7 +20,10 @@ ColorPipeline chooseColorPipeline(quint32 build,
                                   bool modernProfileApisAvailable,
                                   bool mhc2CapabilityApiAvailable,
                                   bool mhc2Supported,
-                                  bool acmSupported);
+                                  bool acmSupported,
+                                  bool matrixDdiSupported,
+                                  bool wddm26OrLater,
+                                  bool exactTargetMapped);
 
 NightLightControlPath chooseNightLightControlPath(quint32 build);
 

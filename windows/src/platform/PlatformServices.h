@@ -23,6 +23,10 @@ public:
     virtual ApplyResult restoreToneCurve(const DisplayInfo &) = 0;
     virtual ApplyResult applyColor(const DisplayInfo &, double saturation, const RgbBalance &) = 0;
     virtual ApplyResult restoreColor(const DisplayInfo &) = 0;
+    virtual ApplyResult beginColorSafetyTest(const DisplayInfo &, double saturation,
+                                             const RgbBalance &, int timeoutSeconds) = 0;
+    virtual ApplyResult confirmColorSafetyTest(const DisplayInfo &) = 0;
+    virtual ApplyResult rollbackColorSafetyTest(const DisplayInfo &) = 0;
     virtual ApplyResult setDitheringDisabled(const DisplayInfo &, bool disabled) = 0;
     virtual bool visualEffectsReduced() const = 0;
     virtual ApplyResult setVisualEffectsReduced(bool reduced) = 0;

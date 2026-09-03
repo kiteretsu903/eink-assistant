@@ -1,5 +1,5 @@
 #ifndef AppVersion
-  #define AppVersion "1.0"
+  #define AppVersion "1.1"
 #endif
 
 #ifndef SourceDir
@@ -48,14 +48,16 @@ ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 MinVersion=6.1sp1
 PrivilegesRequired=admin
-CloseApplications=yes
+CloseApplications=force
 RestartApplications=no
-AppMutex=Local\EinkAssistant.SingleInstance.v1
 Compression=lzma2/ultra64
 SolidCompression=yes
-WizardStyle=modern
+WizardStyle=modern dynamic excludelightcontrols hidebevels
+WizardSizePercent=115
+WizardSmallImageFile=..\..\Resources\AppIcon.png
+WizardSmallImageFileDynamicDark=..\..\Resources\AppIcon.png
 SetupLogging=yes
-VersionInfoVersion=1.0.0.0
+VersionInfoVersion=1.1.0.0
 VersionInfoProductName={#AppName}
 VersionInfoProductVersion={#AppVersion}
 VersionInfoCompany={#AppPublisher}
@@ -79,3 +81,51 @@ Name: "{autodesktop}\E-Ink Assistant"; Filename: "{app}\{#AppExeName}"; WorkingD
 
 [Run]
 Filename: "{app}\{#AppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(AppName, '&', '&&')}}"; WorkingDir: "{app}"; Flags: nowait postinstall skipifsilent runascurrentuser
+
+[Code]
+const
+  EVENT_MODIFY_STATE = $0002;
+  GracefulExitWaitIterations = 80;
+
+function OpenEvent(DesiredAccess: DWORD; InheritHandle: BOOL; Name: String): THandle;
+  external 'OpenEventW@kernel32.dll stdcall';
+function SetEvent(EventHandle: THandle): BOOL;
+  external 'SetEvent@kernel32.dll stdcall';
+function CloseHandle(Handle: THandle): BOOL;
+  external 'CloseHandle@kernel32.dll stdcall';
+
+function RequestGracefulAppExit: Boolean;
+var
+  ExitEvent: THandle;
+begin
+  Result := False;
+  ExitEvent := OpenEvent(EVENT_MODIFY_STATE, False, 'Local\EinkAssistant.QuitInstance.v1');
+  if ExitEvent <> 0 then
+  begin
+    Result := SetEvent(ExitEvent);
+    CloseHandle(ExitEvent);
+    if Result then
+      Log('Requested a graceful E-Ink Assistant shutdown before updating.');
+  end;
+end;
+
+function PrepareToInstall(var NeedsRestart: Boolean): String;
+var
+  Attempt: Integer;
+begin
+  Result := '';
+  if not RequestGracefulAppExit then
+    Exit;
+
+  for Attempt := 1 to GracefulExitWaitIterations do
+  begin
+    if not CheckForMutexes('Local\EinkAssistant.SingleInstance.v1') then
+    begin
+      Log('E-Ink Assistant completed its graceful shutdown.');
+      Exit;
+    end;
+    Sleep(100);
+  end;
+
+  Log('Graceful shutdown timed out; Restart Manager will offer the force-close option.');
+end;
