@@ -6,6 +6,7 @@
   Bigme B251 Pro example. **Got it** hides it for the current session;
   **Never show it again** keeps it hidden after relaunch.
 - Reworked the welcome panel into three concise, icon-led setup points.
+- Built-in displays now appear after external displays in the selection list.
 
 ## v2.4 — 2026-09-01
 

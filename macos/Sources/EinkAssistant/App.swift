@@ -148,7 +148,12 @@ final class AssistantModel: ObservableObject {
     }
 
     func refresh() {
-        let displays = activeDisplays()
+        let discoveredDisplays = activeDisplays()
+        // Built-in panels are rarely the e-ink target. Keep the system's
+        // discovery order within each group, but list external displays first
+        // so the most likely choices are immediately visible.
+        let displays = discoveredDisplays.filter { !$0.isBuiltin }
+            + discoveredDisplays.filter { $0.isBuiltin }
         let currentEinkUUIDs = Set(displays.compactMap { display -> String? in
             guard EinkSettings.isEink(display.id) else { return nil }
             return displayUUIDString(display.id)

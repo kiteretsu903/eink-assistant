@@ -25,6 +25,7 @@
 
 - 在控制面板顶部新增可关闭的硬件设置提示，并提供 Bigme B251 Pro 示例。
 - 将欢迎面板改为三个简洁、带图标的设置要点。
+- 显示器选择列表现在先显示外接显示器，内建显示屏排在最后。
 
 [下载最新版本](https://github.com/kiteretsu903/eink-assistant/releases/latest) · [查看完整更新日志](../../CHANGELOG.md)
 

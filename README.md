@@ -38,6 +38,7 @@ app itself. MIT licensed.
 - Added dismissible hardware-setup guidance above the controls, including a
   Bigme B251 Pro example.
 - Reworked the welcome panel into three concise, icon-led setup points.
+- Built-in displays now appear after external displays in the selection list.
 
 [Download the latest release](../../releases/latest) · [Read the full changelog](CHANGELOG.md)
 
