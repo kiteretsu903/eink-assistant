@@ -10,6 +10,12 @@
 "busy.quitting"    = "Restoring your display settings…";
 "busy.configuring" = "Configuring your display…";
 
+"hardware.notice.title" = "Set your display hardware first";
+"hardware.notice.body"  = "For best results, set your e-ink display to a **balanced or slightly lower hardware-contrast level**.";
+"hardware.notice.bigme" = "For example, Bigme B251 Pro (R2 FW V2.0): Web Mode, Hardware Gamma Level 3, Contrast 50, Color Restore Mode off.";
+"hardware.notice.gotIt" = "Got it";
+"hardware.notice.never" = "Never show it again";
+
 "saturation.title"   = "Saturation";
 /* Saturation is cleared on quit and re-applied on launch. */
 "saturation.caption" = "For color e-ink: compensates for the narrow color gamut. Restored when the app quits.";
@@ -60,9 +66,6 @@
 "language.title"  = "Language";
 "language.system" = "System";
 
-"notice.tuned" = "Presets assume the monitor itself is set to: Web Mode, Hardware Gamma Level 3, Contrast 50, Color Restore Mode off (Bigme B251 Pro, R2 FW V2.0). Set those first.";
-"notice.risk"  = "B&W and other color e-ink displays can use the relevant controls and tune their own values in Advanced mode. Use at your own risk.";
-
 "preset.factory"  = "Factory";
 "preset.enhanced" = "Enhanced";
 "preset.vivid"    = "Vivid";
@@ -98,11 +101,12 @@
 "role.error"   = "Could not change the display role.";
 
 "welcome.title"       = "Welcome to E-Ink Assistant";
-"welcome.menubar"     = "The app lives in your **menu bar**, with no Dock icon. **Click the icon up there** to open it.";
-"welcome.bigme.title" = "Using a Bigme B251 Pro?";
-"welcome.bigme.body"  = "Set the monitor itself to **Web Mode, Hardware Gamma Level 3, Contrast 50, Color Restore Mode off**. The presets were tuned against firmware **R2 FW V2.0**; other Bigme firmware may behave differently, so judge the result yourself.";
-"welcome.other.title" = "Using B&W or another color e-ink display?";
-"welcome.other.body"  = "Both types can benefit from **Reduce Shaking, Text Contrast, Video Enhance**, and the system accessibility controls. Color panels can also tune **Saturation and RGB**. Start from a balanced hardware baseline; **Advanced mode** lets you dial in your own curve.";
+"welcome.menubar.title" = "Menu bar app";
+"welcome.menubar"     = "Click the book icon to open the controls.";
+"welcome.bigme.title" = "Bigme B251 Pro";
+"welcome.bigme.body"  = "Use Web Mode, Hardware Gamma Level 3, Contrast 50, and Color Restore Mode off.";
+"welcome.other.title" = "Other e-ink displays";
+"welcome.other.body"  = "Start with balanced hardware settings, then fine-tune in Advanced mode.";
 "welcome.hide"        = "Do not show this tip again";
 "welcome.done"        = "Got it";
 

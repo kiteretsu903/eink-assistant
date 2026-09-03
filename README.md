@@ -33,11 +33,11 @@ app itself. MIT licensed.
 
 ## Latest release
 
-**v2.4 — September 1, 2026**
+**v2.5 — September 2, 2026**
 
-- The control panel now fits the visible height of its current screen.
-- Tall content scrolls and keeps a 40-point gap above the Dock or screen edge;
-  shorter panels keep their natural height.
+- Added dismissible hardware-setup guidance above the controls, including a
+  Bigme B251 Pro example.
+- Reworked the welcome panel into three concise, icon-led setup points.
 
 [Download the latest release](../../releases/latest) · [Read the full changelog](CHANGELOG.md)
 

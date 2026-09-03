@@ -38,6 +38,7 @@ struct PanelState: Identifiable, Equatable {
 @MainActor
 final class AssistantModel: ObservableObject {
     static let shared = AssistantModel()
+    private static let hardwareNoticeSuppressKey = "hide-hardware-setup-notice"
 
     @Published var panels: [PanelState] = []
     @Published var launchAtLogin = false
@@ -59,6 +60,10 @@ final class AssistantModel: ObservableObject {
     @Published var pendingAccessibilityState: Bool?
     @Published var autoAccessibility = UserDefaults.standard.bool(
         forKey: "accessibility-auto-follow")
+    /// "Got it" hides the hardware reminder for this app session. The second
+    /// action stores an explicit opt-out so it stays hidden after relaunch.
+    @Published var showsHardwareSetupNotice = !UserDefaults.standard.bool(
+        forKey: AssistantModel.hardwareNoticeSuppressKey)
     @Published var lastError: String?
 
     // Writing a gamma table or a color profile makes macOS post a storm of
@@ -664,6 +669,14 @@ final class AssistantModel: ObservableObject {
         guard language != value else { return }
         Localization.set(value)
         language = value          // republishes, so every L() re-resolves
+    }
+
+    func dismissHardwareSetupNotice(permanently: Bool) {
+        if permanently {
+            UserDefaults.standard.set(
+                true, forKey: AssistantModel.hardwareNoticeSuppressKey)
+        }
+        showsHardwareSetupNotice = false
     }
 
     func setLaunchAtLogin(_ enabled: Bool) {
@@ -1405,11 +1418,57 @@ struct SystemDisplayRow: View {
 
 // MARK: - Main view
 
+/// Hardware contrast that starts too high leaves the software curve with no
+/// recoverable shade detail. Keep this reminder before the system-wide
+/// accessibility controls so it is the first setup step below the app title.
+private struct HardwareSetupNotice: View {
+    @ObservedObject var model: AssistantModel
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 9) {
+                Image(systemName: "display")
+                    .font(.system(size: 18))
+                    .foregroundStyle(Color.accentColor)
+                    .frame(width: 20)
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(L("hardware.notice.title"))
+                        .font(.system(size: 16, weight: .semibold))
+                    Text((try? AttributedString(
+                        markdown: L("hardware.notice.body")))
+                        ?? AttributedString(L("hardware.notice.body")))
+                    Text(L("hardware.notice.bigme"))
+                }
+                .fixedSize(horizontal: false, vertical: true)
+            }
+
+            HStack(spacing: 9) {
+                Spacer()
+                Button(L("hardware.notice.gotIt")) {
+                    model.dismissHardwareSetupNotice(permanently: false)
+                }
+                .buttonStyle(EinkOutlinedButtonStyle(foreground: .accentColor))
+                .keyboardShortcut(.defaultAction)
+                Button(L("hardware.notice.never")) {
+                    model.dismissHardwareSetupNotice(permanently: true)
+                }
+                .buttonStyle(EinkOutlinedButtonStyle())
+            }
+        }
+        .padding(14)
+        .einkOutlinedArea()
+    }
+}
+
 struct AssistantView: View {
     @ObservedObject var model: AssistantModel
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
+            if model.showsHardwareSetupNotice {
+                HardwareSetupNotice(model: model)
+            }
+
             SystemDisplayRow(model: model)
 
             Divider()
@@ -1429,22 +1488,6 @@ struct AssistantView: View {
             }
 
             HowItWorks(language: model.language)
-
-            // The settings here were tuned against one specific panel in one
-            // specific configuration. Say so, rather than implying they are
-            // universal.
-            HStack(alignment: .top, spacing: 5) {
-                Image(systemName: "info.circle")
-                    .font(.system(size: 15))
-                    .foregroundStyle(EinkPalette.secondaryText)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(L("notice.tuned"))
-                    Text(L("notice.risk"))
-                }
-                .font(.system(size: 13))
-                .foregroundStyle(EinkPalette.secondaryText)
-                .fixedSize(horizontal: false, vertical: true)
-            }
 
             Divider()
 

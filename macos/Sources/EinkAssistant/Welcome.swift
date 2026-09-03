@@ -86,12 +86,6 @@ enum WelcomeWindow {
 
 // MARK: - Content
 
-/// Renders **bold** from the localized string. Text(String) is verbatim, so the
-/// markup has to be parsed rather than passed through.
-private func md(_ text: String) -> AttributedString {
-    (try? AttributedString(markdown: text)) ?? AttributedString(text)
-}
-
 struct WelcomeView: View {
     let close: () -> Void
     @State private var suppress = WelcomeWindow.isSuppressed
@@ -101,18 +95,13 @@ struct WelcomeView: View {
             Text(L("welcome.title"))
                 .font(.system(size: 22, weight: .semibold))
 
-            HStack(alignment: .top, spacing: 8) {
-                Image(systemName: "menubar.arrow.up.rectangle")
-                    .font(.system(size: 19))
-                    .foregroundStyle(Color.accentColor)
-                Text(md(L("welcome.menubar")))
-                    .fixedSize(horizontal: false, vertical: true)
+            VStack(alignment: .leading, spacing: 12) {
+                tip("menubar.arrow.up.rectangle",
+                    L("welcome.menubar.title"), L("welcome.menubar"))
+                tip("display", L("welcome.bigme.title"), L("welcome.bigme.body"))
+                tip("slider.horizontal.3",
+                    L("welcome.other.title"), L("welcome.other.body"))
             }
-
-            Divider()
-
-            tip("display", L("welcome.bigme.title"), L("welcome.bigme.body"))
-            tip("display.2", L("welcome.other.title"), L("welcome.other.body"))
 
             Divider()
 
@@ -135,17 +124,23 @@ struct WelcomeView: View {
     }
 
     private func tip(_ symbol: String, _ title: String, _ body: String) -> some View {
-        HStack(alignment: .top, spacing: 8) {
-            Image(systemName: symbol)
-                .font(.system(size: 19))
-                .foregroundStyle(EinkPalette.secondaryText)
-                .frame(width: 20)
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title).font(.system(size: 17, weight: .semibold))
-                Text(md(body))
+        HStack(alignment: .top, spacing: 12) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(EinkPalette.areaOutline, lineWidth: 2)
+                    .frame(width: 38, height: 38)
+                Image(systemName: symbol)
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(Color.accentColor)
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title).font(.system(size: 16, weight: .semibold))
+                Text(body)
+                    .font(.system(size: 14))
                     .foregroundStyle(EinkPalette.secondaryText)
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
+        .accessibilityElement(children: .combine)
     }
 }

@@ -10,6 +10,12 @@
 "busy.quitting"    = "正在恢复显示设置…";
 "busy.configuring" = "正在配置显示器…";
 
+"hardware.notice.title" = "请先设置显示器硬件";
+"hardware.notice.body"  = "为获得最佳效果，请将墨水屏的硬件对比度调至**均衡或略低的水平**。";
+"hardware.notice.bigme" = "例如，Bigme B251 Pro（R2 FW V2.0）：网页模式、硬件伽马“等级 3”、对比度 50、关闭色彩还原模式。";
+"hardware.notice.gotIt" = "知道了";
+"hardware.notice.never" = "不再显示";
+
 "saturation.title"   = "饱和度";
 "saturation.caption" = "适用于彩色墨水屏：补偿偏窄的色域。退出应用后会恢复原状。";
 "saturation.mhc2.compat" = "Windows 10 MHC2 路径：已在测试硬件上验证。支持情况仍取决于显示器和驱动程序；退出应用会恢复原始配置文件。";
@@ -59,9 +65,6 @@
 "language.title"  = "语言";
 "language.system" = "跟随系统";
 
-"notice.tuned" = "预设的前提是显示器本身已设为：网页模式、硬件伽马“等级3”、对比度 50、色彩还原模式关闭（Bigme B251 Pro，固件版本 R2 FW V2.0）。请先设置好这些。";
-"notice.risk"  = "黑白墨水屏及其他彩色墨水屏都可以使用适合自己的功能，并在高级模式中调整专属参数。请根据面板的实际显示效果进行调校。";
-
 "preset.factory"  = "原厂";
 "preset.enhanced" = "增强";
 "preset.vivid"    = "艳丽";
@@ -96,11 +99,12 @@
 "role.error"   = "无法修改显示器类型。";
 
 "welcome.title"       = "欢迎使用墨水屏助手";
-"welcome.menubar"     = "本应用运行在**菜单栏**，没有程序坞图标。**点击上方菜单栏的图标**即可打开。";
-"welcome.bigme.title" = "使用 Bigme B251 Pro？";
-"welcome.bigme.body"  = "请先把显示器本身设为：**网页模式、硬件伽马“等级3”、对比度 50、色彩还原模式关闭**。预设是针对固件版本 **R2 FW V2.0** 调校的，其他 Bigme 固件版本表现可能不同，请自行判断效果。";
-"welcome.other.title" = "使用黑白或其他彩色墨水屏？";
-"welcome.other.body"  = "两类屏幕都可以受益于**减少抖动、文字对比度、视频暗部增强**和系统辅助功能；彩色屏还可以调整**饱和度与 RGB**。请先采用较为中性的硬件设置，**高级模式**可进一步自行调整曲线。";
+"welcome.menubar.title" = "菜单栏应用";
+"welcome.menubar"     = "点击书本图标打开控制面板。";
+"welcome.bigme.title" = "Bigme B251 Pro";
+"welcome.bigme.body"  = "使用网页模式、硬件伽马等级 3、对比度 50，并关闭色彩还原模式。";
+"welcome.other.title" = "其他墨水屏";
+"welcome.other.body"  = "先使用均衡的硬件设置，再在高级模式中微调。";
 "welcome.hide"        = "不再显示此提示";
 "welcome.done"        = "知道了";
 

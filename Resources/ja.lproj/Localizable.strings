@@ -10,6 +10,12 @@
 "busy.quitting"    = "ディスプレイ設定を復元しています…";
 "busy.configuring" = "ディスプレイを設定しています…";
 
+"hardware.notice.title" = "先にディスプレイ本体を設定してください";
+"hardware.notice.body"  = "最適な効果を得るには、電子ペーパーディスプレイ本体のコントラストを**バランスの取れた、またはやや低めの設定**にしてください。";
+"hardware.notice.bigme" = "例：Bigme B251 Pro（R2 FW V2.0）は Web Mode、Hardware Gamma Level 3、Contrast 50、Color Restore Mode オフ。";
+"hardware.notice.gotIt" = "わかりました";
+"hardware.notice.never" = "今後表示しない";
+
 "saturation.title"   = "彩度";
 "saturation.caption" = "カラー電子ペーパー向け：狭い色域を補正します。アプリ終了時に元へ戻ります。";
 "saturation.mhc2.compat" = "Windows 10 MHC2 パス：テスト環境で動作確認済みです。ディスプレイとドライバーに依存し、終了時に元のプロファイルへ戻します。";
@@ -59,9 +65,6 @@
 "language.title"  = "言語";
 "language.system" = "システム設定に従う";
 
-"notice.tuned" = "プリセットはディスプレイ本体が次の設定であることを前提にしています：Web Mode、Hardware Gamma Level 3、Contrast 50、Color Restore Mode オフ（Bigme B251 Pro、R2 FW V2.0）。先に設定してください。";
-"notice.risk"  = "白黒および他のカラー電子ペーパーディスプレイでも、対応する機能を使い、詳細モードでパネルに合う値を設定できます。実際の表示を確認しながら調整してください。";
-
 "preset.factory"  = "標準";
 "preset.enhanced" = "強調";
 "preset.vivid"    = "鮮やか";
@@ -94,11 +97,12 @@
 "role.error"   = "ディスプレイの役割を変更できませんでした。";
 
 "welcome.title"       = "E-Ink Assistant へようこそ";
-"welcome.menubar"     = "このアプリはDockではなく**メニューバー**にあります。**上のアイコンをクリック**して開いてください。";
-"welcome.bigme.title" = "Bigme B251 Pro をお使いですか？";
-"welcome.bigme.body"  = "ディスプレイ本体を **Web Mode、Hardware Gamma Level 3、Contrast 50、Color Restore Mode オフ**に設定してください。プリセットはファームウェア **R2 FW V2.0** 向けに調整されています。他のBigmeファームウェアでは動作が異なる場合があります。";
-"welcome.other.title" = "白黒または他のカラー電子ペーパーですか？";
-"welcome.other.body"  = "どちらも**ちらつき低減、テキストコントラスト、映像の暗部補正**、システムのアクセシビリティ設定を活用できます。カラーパネルでは**彩度とRGB**も調整できます。まず本体をバランスの取れた設定にし、**詳細モード**でカーブを追い込んでください。";
+"welcome.menubar.title" = "メニューバーアプリ";
+"welcome.menubar"     = "本のアイコンをクリックして操作画面を開きます。";
+"welcome.bigme.title" = "Bigme B251 Pro";
+"welcome.bigme.body"  = "Web Mode、Hardware Gamma Level 3、Contrast 50、Color Restore Mode オフに設定します。";
+"welcome.other.title" = "その他の電子ペーパーディスプレイ";
+"welcome.other.body"  = "本体をバランスよく設定し、詳細モードで微調整します。";
 "welcome.hide"        = "今後このヒントを表示しない";
 "welcome.done"        = "わかりました";
 

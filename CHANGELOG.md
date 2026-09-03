@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.5 — 2026-09-02
+
+- Added a dismissible hardware-setup reminder above the controls, including a
+  Bigme B251 Pro example. **Got it** hides it for the current session;
+  **Never show it again** keeps it hidden after relaunch.
+- Reworked the welcome panel into three concise, icon-led setup points.
+
 ## v2.4 — 2026-09-01
 
 - The control panel now uses the visible height of the screen containing the

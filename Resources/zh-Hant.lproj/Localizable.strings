@@ -10,6 +10,12 @@
 "busy.quitting"    = "正在還原顯示設定…";
 "busy.configuring" = "正在設定顯示器…";
 
+"hardware.notice.title" = "請先設定顯示器硬體";
+"hardware.notice.body"  = "為獲得最佳效果，請將電子紙顯示器的硬體對比度調至**均衡或略低的程度**。";
+"hardware.notice.bigme" = "例如，Bigme B251 Pro（R2 FW V2.0）：網頁模式、硬體 Gamma 等級 3、對比度 50、關閉色彩還原模式。";
+"hardware.notice.gotIt" = "知道了";
+"hardware.notice.never" = "不要再顯示";
+
 "saturation.title"   = "彩度";
 "saturation.caption" = "適用於彩色電子紙：補償較窄的色域。結束 App 時會還原。";
 "saturation.mhc2.compat" = "Windows 10 MHC2 路徑：已在測試硬體上驗證。支援情況仍取決於顯示器與驅動程式；結束 App 會還原原始描述檔。";
@@ -59,9 +65,6 @@
 "language.title"  = "語言";
 "language.system" = "跟隨系統";
 
-"notice.tuned" = "預設值假設顯示器本身已設為：網頁模式、硬體 Gamma 等級 3、對比度 50、關閉色彩還原模式（Bigme B251 Pro，R2 FW V2.0）。請先完成這些設定。";
-"notice.risk"  = "黑白電子紙與其他彩色電子紙都能使用適合自己的功能，並在進階模式中調整專屬參數。請依面板的實際顯示效果進行調校。";
-
 "preset.factory"  = "原廠";
 "preset.enhanced" = "增強";
 "preset.vivid"    = "鮮豔";
@@ -94,11 +97,12 @@
 "role.error"   = "無法更改顯示器角色。";
 
 "welcome.title"       = "歡迎使用電子紙助手";
-"welcome.menubar"     = "本 App 位於**選單列**，不會顯示 Dock 圖示。**按一下上方的圖示**即可開啟。";
-"welcome.bigme.title" = "使用 Bigme B251 Pro？";
-"welcome.bigme.body"  = "請先將顯示器設為：**網頁模式、硬體 Gamma 等級 3、對比度 50、關閉色彩還原模式**。預設值是依照 **R2 FW V2.0** 韌體調校；其他 Bigme 韌體的表現可能不同，請自行判斷效果。";
-"welcome.other.title" = "使用黑白或其他彩色電子紙？";
-"welcome.other.body"  = "兩種類型都能受益於**減少閃爍、文字對比度、影片暗部增強**與系統輔助使用控制；彩色面板還能調整**彩度與 RGB**。請先採用均衡的硬體基準；**進階模式**可進一步自訂曲線。";
+"welcome.menubar.title" = "選單列 App";
+"welcome.menubar"     = "按一下書本圖示以開啟控制面板。";
+"welcome.bigme.title" = "Bigme B251 Pro";
+"welcome.bigme.body"  = "使用網頁模式、硬體 Gamma 等級 3、對比度 50，並關閉色彩還原模式。";
+"welcome.other.title" = "其他電子紙顯示器";
+"welcome.other.body"  = "先使用均衡的硬體設定，再於進階模式中微調。";
 "welcome.hide"        = "不要再顯示此提示";
 "welcome.done"        = "知道了";
 
