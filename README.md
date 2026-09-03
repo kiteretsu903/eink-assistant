@@ -32,12 +32,16 @@ MIT licensed.
 
 ## Latest release
 
-**v2.5 — September 2, 2026**
+**v2.6 — September 2, 2026**
 
-- Added dismissible hardware-setup guidance above the controls, including a
-  Bigme B251 Pro example.
-- Reworked the welcome panel into three concise, icon-led setup points.
-- Built-in displays now appear after external displays in the selection list.
+- Added reliable support for mirrored displays while keeping tuning targeted
+  to the marked physical e-ink panel.
+- Switching between mirrored and extended layouts now refreshes and reapplies
+  display settings promptly.
+- Quit cleanup now includes online mirrored displays without modifying
+  unmarked displays.
+- The hardware setup tip now explicitly directs users to the monitor's own
+  settings menu.
 
 [Download the latest release](../../releases/latest) · [Read the full changelog](CHANGELOG.md)
 

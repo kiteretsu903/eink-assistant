@@ -10,8 +10,8 @@
 "busy.quitting"    = "正在恢复显示设置…";
 "busy.configuring" = "正在配置显示器…";
 
-"hardware.notice.title" = "请先设置显示器硬件";
-"hardware.notice.body"  = "为获得最佳效果，请将墨水屏的硬件对比度调至**均衡或略低的水平**。";
+"hardware.notice.title" = "先在显示器上设置对比度";
+"hardware.notice.body"  = "请在显示器自带菜单中选择**均衡或略低的硬件对比度**，以获得本应用的最佳效果。";
 "hardware.notice.bigme" = "例如，Bigme B251 Pro（R2 FW V2.0）：网页模式、硬件伽马“等级 3”、对比度 50、关闭色彩还原模式。";
 "hardware.notice.gotIt" = "知道了";
 "hardware.notice.never" = "不再显示";

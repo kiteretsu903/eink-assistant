@@ -3,6 +3,7 @@
 import Foundation
 import CoreGraphics
 import AppKit
+import ColorSync
 
 struct Display {
     let id: CGDirectDisplayID
@@ -12,13 +13,42 @@ struct Display {
     let size: CGSize
 }
 
-func activeDisplays() -> [Display] {
+private func displayIDs(
+    from getter: (UInt32, UnsafeMutablePointer<CGDirectDisplayID>?,
+                  UnsafeMutablePointer<UInt32>?) -> CGError
+) -> [CGDirectDisplayID] {
     var count: UInt32 = 0
-    CGGetActiveDisplayList(0, nil, &count)
+    guard getter(0, nil, &count) == .success, count > 0 else { return [] }
     var ids = [CGDirectDisplayID](repeating: 0, count: Int(count))
-    CGGetActiveDisplayList(count, &ids, &count)
+    guard getter(count, &ids, &count) == .success else { return [] }
+    return Array(ids.prefix(Int(count)))
+}
 
-    return ids.enumerated().map { index, id in
+func activeDisplayIDs() -> [CGDirectDisplayID] {
+    displayIDs(from: CGGetActiveDisplayList)
+}
+
+/// Includes active, mirrored, and sleeping displays. Display cleanup needs
+/// this broader list because a hardware-mirrored secondary is online but not
+/// necessarily active or drawable.
+func onlineDisplayIDs() -> [CGDirectDisplayID] {
+    displayIDs(from: CGGetOnlineDisplayList)
+}
+
+private func colorSyncDisplayName(_ id: CGDirectDisplayID) -> String? {
+    guard let uuid = CGDisplayCreateUUIDFromDisplayID(id)?.takeRetainedValue(),
+          let info = ColorSyncDeviceCopyDeviceInfo(
+            kColorSyncDisplayDeviceClass.takeUnretainedValue(), uuid
+          )?.takeRetainedValue() as? [String: Any]
+    else { return nil }
+
+    let key = kColorSyncDeviceDescription.takeUnretainedValue() as String
+    guard let name = info[key] as? String, !name.isEmpty else { return nil }
+    return name
+}
+
+private func displays(for ids: [CGDirectDisplayID]) -> [Display] {
+    ids.enumerated().map { index, id in
         let screen = NSScreen.screens.first {
             ($0.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")]
                 as? CGDirectDisplayID) == id
@@ -27,10 +57,27 @@ func activeDisplays() -> [Display] {
             id: id,
             index: index + 1,
             isBuiltin: CGDisplayIsBuiltin(id) != 0,
-            name: screen?.localizedName ?? "Display \(id)",
+            name: screen?.localizedName ?? colorSyncDisplayName(id) ?? "Display \(id)",
             size: screen?.frame.size ?? CGDisplayBounds(id).size
         )
     }
+}
+
+func activeDisplays() -> [Display] {
+    displays(for: activeDisplayIDs())
+}
+
+/// The displays the main app can manage. Hardware mirror secondaries are
+/// online but absent from CGGetActiveDisplayList, so add those mirror members
+/// without also surfacing unrelated sleeping displays such as a closed
+/// built-in panel.
+func controllableDisplays() -> [Display] {
+    let active = activeDisplayIDs()
+    let activeSet = Set(active)
+    let hiddenMirrorMembers = onlineDisplayIDs().filter {
+        !activeSet.contains($0) && CGDisplayIsInMirrorSet($0) != 0
+    }
+    return displays(for: active + hiddenMirrorMembers)
 }
 
 func display(at index: Int) -> Display? {
@@ -44,4 +91,3 @@ func formatted(_ value: Double) -> String {
         ? String(Int(value.rounded()))
         : String(format: "%g", value)
 }
-

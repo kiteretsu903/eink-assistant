@@ -10,8 +10,8 @@
 "busy.quitting"    = "Restoring your display settings…";
 "busy.configuring" = "Configuring your display…";
 
-"hardware.notice.title" = "Set your display hardware first";
-"hardware.notice.body"  = "For best results, set your e-ink display to a **balanced or slightly lower hardware-contrast level**.";
+"hardware.notice.title" = "Set the contrast on your monitor first";
+"hardware.notice.body"  = "In your monitor’s own menu, choose a **balanced or slightly lower hardware-contrast level** for the best results from this app.";
 "hardware.notice.bigme" = "For example, Bigme B251 Pro (R2 FW V2.0): Web Mode, Hardware Gamma Level 3, Contrast 50, Color Restore Mode off.";
 "hardware.notice.gotIt" = "Got it";
 "hardware.notice.never" = "Never show it again";

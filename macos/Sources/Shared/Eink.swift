@@ -161,17 +161,15 @@ func reapplyEnhance(displayID: CGDirectDisplayID) {
     }
 }
 
-/// Clears every display's tone curve, without needing any app state.
+/// Clears every marked display's tone curve, without needing the UI model.
 ///
 /// Used on quit. It deliberately does not go through the UI model: that model
 /// is only wired up when the menu bar panel is first opened, so relying on it
 /// meant quitting without ever opening the panel left the curve applied.
 func restoreAllDisplaysToneCurves() {
-    var count: UInt32 = 0
-    CGGetActiveDisplayList(0, nil, &count)
-    var ids = [CGDirectDisplayID](repeating: 0, count: Int(count))
-    CGGetActiveDisplayList(count, &ids, &count)
-    for id in ids { clearToneCurveLive(displayID: id) }
+    for id in onlineDisplayIDs() where EinkSettings.isEink(id) {
+        clearToneCurveLive(displayID: id)
+    }
 }
 
 // MARK: - Color profile adjustments as app-managed state
@@ -227,11 +225,7 @@ extension EinkSettings {
 /// recognize as ours are dropped — `installedSaturation` returns nil for a
 /// user's own calibration, which must not be disturbed.
 func restoreAllDisplaysSaturation() {
-    var count: UInt32 = 0
-    CGGetActiveDisplayList(0, nil, &count)
-    var ids = [CGDirectDisplayID](repeating: 0, count: Int(count))
-    CGGetActiveDisplayList(count, &ids, &count)
-    for id in ids where installedSaturation(displayID: id) != nil {
+    for id in onlineDisplayIDs() where installedSaturation(displayID: id) != nil {
         restoreProfile(displayID: id)
     }
 }

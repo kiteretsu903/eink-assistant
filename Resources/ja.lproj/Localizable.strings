@@ -10,8 +10,8 @@
 "busy.quitting"    = "ディスプレイ設定を復元しています…";
 "busy.configuring" = "ディスプレイを設定しています…";
 
-"hardware.notice.title" = "先にディスプレイ本体を設定してください";
-"hardware.notice.body"  = "最適な効果を得るには、電子ペーパーディスプレイ本体のコントラストを**バランスの取れた、またはやや低めの設定**にしてください。";
+"hardware.notice.title" = "先にモニター本体のコントラストを設定";
+"hardware.notice.body"  = "モニター本体のメニューで**バランスの取れた、またはやや低めのハードウェアコントラスト**を選ぶと、このアプリを最大限に活用できます。";
 "hardware.notice.bigme" = "例：Bigme B251 Pro（R2 FW V2.0）は Web Mode、Hardware Gamma Level 3、Contrast 50、Color Restore Mode オフ。";
 "hardware.notice.gotIt" = "わかりました";
 "hardware.notice.never" = "今後表示しない";

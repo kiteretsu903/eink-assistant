@@ -73,6 +73,8 @@ final class AssistantModel: ObservableObject {
     // and external ones are coalesced.
     private var selfChangeUntil = Date.distantPast
     private var reapplyTask: Task<Void, Never>?
+    private var settledReapplyTask: Task<Void, Never>?
+    private var forcedReapplyPending = false
     private var helperTask: Task<Void, Never>?
     private var accessibilityPresenceTask: Task<Void, Never>?
     private var connectedEinkUUIDs: Set<String> = []
@@ -83,25 +85,36 @@ final class AssistantModel: ObservableObject {
     }
 
     /// `force` skips the self-change guard and re-applies everything
-    /// unconditionally. Only safe for wake events: those cannot be caused by
-    /// our own writes, so there is no feedback loop to start. Reconfiguration
-    /// events *are* triggered by our writes, and must stay guarded.
+    /// unconditionally. It is reserved for wake and mirror/unmirror events,
+    /// which cannot be caused by our color-profile or gamma-table writes.
+    /// Keeping the force request sticky prevents a later AppKit notification
+    /// for the same transition from replacing it with a guarded refresh.
     func scheduleReapply(force: Bool = false) {
+        forcedReapplyPending = forcedReapplyPending || force
+        if force { settledReapplyTask?.cancel() }
         reapplyTask?.cancel()
+        let delay: UInt64 = forcedReapplyPending ? 200_000_000 : 700_000_000
         reapplyTask = Task { @MainActor [weak self] in
-            try? await Task.sleep(nanoseconds: 700_000_000)
+            try? await Task.sleep(nanoseconds: delay)
             guard !Task.isCancelled, let self else { return }
+            let mustReapply = self.forcedReapplyPending
+            self.forcedReapplyPending = false
             self.refresh()
             // A change we caused ourselves needs no response.
-            guard force || Date() >= self.selfChangeUntil else { return }
+            guard mustReapply || Date() >= self.selfChangeUntil else { return }
             self.reapplyAll()
 
-            // Displays can come back progressively after a wake, so assert a
-            // second time once things have settled.
-            guard force else { return }
-            try? await Task.sleep(nanoseconds: 3_000_000_000)
-            guard !Task.isCancelled else { return }
-            self.reapplyAll()
+            // Displays can come back progressively after wake and mirror-mode
+            // changes. Use a separate task so the notifications caused by our
+            // own first write cannot cancel the settled second pass.
+            guard mustReapply else { return }
+            self.settledReapplyTask?.cancel()
+            self.settledReapplyTask = Task { @MainActor [weak self] in
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
+                guard !Task.isCancelled, let self else { return }
+                self.refresh()
+                self.reapplyAll()
+            }
         }
     }
 
@@ -148,7 +161,7 @@ final class AssistantModel: ObservableObject {
     }
 
     func refresh() {
-        let discoveredDisplays = activeDisplays()
+        let discoveredDisplays = controllableDisplays()
         // Built-in panels are rarely the e-ink target. Keep the system's
         // discovery order within each group, but list external displays first
         // so the most likely choices are immediately visible.
@@ -210,7 +223,9 @@ final class AssistantModel: ObservableObject {
             try? await Task.sleep(nanoseconds: 2_000_000_000)
             guard !Task.isCancelled, let self,
                   self.autoAccessibility, self.helperReady else { return }
-            let stillHasEink = activeDisplays().contains { EinkSettings.isEink($0.id) }
+            let stillHasEink = controllableDisplays().contains {
+                EinkSettings.isEink($0.id)
+            }
             if !stillHasEink { self.setAccessibilityEnabled(false) }
         }
     }
@@ -232,11 +247,13 @@ final class AssistantModel: ObservableObject {
                                          displayName: panel.name)
             }
         }
-        for panel in panels { reapplyEnhance(displayID: panel.id) }
+        for panel in panels where panel.isEink {
+            reapplyEnhance(displayID: panel.id)
+        }
         // Dithering is hardware state that survives across processes and is
         // reset by display reconfiguration, so it is re-asserted here too.
-        for panel in panels {
-            Dither.setDisabled(panel.isEink && panel.reduceShaking, displayID: panel.id)
+        for panel in panels where panel.isEink {
+            Dither.setDisabled(panel.reduceShaking, displayID: panel.id)
         }
         reassertCurvesSoon()
     }
@@ -249,8 +266,11 @@ final class AssistantModel: ObservableObject {
         CGDisplayRegisterReconfigurationCallback({ displayID, flags, userInfo in
             guard let userInfo else { return }
             let relevant: CGDisplayChangeSummaryFlags =
-                [.addFlag, .removeFlag, .enabledFlag, .disabledFlag, .setModeFlag]
+                [.addFlag, .removeFlag, .enabledFlag, .disabledFlag, .setModeFlag,
+                 .mirrorFlag, .unMirrorFlag, .desktopShapeChangedFlag]
             guard !flags.intersection(relevant).isEmpty else { return }
+            let mirrorChanged = flags.contains(.mirrorFlag)
+                || flags.contains(.unMirrorFlag)
             let model = Unmanaged<AssistantModel>.fromOpaque(userInfo).takeUnretainedValue()
             Task { @MainActor in
                 // `addFlag` is the one trustworthy signal macOS exposes for
@@ -259,7 +279,7 @@ final class AssistantModel: ObservableObject {
                 if flags.contains(.addFlag) {
                     DisplayRole.clearReconnectNeeded(displayID: displayID)
                 }
-                model.scheduleReapply()
+                model.scheduleReapply(force: mirrorChanged)
             }
         }, context)
     }
@@ -272,7 +292,9 @@ final class AssistantModel: ObservableObject {
             try? await Task.sleep(nanoseconds: 1_200_000_000)
             guard let self else { return }
             self.markSelfChange()
-            for panel in self.panels { reapplyEnhance(displayID: panel.id) }
+            for panel in self.panels where panel.isEink {
+                reapplyEnhance(displayID: panel.id)
+            }
         }
     }
 
@@ -703,7 +725,9 @@ final class AssistantModel: ObservableObject {
 
     /// Leaves every display as we found it.
     func restoreAll() {
-        for panel in panels { clearToneCurveLive(displayID: panel.id) }
+        for panel in panels where panel.isEink {
+            clearToneCurveLive(displayID: panel.id)
+        }
     }
 }
 
@@ -1442,6 +1466,9 @@ private struct HardwareSetupNotice: View {
                     Text((try? AttributedString(
                         markdown: L("hardware.notice.body")))
                         ?? AttributedString(L("hardware.notice.body")))
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.88)
+                        .allowsTightening(true)
                     Text(L("hardware.notice.bigme"))
                 }
                 .fixedSize(horizontal: false, vertical: true)

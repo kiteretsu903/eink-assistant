@@ -10,8 +10,8 @@
 "busy.quitting"    = "正在還原顯示設定…";
 "busy.configuring" = "正在設定顯示器…";
 
-"hardware.notice.title" = "請先設定顯示器硬體";
-"hardware.notice.body"  = "為獲得最佳效果，請將電子紙顯示器的硬體對比度調至**均衡或略低的程度**。";
+"hardware.notice.title" = "先在顯示器上設定對比度";
+"hardware.notice.body"  = "請在顯示器內建選單中選擇**均衡或略低的硬體對比度**，以獲得本 App 的最佳效果。";
 "hardware.notice.bigme" = "例如，Bigme B251 Pro（R2 FW V2.0）：網頁模式、硬體 Gamma 等級 3、對比度 50、關閉色彩還原模式。";
 "hardware.notice.gotIt" = "知道了";
 "hardware.notice.never" = "不要再顯示";

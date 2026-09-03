@@ -64,6 +64,28 @@
     }
   };
 
+  copy["zh-Hans"].changelog.releases.unshift([
+    "版本 2.6", "2026 年 9 月 2 日", "改进复制模式支持。",
+    "硬件镜像中的副屏仍可单独选择，并按物理输出调校。",
+    "在复制模式与扩展模式之间切换时，会及时刷新并重新应用显示设置。",
+    "重新应用与退出清理只处理已标记的墨水屏，同时覆盖在线的镜像显示器。",
+    "硬件设置提示现在明确说明需要在显示器自带菜单中调整对比度。"
+  ]);
+  copy["zh-Hant"].changelog.releases.unshift([
+    "版本 2.6", "2026 年 9 月 2 日", "改進鏡像模式支援。",
+    "硬體鏡像中的副螢幕仍可單獨選取，並依實體輸出調校。",
+    "在鏡像模式與延伸模式之間切換時，會及時重新整理並套用顯示設定。",
+    "重新套用與結束清理只處理已標記的電子紙，同時涵蓋在線的鏡像顯示器。",
+    "硬體設定提示現在明確說明需要在顯示器內建選單中調整對比度。"
+  ]);
+  copy.ja.changelog.releases.unshift([
+    "バージョン 2.6", "2026年9月2日", "ミラー表示への対応を改善。",
+    "ハードウェアミラーの副ディスプレイも個別に選択し、物理出力ごとに調整できます。",
+    "ミラーリングと拡張表示を切り替えると、表示設定をすぐに更新して再適用します。",
+    "再適用と終了時の復元は、オンラインのミラーディスプレイを含む登録済み電子ペーパーだけを処理します。",
+    "本体設定の案内で、モニター自身のメニューからコントラストを調整することを明記しました。"
+  ]);
+
   const supported = ["en", "zh-Hans", "zh-Hant", "ja"];
   const select = (selector, value, html = false) => { const element = document.querySelector(selector); if (element && value !== undefined) element[html ? "innerHTML" : "textContent"] = value; };
   const selectAll = (selector, values, html = false) => document.querySelectorAll(selector).forEach((element, index) => { if (values[index] !== undefined) element[html ? "innerHTML" : "textContent"] = values[index]; });

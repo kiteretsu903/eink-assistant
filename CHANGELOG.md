@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.6 — 2026-09-02
+
+- Added reliable support for mirrored displays. Hardware-mirrored secondary
+  displays remain individually selectable and are tuned by physical output.
+- Switching between mirrored and extended layouts now refreshes promptly, then
+  performs a settled second pass to keep display settings applied.
+- Reapply and quit cleanup now touch only marked e-ink panels while also
+  covering online mirrored displays.
+- Clarified that hardware contrast should be adjusted in the monitor's own
+  settings menu for the best results from the app.
+
 ## v2.5 — 2026-09-02
 
 - Added a dismissible hardware-setup reminder above the controls, including a
