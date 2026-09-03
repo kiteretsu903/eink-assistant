@@ -1,6 +1,16 @@
 # Windows changelog
 
-## 1.1 — Unreleased
+## 1.2 — Unreleased
+
+- Separates an already-usable ACM pipeline from an ACM toggle that Windows
+  actually permits the app to change. A retained `enabled` bit no longer causes
+  an unsupported toggle request or a misleading red feature-failure warning.
+- Defers app-owned ACM restoration while Duplicate mode temporarily suppresses
+  the toggle, keeping the recovery journal until a controllable topology
+  returns. An unmodifiable ACM state outside Duplicate mode is treated as an
+  externally owned fixed baseline.
+
+## 1.1 — Internal test baseline
 
 - Native Qt Widgets tray application for Windows 7 SP1 through Windows 11.
 - Per-display text contrast, video enhancement, advanced tone curves, and
@@ -41,5 +51,5 @@
 - Neutral modern installer and uninstaller appearance with native light-theme
   colors, automatic dark mode, product artwork, and simplified page chrome.
 
-This entry records the intended Windows 1.1 baseline only. No Windows 1.1
+These entries record the intended Windows source baselines only. No Windows
 release or public website update has been made.

@@ -4,7 +4,7 @@
 > [`docs/TECHNICAL.md`](docs/TECHNICAL.md). It is the authoritative record
 > of Windows architecture, feature gates, lifecycle rules, tests, and decisions.
 
-**Version status:** Windows 1.1 source baseline, currently unreleased.
+**Version status:** Windows 1.2 source baseline, currently unreleased.
 
 This directory contains the native Windows edition of E-Ink Assistant. It uses
 Qt 5.15 Widgets rather than a browser runtime, keeps the original high-contrast
@@ -71,7 +71,7 @@ Qt 5.15.2 is intentionally pinned because it is the last broadly deployable Qt
 generation that supports Windows 7. The release uses dynamically linked Qt
 libraries, preserving LGPL relinking rights.
 
-The Windows 1.1 build is x64. On the development machine, a packaged tray app
+The Windows 1.2 build is x64. On the development machine, a packaged tray app
 measured **39.58 MiB working set** and **23.03 MiB private memory** after two
 seconds idle. Results vary with Windows, the display count, and Qt's shared DLL
 pages, but no web engine, QML runtime, service, or independently installed
@@ -91,7 +91,7 @@ Shared localization and product artwork live in the repository-level
 `../Resources/` directory. The macOS source is isolated under `../macos/`.
 
 Documentation is indexed in [`docs/README.md`](docs/README.md), and the
-unreleased 1.1 summary is in [`CHANGELOG.md`](CHANGELOG.md).
+unreleased 1.2 summary is in [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Build
 
@@ -117,7 +117,7 @@ build script. After installing Inno Setup 6.7 or later, run from `windows/`:
 
 The script first performs the normal Release build and full automated test
 baseline, validates every required deployed file, and then writes
-`artifacts/installer/E-Ink-Assistant-Windows-1.1-Setup.exe`. Pass
+`artifacts/installer/E-Ink-Assistant-Windows-1.2-Setup.exe`. Pass
 `-CopyToDesktop` to also place a copy on the current user's desktop, or
 `-SkipApplicationBuild` to package an already-validated payload.
 

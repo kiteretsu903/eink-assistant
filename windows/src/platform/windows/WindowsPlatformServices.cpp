@@ -468,8 +468,8 @@ QVector<DisplayInfo> WindowsPlatformServices::displays() {
             if(!adapter.name.isEmpty())info.graphicsAdapterName=adapter.name;
             if(info.friendlyName.isEmpty()){const QString modelName=monitorModelName(info.stableId);if(!modelName.isEmpty())info.friendlyName=modelName;}
             if(info.friendlyName.isEmpty()){info.friendlyName=QStringLiteral("Display");info.friendlyNameIsFallback=true;}
-            bool supported=false,enabled=false;
-            if(queryAcm(info,&supported,&enabled)) { info.acmSupported=supported; info.acmEnabled=enabled; }
+            bool supported=false,enabled=false,toggleSupported=false;
+            if(queryAcm(info,&supported,&enabled,nullptr,&toggleSupported)) { info.acmSupported=supported; info.acmToggleSupported=toggleSupported; info.acmEnabled=enabled; }
             bool mhc2Supported=false,mhc2Verified=false;
             queryWindows10Mhc2(info,&mhc2Supported,&mhc2Verified);
             bool matrixDdi=false;const bool matrixDdiKnown=build>=19041&&queryMatrixDdi(info,&matrixDdi);
@@ -515,8 +515,8 @@ QVector<DisplayInfo> WindowsPlatformServices::displays() {
     return result;
 }
 
-bool WindowsPlatformServices::queryAcm(const DisplayInfo &d, bool *supported, bool *enabled, QString *error) {
-    if(windowsBuild()<26100) { if(supported)*supported=false; if(enabled)*enabled=false; return true; }
+bool WindowsPlatformServices::queryAcm(const DisplayInfo &d, bool *supported, bool *enabled, QString *error, bool *toggleSupported) {
+    if(windowsBuild()<26100) { if(supported)*supported=false; if(enabled)*enabled=false; if(toggleSupported)*toggleSupported=false; return true; }
     DisplayConfigAdvancedColorInfo2 packet{};
     packet.header.type=static_cast<DISPLAYCONFIG_DEVICE_INFO_TYPE>(DisplayConfigGetAdvancedColorInfo2);
     packet.header.size=sizeof(packet);packet.header.adapterId.HighPart=d.adapterHigh;
@@ -524,7 +524,8 @@ bool WindowsPlatformServices::queryAcm(const DisplayInfo &d, bool *supported, bo
     const LONG result=DisplayConfigGetDeviceInfo(&packet.header);
     if(result!=ERROR_SUCCESS) { if(error)*error=errorMessage(QStringLiteral("Query Auto Color Management"),result); return false; }
     const bool currentEnabled=packet.wideColorEnabled();
-    if(supported)*supported=packet.wideColorSupported()||currentEnabled;if(enabled)*enabled=currentEnabled;return true;
+    const bool canToggle=packet.wideColorSupported();
+    if(supported)*supported=canToggle||currentEnabled;if(enabled)*enabled=currentEnabled;if(toggleSupported)*toggleSupported=canToggle;return true;
 }
 
 bool WindowsPlatformServices::modernColorProfileApisAvailable() {
@@ -903,7 +904,7 @@ ApplyResult WindowsPlatformServices::recoverInterruptedColorState() {
     if(m_recoveryComplete)return ApplyResult::ok();
     if(!saturationPlatformAvailable()) { m_recoveryComplete=true; return ApplyResult::ok(); }
     const QStringList installed=QDir(colorDirectory()).entryList({QStringLiteral("EinkAssistant-*.icm")},QDir::Files);
-    ApplyResult result=ApplyResult::ok(); bool associationsClean=true; QStringList generated=installed;
+    ApplyResult result=ApplyResult::ok(); bool associationsClean=true,recoveryDeferred=false; QStringList generated=installed;
     const QVector<DisplayInfo> current=displays();
     for(const DisplayInfo &display:current) {
         ColorState saved; const bool hasRecord=readRecoveryRecord(display,&saved);
@@ -911,7 +912,7 @@ ApplyResult WindowsPlatformServices::recoverInterruptedColorState() {
         const bool legacyGeneratedDefault=isGeneratedProfile(defaultBefore)
             || (hasRecord && isGeneratedProfile(saved.previousProfile));
         if(legacyGeneratedDefault) { saved.previousProfile.clear(); saved.acmOriginallyEnabled=false; }
-        ApplyResult displayResult=ApplyResult::ok();
+        ApplyResult displayResult=ApplyResult::ok();bool displayRecoveryDeferred=false;
         if(hasRecord && !saved.previousProfile.isEmpty() && !isGeneratedProfile(saved.previousProfile)) {
             const ApplyResult restored=setDefaultProfile(display,saved.previousProfile,saved.scope);
             if(!restored.success)displayResult=restored;
@@ -920,20 +921,30 @@ ApplyResult WindowsPlatformServices::recoverInterruptedColorState() {
         generated.append(removed);
         if(!cleaned.success) { associationsClean=false; if(displayResult.success)displayResult=cleaned; }
         if((hasRecord || legacyGeneratedDefault) && display.acmSupported) {
-            bool supported=false,enabled=false; QString queryError;
-            if(!queryAcm(display,&supported,&enabled,&queryError)) {
+            bool supported=false,enabled=false,toggleSupported=false; QString queryError;
+            if(!queryAcm(display,&supported,&enabled,&queryError,&toggleSupported)) {
                 if(displayResult.success)displayResult=ApplyResult::fail(queryError);
             } else if(enabled!=saved.acmOriginallyEnabled) {
-                const ApplyResult restored=setAcm(display,saved.acmOriginallyEnabled);
-                if(!restored.success && displayResult.success)displayResult=restored;
+                if(!toggleSupported) {
+                    // The topology can retain an active ACM pipeline while
+                    // temporarily suppressing its toggle (notably while
+                    // displays are cloned). Keep the journal for a later
+                    // topology where restoration is possible, without showing
+                    // a false feature-failure warning.
+                    displayRecoveryDeferred=hasRecord&&display.cloneMode;
+                } else {
+                    const ApplyResult restored=setAcm(display,saved.acmOriginallyEnabled);
+                    if(!restored.success && displayResult.success)displayResult=restored;
+                }
             }
         }
-        if(displayResult.success && hasRecord)clearRecoveryRecord(display);
+        if(displayResult.success && hasRecord&&!displayRecoveryDeferred)clearRecoveryRecord(display);
+        recoveryDeferred|=displayRecoveryDeferred;
         if(!displayResult.success && result.success)result=displayResult;
     }
     const ApplyResult uninstalled=uninstallGeneratedProfiles(generated);
     if(!uninstalled.success && result.success)result=uninstalled;
-    m_recoveryComplete=associationsClean;
+    m_recoveryComplete=associationsClean&&!recoveryDeferred;
     return result;
 }
 
@@ -961,7 +972,7 @@ ApplyResult WindowsPlatformServices::applyColor(const DisplayInfo &d, double sat
         const ApplyResult journal=writeRecoveryRecord(d,state); if(!journal.success)return journal;
         state.captured=true;
     }
-    if(d.acmSupported&&!state.acmOriginallyEnabled&&!state.acmChanged) {
+    if(d.acmToggleSupported&&!state.acmOriginallyEnabled&&!state.acmChanged) {
         const ApplyResult acm=setAcm(d,true); if(!acm.success) return acm; state.acmChanged=true;
     }
     const QString fileName=QStringLiteral("%1%2-%3.icm").arg(profilePrefix(d),m_profileSessionId).arg(++m_profileSequence);
@@ -1081,7 +1092,7 @@ ApplyResult WindowsPlatformServices::setDefaultProfile(const DisplayInfo &d, con
 
 ApplyResult WindowsPlatformServices::restoreColor(const DisplayInfo &d) {
     if(!m_colorStates.contains(d.stableId)) return ApplyResult::ok();
-    const ColorState state=m_colorStates.value(d.stableId); ApplyResult result=ApplyResult::ok();
+    const ColorState state=m_colorStates.value(d.stableId); ApplyResult result=ApplyResult::ok();bool acmRestoreDeferred=false;
     if(!state.previousProfile.isEmpty() && !isGeneratedProfile(state.previousProfile)) {
         const ApplyResult previous=setDefaultProfile(d,state.previousProfile,state.scope); if(!previous.success)result=previous;
     }
@@ -1091,8 +1102,13 @@ ApplyResult WindowsPlatformServices::restoreColor(const DisplayInfo &d) {
     generated.append(QDir(colorDirectory()).entryList({prefix+QStringLiteral("*.icm")},QDir::Files));
     const ApplyResult uninstalled=uninstallGeneratedProfiles(generated);
     if(!uninstalled.success && result.success)result=uninstalled;
-    if(state.acmChanged) { const ApplyResult acm=setAcm(d,false); if(!acm.success) result=acm; }
-    if(result.success) { clearRecoveryRecord(d); m_colorStates.remove(d.stableId); m_baseProfiles.remove(d.stableId); }
+    if(state.acmChanged) {
+        bool supported=false,enabled=false,toggleSupported=false;
+        if(!queryAcm(d,&supported,&enabled,nullptr,&toggleSupported))acmRestoreDeferred=true;
+        else if(enabled&&!toggleSupported)acmRestoreDeferred=d.cloneMode;
+        else if(enabled) { const ApplyResult acm=setAcm(d,false); if(!acm.success)result=acm; }
+    }
+    if(result.success&&!acmRestoreDeferred) { clearRecoveryRecord(d); m_colorStates.remove(d.stableId); m_baseProfiles.remove(d.stableId); }
     return result;
 }
 

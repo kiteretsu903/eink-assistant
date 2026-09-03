@@ -4,8 +4,8 @@
 1 RT_MANIFEST "app.manifest"
 
 1 VERSIONINFO
- FILEVERSION 1,1,0,0
- PRODUCTVERSION 1,1,0,0
+ FILEVERSION 1,2,0,0
+ PRODUCTVERSION 1,2,0,0
  FILEFLAGSMASK 0x3fL
  FILEFLAGS 0x0L
  FILEOS VOS_NT_WINDOWS32
@@ -18,11 +18,11 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "E-Ink Assistant\0"
             VALUE "FileDescription", "E-Ink Assistant for Windows\0"
-            VALUE "FileVersion", "1.1.0.0\0"
+            VALUE "FileVersion", "1.2.0.0\0"
             VALUE "InternalName", "EinkAssistant.exe\0"
             VALUE "OriginalFilename", "EinkAssistant.exe\0"
             VALUE "ProductName", "E-Ink Assistant for Windows\0"
-            VALUE "ProductVersion", "1.1\0"
+            VALUE "ProductVersion", "1.2\0"
         END
     END
     BLOCK "VarFileInfo"

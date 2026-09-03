@@ -68,7 +68,7 @@ private:
 
     static quint32 windowsBuild();
     static QString errorMessage(const QString &operation, DWORD code = GetLastError());
-    static bool queryAcm(const DisplayInfo &, bool *supported, bool *enabled, QString *error = nullptr);
+    static bool queryAcm(const DisplayInfo &, bool *supported, bool *enabled, QString *error = nullptr, bool *toggleSupported = nullptr);
     static bool queryWindows10Mhc2(const DisplayInfo &, bool *supported, bool *verified, QString *error = nullptr);
     static bool queryMatrixDdi(const DisplayInfo &, bool *supported);
     static bool queryWddmVersion(const DisplayInfo &, int *version);

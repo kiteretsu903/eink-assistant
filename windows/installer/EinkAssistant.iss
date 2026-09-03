@@ -1,5 +1,5 @@
 #ifndef AppVersion
-  #define AppVersion "1.1"
+  #define AppVersion "1.2"
 #endif
 
 #ifndef SourceDir
@@ -57,7 +57,7 @@ WizardSizePercent=115
 WizardSmallImageFile=..\..\Resources\AppIcon.png
 WizardSmallImageFileDynamicDark=..\..\Resources\AppIcon.png
 SetupLogging=yes
-VersionInfoVersion=1.1.0.0
+VersionInfoVersion=1.2.0.0
 VersionInfoProductName={#AppName}
 VersionInfoProductVersion={#AppVersion}
 VersionInfoCompany={#AppPublisher}

@@ -35,6 +35,7 @@ struct DisplayInfo {
     bool colorAdjustmentSupported = false;
     bool usesWindows10Mhc2 = false;
     bool acmSupported = false;
+    bool acmToggleSupported = false;
     bool acmEnabled = false;
     bool colorAdjustmentUpgradeMayHelp = false;
     bool matrixDdiSupported = false;
