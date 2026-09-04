@@ -5,6 +5,11 @@
   margin-bottom: 138px;
 }
 
+.catalogue-section-number {
+  grid-column: 1 / -1;
+  margin: 0 0 17px;
+}
+
 .macos-card {
   min-height: 650px;
   padding: 31px;

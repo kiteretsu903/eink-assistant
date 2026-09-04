@@ -11,59 +11,62 @@
   <img src="Resources/AppIcon.png" alt="E-Ink Assistant app icon" width="128">
 </p>
 
-**Tune black-and-white and color e-ink displays for macOS.**
-
-> **Windows port:** this repository also contains a Qt 5.15/C++ Windows port
-> with Windows 7-compatible core features plus one runtime-selected color
-> package: MHC2 saturation on Windows 10 builds 19041–19045 and ACM on
-> Windows 11 24H2 or above.
-> See [WINDOWS.md](WINDOWS.md) for compatibility, building, and testing.
-> Maintainers and coding agents should also read the authoritative
-> [Windows engineering reference](WINDOWS-TECHNICAL.md).
+**Tune black-and-white and color e-ink displays on macOS and Windows.**
 
 [Visit the product website](https://kiteretsu903.github.io/eink-assistant/)
 
-Both B&W and color e-ink share the problems of slow refresh, limited contrast,
-crushed shadow detail, and visible macOS dithering. E-Ink Assistant is a small
-menu bar app that addresses those problems per display, leaving your laptop
-screen alone. Color panels additionally get saturation and direct RGB controls.
+E-Ink Assistant adjusts text contrast, shadow detail, and color on the e-ink
+displays you choose. Other displays stay unchanged. The macOS edition runs in
+the menu bar; the Windows edition runs in the system tray.
 
-MIT licensed.
+[Download macOS 2.6](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-v2.6.dmg) ·
+[Download Windows 1.2](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-Windows-1.2-Setup.exe) ·
+[View all releases](https://github.com/kiteretsu903/eink-assistant/releases)
 
-## Latest release
+Free, open source, and MIT licensed.
 
-**v2.6 — September 2, 2026**
+## Features and system requirements
 
-- Added reliable support for mirrored displays while keeping tuning targeted
-  to the marked physical e-ink panel.
-- Switching between mirrored and extended layouts now refreshes and reapplies
-  display settings promptly.
-- Quit cleanup now includes online mirrored displays without modifying
-  unmarked displays.
-- The hardware setup tip now explicitly directs users to the monitor's own
-  settings menu.
+| Feature | macOS | Windows |
+|---|---|---|
+| Supported systems | **macOS 14 or later**<br>Apple silicon only | **Windows 7 SP1 through Windows 11**<br>x64 computers |
+| Where the app runs | Menu bar | System tray |
+| Choose specific e-ink displays | Yes. Other displays stay unchanged. | Same as macOS |
+| Text Contrast | Four levels: Medium, Strong, Sharp, Solid | Same as macOS |
+| Video Enhance | Three levels: Subtle, Medium, Strong | Same as macOS |
+| Advanced curve and presets | Live curve editor and five named presets | Same as macOS |
+| Saturation and RGB | Per-display color profile; 0%–300% saturation and 0%–200% RGB | Available on applicable Windows 10 2004 and Windows 11 21H2+ systems; the available method depends on the system and hardware |
+| Reduce Shaking | Available on supported external displays; turns on when a display is marked as e-ink | Not available. Windows has no unified public per-display dithering control, and most Windows systems probably do not need it. |
+| Reduce Transparency & Motion | Available through a one-time, user-confirmed helper | Available from Windows 7 SP1 through compatible system APIs |
+| System light mode | Not changed | Session-only Windows Light Mode on Windows 10 1903+ |
+| Night Shift / Night Light | Per-display Night Shift and True Tone exclusion; requires administrator approval and reconnect | Night Light settings from Windows 10 1703+; direct Disable Night Light control on Windows 11 24H2+ |
+| Mirrored / duplicated displays | Mirrored physical displays remain individually selectable | Tone curves affect the shared source; Saturation and RGB require Extend mode |
+| Restore changes | Temporary curves, color profiles, and dithering restore on quit; the Night Shift / True Tone exclusion is persistent | Temporary gamma, color, visual, and Night Light changes restore on quit; color and Night Light also recover after an abnormal exit |
+| Launch at login | Supported | Supported |
+| Interface languages | English, Simplified Chinese, Traditional Chinese, Japanese | Same as macOS |
+| Administrator access | Only for the optional Night Shift / True Tone exclusion | Required by the installer and app |
 
-[Download the latest release](../../releases/latest) · [Read the full changelog](CHANGELOG.md)
+[macOS details](macos/README.md) ·
+[Windows compatibility and setup](WINDOWS.md) ·
+[macOS changelog](CHANGELOG.md) ·
+[Windows changelog](windows/CHANGELOG.md)
 
 <p align="center">
   <img src="docs/en/app-main-v2-1.png" alt="E-Ink Assistant v2.1 in English" width="440">
 </p>
 
-## Key features
+## What you can do
 
-- **For B&W and color e-ink:** reduce dithering shimmer, deepen text, recover
-  dark detail in video and photos, and reduce system transparency and motion.
-- **For color e-ink:** compensate for a narrow color gamut with saturation,
-  then correct color casts with direct Red, Green, and Blue controls.
-- **Reading and media modes:** Text Contrast and Video Enhance are separate,
-  mutually exclusive tools for opposite jobs.
-- **Per-display control:** tune only marked e-ink panels; other displays remain
-  untouched.
-- **Safe lifecycle:** display adjustments restore on quit and reapply on launch.
-  The optional accessibility helper turns off when the app exits.
-- **Advanced tuning:** edit the complete tone curve and save five named presets.
+- **Reading:** darken faint body and secondary text with Text Contrast.
+- **Photos and video:** lift dark image detail with Video Enhance.
+- **Color e-ink:** adjust saturation and RGB when the platform and display path
+  support it.
+- **Per-display settings:** mark only the e-ink panels you want the app to
+  change; save separate settings for each one.
+- **Advanced tuning:** adjust the complete tone curve and save five named
+  presets.
 
-### What color e-ink displays benefit from
+### Color e-ink
 
 - Everything listed for B&W e-ink below.
 - **Saturation compensation** to strengthen a narrow color gamut, with six
@@ -73,7 +76,7 @@ MIT licensed.
 - **Per-display Night Shift and True Tone control** so macOS color-temperature
   processing does not fight deliberate color tuning.
 
-### What B&W e-ink displays benefit from
+### Black-and-white e-ink
 
 - **Reduce Shaking** to stop visible macOS dithering shimmer on supported
   displays.
@@ -89,14 +92,14 @@ MIT licensed.
 
 ## Feature details
 
-### Reduce Shaking — B&W and color
+### Reduce Shaking: B&W and color
 
 macOS dithers display output to smooth gradients. An LCD refreshes the pattern
 away; e-ink holds every pixel, so the pattern can become a constant shimmer.
 Disabling it makes the picture sit still. This turns on automatically when you
 mark a supported display as e-ink.
 
-### Text Contrast — B&W and color
+### Text Contrast: B&W and color
 
 Darkens text so it separates from the page on a low-contrast panel. Faint and
 secondary text gains the most: at the strongest level its signal contrast is
@@ -109,7 +112,7 @@ Strong setting; each level after it is more aggressive. Solid heavily crushes
 the black point for maximum separation, which looks crisper but loses more gray
 detail and soft edges.
 
-### Video Enhance — B&W and color
+### Video Enhance: B&W and color
 
 Brightens only the darkest tones while leaving mid-tones and highlights alone,
 so shadow detail that e-ink normally crushes becomes visible again.
@@ -120,7 +123,7 @@ Three levels: **Subtle, Medium, Strong**. It cannot distinguish dark imagery
 from dark text, so it lightens text too. **Use it for video and photos, and turn
 it off for reading.** Video Enhance and Text Contrast are mutually exclusive.
 
-### Saturation — color e-ink
+### Saturation: color e-ink
 
 Color e-ink places a color filter over a monochrome panel, which costs much of
 the gamut. Saturation compensation restores stronger color signals. B&W panels
@@ -131,7 +134,7 @@ can simply leave this at 100%.
 Presets **B&W / Faded / Factory / Enhanced / Vivid / Anime**, or a slider from
 0% to 300%.
 
-### RGB — color e-ink
+### RGB: color e-ink
 
 Adjust **Red, Green, and Blue directly from 0% to 200%** to correct a panel's
 color cast. The controls are collapsed by default; select **RGB** to reveal the
@@ -142,7 +145,7 @@ neutral 100% setting.
 RGB and Saturation share one per-display color profile, so they work together
 without interfering with Text Contrast or Video Enhance.
 
-### Disable Night Shift & True Tone — primarily color e-ink
+### Disable Night Shift & True Tone: primarily color e-ink
 
 Both features shift color and tone, which can fight deliberate display tuning.
 E-Ink Assistant can mark only the selected display as a television so macOS
@@ -153,13 +156,13 @@ Other screens keep Night Shift and True Tone. This requires an administrator
 password and **disconnecting and reconnecting that display**, and is the one setting not undone on quit. Existing
 overrides, including custom scaled resolutions, are preserved.
 
-### Reduce Transparency & Motion — B&W and color
+### Reduce Transparency & Motion: B&W and color
 
 These system accessibility settings improve legibility and avoid animation that
 slow-refresh panels cannot display well. A one-time, user-confirmed Shortcuts
 helper gives the app a safe On/Off control and optional connection automation.
 
-### Advanced — B&W and color
+### Advanced: B&W and color
 
 Full control of knee, gamma, black point, and white point, with a live plot and
 five saveable, renameable slots.
@@ -175,37 +178,37 @@ five saveable, renameable slots.
 
 ## Install
 
-Requires **macOS 14 or later** on **Apple Silicon**.
+### macOS
 
-```
-git clone https://github.com/kiteretsu903/eink-assistant.git
-cd eink-assistant
-./build.sh
-open "E-Ink Assistant.app"
-```
+Requires **macOS 14 or later** on **Apple silicon**.
 
-Recommended: download the `.dmg` from [Releases](../../releases), open it, and
-drag **E-Ink Assistant** onto the **Applications** folder shown in the installer.
+1. [Download the macOS 2.6 DMG](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-v2.6.dmg).
+2. Open it and drag **E-Ink Assistant** into **Applications**.
+3. Try to open the app once. If macOS blocks it, open **System Settings →
+   Privacy & Security** and select **Open Anyway**.
 
-### First launch: getting past Gatekeeper
+This is independently developed software and is not currently on the App Store.
+macOS will show an “unable to verify” warning the first time you open it. The
+code is fully open source, so you can review it before deciding whether to use
+it.
 
-The app is **ad-hoc signed, not notarized**, so macOS refuses to open a
-downloaded copy the first time. On **macOS 15 and later, right-click → Open no
-longer works.**
-
-1. Try to open the app once, then dismiss the warning.
-2. Open **System Settings → Privacy & Security**.
-3. Find the message that the app was blocked and click **Open Anyway**.
-4. Confirm.
-
-After dragging the app to **Applications**, if the button still does not appear,
-clear the quarantine flag directly:
+If **Open Anyway** does not appear after moving the app to Applications, open
+Terminal and run:
 
 ```
 xattr -dr com.apple.quarantine "/Applications/E-Ink Assistant.app"
 ```
 
-Building from source avoids quarantine entirely.
+### Windows
+
+Requires **Windows 7 SP1 through Windows 11** on an **x64 computer**.
+
+1. [Download the Windows 1.2 installer](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-Windows-1.2-Setup.exe).
+2. Run Setup and approve the administrator prompt.
+3. Open E-Ink Assistant from the Start menu or system tray.
+
+See [WINDOWS.md](WINDOWS.md) for exact feature availability by Windows version,
+GPU, driver, and display connection.
 
 ---
 
@@ -215,13 +218,13 @@ Building from source avoids quarantine entirely.
   <img src="docs/en/app-displays-v2-1.png" alt="Marking displays in E-Ink Assistant v2.1" width="440">
 </p>
 
-1. Open the app from the menu bar.
+1. Open the app from the macOS menu bar or Windows system tray.
 2. Mark each B&W or color e-ink display you want to tune.
-3. Reduce Shaking comes on automatically where supported.
-4. On color e-ink, adjust Saturation and RGB. On B&W, leave them at 100%.
-5. Choose Text Contrast for reading or Video Enhance for media—not both.
+3. Set a balanced hardware contrast in the monitor's own menu first.
+4. Choose Text Contrast for reading or Video Enhance for media, not both.
+5. On color e-ink, adjust Saturation and RGB when the platform supports them.
 
-The system-wide **Reduce Transparency & Motion** row has a one-time **Install &
+On macOS, the system-wide **Reduce Transparency & Motion** row has a one-time **Install &
 Enable** setup. Confirm **Add Shortcut** in Apple's Shortcuts app. The bundled
 helper accepts Text only, recognizes exact `on` and `off` commands, ignores
 everything else, and ends with `Nothing` so it produces no output. It is not
@@ -241,8 +244,9 @@ on **Launch at Login** for automatic startup.
 
 ## Display scope and presets
 
-The core tools—Reduce Shaking, Text Contrast, Video Enhance, accessibility
-controls, and Advanced curves—can benefit **both B&W and color e-ink**.
+The core tools, including Reduce Shaking, Text Contrast, Video Enhance,
+accessibility controls, and Advanced curves, can benefit **both B&W and color
+e-ink**.
 Saturation and RGB correction are specifically for color panels.
 
 Set the monitor hardware first. The bundled presets were tuned by eye on a

@@ -38,16 +38,23 @@
 .download-content { width: min(100%, 560px); }
 .download-content > p:not(.section-number):not(.fine-print) { margin-bottom: 24px; }
 
-.changelog { padding: 103px 0 104px; }
-.changelog-intro { max-width: 720px; }
-.changelog-intro h1 { font-size: clamp(58px, 7.2vw, 96px); margin-bottom: 27px; }
-.changelog-intro > p:last-child { max-width: 400px; color: #5d5b54; font-size: 17px; }
+.changelog { padding: 72px 0 104px; }
+.changelog-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 28px; margin-bottom: 34px; }
+.changelog-toolbar .section-number { margin: 0; }
+.platform-tabs { display: inline-grid; grid-template-columns: repeat(2, minmax(128px, 1fr)); border: 1px solid var(--line); }
+.platform-tab { min-height: 46px; padding: 0 22px; border: 0; background: transparent; color: var(--ink); font: 750 13px var(--sans); cursor: pointer; }
+.platform-tab + .platform-tab { border-left: 1px solid var(--line); }
+.platform-tab:hover { background: var(--cream); }
+.platform-tab[aria-selected="true"] { background: var(--ink); color: var(--paper); }
+.platform-tab:focus-visible { position: relative; z-index: 1; outline: 3px solid var(--red); outline-offset: 3px; }
+.platform-release-list[hidden] { display: none; }
 
-.release-list { margin-top: 72px; border-top: 6px solid #9eaf9b; }
+.release-list { margin-top: 0; border-top: 6px solid #9eaf9b; }
 .release-list article { display: grid; grid-template-columns: .33fr .67fr; gap: 40px; padding: 32px 28px; border: 1px solid var(--line); border-top: 0; background: rgba(255, 255, 255, .28); }
 .release-list .release-current { background: #f2f4ec; }
 .release-version p { margin: 0 0 6px; color: var(--ink); font: 500 27px/1 var(--serif); letter-spacing: -.04em; }
 .release-version time { color: #68665e; font-size: 10px; font-weight: 800; letter-spacing: .11em; }
+.release-status { color: #68665e; font-size: 10px; font-weight: 800; letter-spacing: .11em; }
 .release-list h2 { margin: 0 0 14px; font-size: clamp(32px, 3.4vw, 45px); }
 .release-list ul { margin: 0; padding-left: 18px; color: #57554e; font-size: 14px; line-height: 1.5; }
 .release-list li + li { margin-top: 8px; }
@@ -63,7 +70,8 @@
   .hero-actions .button,
   .hero-star { justify-content: space-between; width: 100%; }
   .changelog { padding: 72px 0 76px; }
-  .release-list { margin-top: 48px; }
+  .changelog-toolbar { align-items: stretch; flex-direction: column; gap: 18px; margin-bottom: 26px; }
+  .platform-tabs { width: 100%; }
   .release-list article { grid-template-columns: 1fr; gap: 20px; padding: 25px 22px; }
   .changelog-github { margin-top: 30px; padding: 23px; }
 }

@@ -1,0 +1,96 @@
+.platform-actions { flex-wrap: wrap; }
+.platform-download { border: 0; cursor: pointer; justify-content: space-between; min-width: 166px; }
+.button-windows { background: #355f86; }
+.button-windows:hover { background: #274b6d; }
+.button-star { gap: 10px; border: 1px solid var(--ink); background: transparent; color: var(--ink); }
+.button-star:hover { background: var(--cream); color: var(--ink); }
+.platform-icon { width: 19px; height: 19px; fill: currentColor; flex: 0 0 auto; }
+.platform-picks a { display: inline-flex; margin-top: 14px; color: inherit; font-size: 12px; font-weight: 800; text-underline-offset: 4px; }
+.platform-details { padding: 96px 0 68px; }
+.platform-comparison { margin-top: 0; }
+.comparison-title { margin-bottom: 28px; }
+.comparison-title h3 { margin: 0; font: 500 clamp(34px, 4vw, 52px)/1 var(--serif); letter-spacing: -.055em; }
+.comparison-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-top: 6px solid #9eaf9b; background: rgba(255, 255, 255, .24); scrollbar-color: #8d8a81 transparent; }
+.comparison-table-wrap:focus-visible { outline: 3px solid var(--red); outline-offset: 4px; }
+.feature-comparison { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 13px; line-height: 1.45; }
+.feature-comparison th,
+.feature-comparison td { padding: 15px 18px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.feature-comparison tr > *:last-child { border-right: 0; }
+.feature-comparison tbody tr:last-child > * { border-bottom: 0; }
+.feature-comparison thead th { background: #e5e9df; font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.feature-comparison thead th:not(:first-child) { padding-block: 19px; }
+.platform-column-title { display: flex; align-items: center; gap: 12px; font: 500 25px/1 var(--serif); letter-spacing: -.035em; text-transform: none; }
+.platform-column-title svg { width: 31px; height: 31px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: 0 0 auto; }
+.feature-comparison thead th:first-child,
+.feature-comparison tbody th { width: 23%; }
+.feature-comparison thead th:nth-child(2) { width: 36%; }
+.feature-comparison thead th:nth-child(3) { width: 41%; }
+.feature-comparison tbody th { background: #f1eee6; font-size: 12px; font-weight: 800; }
+.feature-comparison tbody tr:nth-child(even) td { background: rgba(255, 255, 255, .22); }
+.feature-comparison td strong { font-weight: 800; }
+.windows-version-guide { margin-top: 20px; padding: 25px 28px; border-left: 6px solid var(--blue); background: #edf1f3; }
+.windows-version-guide h4 { margin: 0 0 13px; font: 500 25px/1.1 var(--serif); letter-spacing: -.035em; }
+.windows-version-guide ul { display: grid; grid-template-columns: repeat(2, 1fr); gap: 9px 32px; margin: 0; padding: 0; list-style: none; }
+.windows-version-guide li { position: relative; padding-left: 14px; color: #55534c; font-size: 12px; line-height: 1.48; }
+.windows-version-guide li::before { content: "•"; position: absolute; left: 0; }
+.platform-summary { background: #383b3d; color: var(--paper); border-top-color: #9eaf9b; }
+.platform-summary > p:not(.catalogue-kicker),
+.platform-summary dd { color: #d1cdc2; }
+.platform-summary dl > div { border-color: rgba(248, 246, 240, .22); }
+.feature-catalogue { margin-bottom: 48px; }
+.feature-catalogue + .comparison { padding-top: 72px; }
+.download-platforms { display: flex; flex-wrap: wrap; gap: 10px; }
+.download-platforms .button { min-width: 170px; }
+
+.download-dialog { width: min(680px, calc(100% - 32px)); max-height: calc(100dvh - 32px); padding: 0; border: 0; border-radius: 7px; background: var(--paper); color: var(--ink); box-shadow: 0 24px 80px rgba(0, 0, 0, .34); }
+.download-dialog::backdrop { background: rgba(22, 22, 20, .64); backdrop-filter: blur(3px); }
+.dialog-panel { position: relative; padding: 38px 40px 36px; }
+.dialog-close { position: absolute; top: 16px; right: 16px; width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 50%; background: transparent; color: inherit; font: 300 27px/1 var(--sans); cursor: pointer; }
+.dialog-platform { margin: 0 48px 17px 0; color: #656159; font-size: 10px; font-weight: 800; letter-spacing: .14em; }
+.download-dialog h2 { margin: 0 48px 25px 0; font-size: clamp(38px, 7vw, 55px); }
+.install-steps { margin: 0; padding: 0; list-style: none; counter-reset: install; }
+.install-steps li { counter-increment: install; position: relative; padding: 15px 0 15px 47px; border-top: 1px solid var(--line); font-size: 14px; }
+.install-steps li::before { content: counter(install, decimal-leading-zero); position: absolute; left: 0; top: 15px; font: 16px var(--serif); }
+.dialog-note { margin: 20px 0 0; padding: 16px; background: var(--cream); color: #4f4c45; font-size: 13px; }
+.download-dialog details { margin-top: 18px; font-size: 13px; }
+.download-dialog summary { cursor: pointer; font-weight: 750; }
+.download-dialog details p { margin: 12px 0 8px; }
+.command-row { display: flex; align-items: stretch; gap: 8px; }
+.command-row code { flex: 1; min-width: 0; padding: 12px; overflow-x: auto; background: #e1ddd3; font-size: 11px; white-space: nowrap; }
+.command-row button { padding: 0 15px; border: 0; background: var(--ink); color: var(--paper); font: 700 11px var(--sans); cursor: pointer; }
+.dialog-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; margin-top: 25px; }
+.dialog-star { color: inherit; font-size: 12px; font-weight: 750; text-underline-offset: 4px; }
+body:has(.download-dialog[open]) { overflow: hidden; }
+
+@media (max-width: 980px) {
+  .site-header nav { display: none; }
+}
+
+@media (max-width: 760px) {
+  .platform-actions .button { width: 100%; }
+  .platform-picks .preset-path + .preset-path { padding-top: 22px; border-top: 1px solid var(--line); border-left: 0; }
+  .platform-details { padding: 72px 0 48px; }
+  .comparison-title { margin-bottom: 22px; }
+  .comparison-title h3 { font-size: 34px; }
+  .comparison-table-wrap { margin-right: calc((100vw - 100%) / -2); }
+  .feature-comparison { min-width: 830px; }
+  .feature-comparison thead th:first-child,
+  .feature-comparison tbody th { position: sticky; left: 0; z-index: 1; width: 180px; }
+  .feature-comparison thead th:first-child { z-index: 2; }
+  .feature-comparison thead th:nth-child(2) { width: 300px; }
+  .feature-comparison thead th:nth-child(3) { width: 350px; }
+  .feature-catalogue { margin-bottom: 32px; }
+  .feature-catalogue + .comparison { padding-top: 56px; }
+  .download-platforms { flex-direction: column; }
+  .download-platforms .button { width: 100%; }
+  .dialog-panel { padding: 29px 22px 25px; }
+  .download-dialog h2 { font-size: 38px; }
+  .command-row { flex-direction: column; }
+  .command-row button { min-height: 42px; }
+  .dialog-actions { align-items: stretch; flex-direction: column; }
+  .dialog-actions .button { justify-content: space-between; width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .download-dialog::backdrop { backdrop-filter: none; }
+}

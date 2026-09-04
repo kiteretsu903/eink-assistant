@@ -4,7 +4,7 @@
       lang: "zh-Hans",
       title: "E-Ink Assistant：让墨水屏在 macOS 上更好用",
       description: "E-Ink Assistant 为 macOS 上的黑白与彩色墨水屏提供专属调校。",
-      nav: ["功能", "使用方法", "更新日志"],
+      nav: ["用途", "功能", "平台对比", "更新日志"],
       getApp: "获取应用 <span aria-hidden=\"true\">↗</span>",
       home: {
         eyebrow: "<span></span> 专为 macOS 与 Apple 芯片打造",
@@ -27,7 +27,7 @@
       lang: "zh-Hant",
       title: "E-Ink Assistant：讓電子紙在 macOS 上更好用",
       description: "E-Ink Assistant 為 macOS 上的黑白與彩色電子紙顯示器提供專屬調校。",
-      nav: ["功能", "使用方式", "更新日誌"],
+      nav: ["用途", "功能", "平台比較", "更新日誌"],
       getApp: "取得應用程式 <span aria-hidden=\"true\">↗</span>",
       home: {
         eyebrow: "<span></span> 專為 macOS 與 Apple 晶片打造", hero: "讓電子紙在 macOS 上<br><em>更穩定、更清晰。</em>", lede: "E-Ink Assistant 是一款輕巧的選單列 App，可改善黑白與彩色電子紙的穩定性、文字顯示與色彩，同時不影響 Mac 內建螢幕。", download: "下載 macOS 版 <span aria-hidden=\"true\">↓</span>", star: "喜歡的話，歡迎在 GitHub 給個 Star。", latest: "最新版本", releaseDate: "2026 年 9 月 2 日", fine: "macOS 14+ · Apple Silicon · 免費開源", tag: "你的電子紙<br>顯示器",
@@ -47,7 +47,7 @@
       lang: "ja",
       title: "E-Ink Assistant：電子ペーパーを macOS でもっと快適に",
       description: "E-Ink Assistant は、macOS のモノクロ・カラー電子ペーパーディスプレイを調整します。",
-      nav: ["機能", "使い方", "更新履歴"], getApp: "アプリを入手 <span aria-hidden=\"true\">↗</span>",
+      nav: ["用途", "機能", "環境比較", "更新履歴"], getApp: "アプリを入手 <span aria-hidden=\"true\">↗</span>",
       home: {
         eyebrow: "<span></span> macOS と Apple シリコンのために", hero: "電子ペーパーを、<br><em>もっと快適に。</em>", lede: "E-Ink Assistant は、Mac の内蔵ディスプレイに影響を与えず、モノクロとカラーの電子ペーパーディスプレイのちらつきや表示を整える軽量なメニューバーアプリです。", download: "macOS 版をダウンロード <span aria-hidden=\"true\">↓</span>", star: "気に入ったら、GitHub で Star をお願いします。", latest: "最新リリース", releaseDate: "2026年9月2日", fine: "macOS 14+ · Apple Silicon · 無料・オープンソース", tag: "電子ペーパー<br>ディスプレイ",
         ticker: "安定した表示 <b>✦</b> 読みやすい文字 <b>✦</b> 見やすい暗部 <b>✦</b> 自然な色 <b>✦</b> 安定した表示 <b>✦</b> 読みやすい文字 <b>✦</b> 見やすい暗部 <b>✦</b> 自然な色 <b>✦</b>",
@@ -89,6 +89,11 @@
   const supported = ["en", "zh-Hans", "zh-Hant", "ja"];
   const select = (selector, value, html = false) => { const element = document.querySelector(selector); if (element && value !== undefined) element[html ? "innerHTML" : "textContent"] = value; };
   const selectAll = (selector, values, html = false) => document.querySelectorAll(selector).forEach((element, index) => { if (values[index] !== undefined) element[html ? "innerHTML" : "textContent"] = values[index]; });
+  const changelogMeta = {
+    "zh-Hans": ["更新日志 | E-Ink Assistant", "E-Ink Assistant macOS 与 Windows 版本的更新记录。"],
+    "zh-Hant": ["更新日誌 | E-Ink Assistant", "E-Ink Assistant macOS 與 Windows 版本的更新記錄。"],
+    ja: ["更新履歴 | E-Ink Assistant", "E-Ink Assistant の macOS 版と Windows 版の更新履歴。"]
+  };
 
   function localeFrom(value) {
     const lang = String(value || "").toLowerCase();
@@ -113,8 +118,9 @@
 
   function applyChangelog(d) {
     const c = d.changelog;
-    select(".changelog-intro .section-number", c.intro[0]); select(".changelog-intro h1", c.intro[1], true); select(".changelog-intro > p:last-child", c.intro[2]);
-    c.releases.forEach((release, index) => { const n = index + 1; select(`.release-list article:nth-child(${n}) .release-version p`, release[0]); if (release[1]) select(`.release-list article:nth-child(${n}) time`, release[1]); select(`.release-list article:nth-child(${n}) h2`, release[2]); selectAll(`.release-list article:nth-child(${n}) li`, release.slice(3), true); });
+    const meta = changelogMeta[d.lang];
+    if (meta) { document.title = meta[0]; const description = document.querySelector('meta[name="description"]'); if (description) description.content = meta[1]; }
+    c.releases.forEach((release, index) => { const n = index + 1; select(`#macos-changelog article:nth-child(${n}) .release-version p`, release[0]); if (release[1]) select(`#macos-changelog article:nth-child(${n}) time`, release[1]); select(`#macos-changelog article:nth-child(${n}) h2`, release[2]); selectAll(`#macos-changelog article:nth-child(${n}) li`, release.slice(3), true); });
     select(".changelog-github p", c.github[0]); select(".changelog-github h2", c.github[1]); select(".changelog-github .github-star span", c.github[2]); selectAll(".site-footer > *", d.home.footer, true);
   }
 
@@ -152,7 +158,7 @@
         ja: "E-Ink Assistant 日本語の高度なカーブ調整画面"
       }[locale];
     }
-    if (document.body.dataset.page === "home") applyHome(d); else applyChangelog(d);
+    if (document.body.dataset.page !== "home") applyChangelog(d);
     updateInternalLinks(locale);
     const canonical = document.querySelector('link[rel="canonical"]');
     if (canonical) { const base = document.body.dataset.page === "home" ? "https://kiteretsu903.github.io/eink-assistant/" : "https://kiteretsu903.github.io/eink-assistant/changelog.html"; canonical.href = locale === "en" ? base : `${base}?lang=${encodeURIComponent(locale)}`; }

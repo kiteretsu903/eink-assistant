@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Release history for E-Ink Assistant." />
+    <meta name="description" content="Release history for the macOS and Windows editions of E-Ink Assistant." />
     <meta name="theme-color" content="#f8f6f0" />
     <link rel="canonical" href="https://kiteretsu903.github.io/eink-assistant/changelog.html" />
     <link rel="alternate" hreflang="en" href="https://kiteretsu903.github.io/eink-assistant/changelog.html" />
@@ -15,20 +15,20 @@
     <link rel="stylesheet" href="site.css" />
     <link rel="stylesheet" href="a11y.css" />
     <link rel="stylesheet" href="light-theme.css" />
-    <link rel="stylesheet" href="changelog.css" />
+    <link rel="stylesheet" href="changelog.css?v=20260903-2" />
     <link rel="stylesheet" href="i18n.css?v=20260814-5" />
   </head>
   <body data-page="changelog">
     <div class="paper-grain" aria-hidden="true"></div>
     <header class="site-header shell">
       <a class="brand" href="index.html" aria-label="E-Ink Assistant home"><img src="app-icon.png" alt="" width="44" height="44" /><span>E‑Ink Assistant</span></a>
-      <nav aria-label="Main navigation"><a href="index.html#features">Features</a><a href="index.html#how-it-works">How it works</a><a href="changelog.html" aria-current="page">Changelog</a></nav>
+      <nav aria-label="Main navigation"><a href="index.html#comparison-text">Controls</a><a href="index.html#features">Features</a><a href="index.html#platforms">Platform comparison</a><a href="changelog.html" aria-current="page">Changelog</a></nav>
       <label class="language-picker"><span class="sr-only">Language</span><select id="site-language" aria-label="Language"><option value="en">English</option><option value="zh-Hans">简体中文</option><option value="zh-Hant">繁體中文</option><option value="ja">日本語</option></select></label>
-      <a class="button button-small" href="https://github.com/kiteretsu903/eink-assistant/releases/latest">Get the app <span aria-hidden="true">↗</span></a>
+      <a class="button button-small" href="index.html#download">Get the app <span aria-hidden="true">↓</span></a>
     </header>
     <main class="changelog shell">
-      <div class="changelog-intro"><p class="section-number">RELEASE HISTORY</p><h1>What changed,<br /><em>and when.</em></h1><p>Updates to E‑Ink Assistant, from the latest version back to the first release.</p></div>
-      <section class="release-list" aria-label="E-Ink Assistant release notes">
+      <div class="changelog-toolbar"><p class="section-number">CHANGELOG</p><div class="platform-tabs" role="tablist" aria-label="Choose a platform"><button class="platform-tab is-active" type="button" role="tab" id="macos-changelog-tab" aria-controls="macos-changelog" aria-selected="true" data-changelog-platform="macos">macOS</button><button class="platform-tab" type="button" role="tab" id="windows-changelog-tab" aria-controls="windows-changelog" aria-selected="false" tabindex="-1" data-changelog-platform="windows">Windows</button></div></div>
+      <section class="release-list platform-release-list" id="macos-changelog" role="tabpanel" aria-labelledby="macos-changelog-tab" data-changelog-panel="macos">
         <article class="release-current"><div class="release-version"><p>VERSION 2.6</p><time datetime="2026-09-02">SEPTEMBER 2, 2026</time></div><div><h2>Improved mirrored-display support.</h2><ul><li>Hardware-mirrored secondary displays remain individually selectable and are tuned by physical output.</li><li>Switching between mirrored and extended layouts promptly refreshes and reapplies display settings.</li><li>Reapply and quit cleanup touch only marked e-ink panels while also covering online mirrored displays.</li><li>The setup tip now explicitly directs users to the monitor's own menu.</li></ul></div></article>
         <article><div class="release-version"><p>VERSION 2.5</p><time datetime="2026-09-02">SEPTEMBER 2, 2026</time></div><div><h2>Added concise hardware setup guidance.</h2><ul><li>A dismissible reminder now appears above the controls, with a Bigme B251 Pro example.</li><li>Got it hides the reminder for the session; Never show it again persists after relaunch.</li><li>The welcome panel now uses three concise, icon-led setup points.</li><li>Built-in displays now appear after external displays in the selection list.</li></ul></div></article>
         <article><div class="release-version"><p>VERSION 2.4</p><time datetime="2026-09-01">SEPTEMBER 1, 2026</time></div><div><h2>Panel height follows the current screen.</h2><ul><li>The control panel now uses the visible height of the screen containing the menu-bar item.</li><li>Tall content scrolls and leaves 40 points above the Dock or screen edge. Shorter panels keep their natural height.</li></ul></div></article>
@@ -39,9 +39,14 @@
         <article><div class="release-version"><p>VERSION 1.1</p></div><div><h2>Added per-display Night Shift and True Tone control.</h2><ul><li>The change requires an administrator password and a display reconnect. It is not undone when the app quits.</li></ul></div></article>
         <article><div class="release-version"><p>VERSION 1.0</p></div><div><h2>Initial release.</h2><ul><li>Added Reduce Shaking, Saturation, Text Contrast, Video Enhance, custom tone curves, saved curve slots, and display restoration on quit.</li></ul></div></article>
       </section>
+      <section class="release-list platform-release-list" id="windows-changelog" role="tabpanel" aria-labelledby="windows-changelog-tab" data-changelog-panel="windows" hidden>
+        <article class="release-current"><div class="release-version"><p>VERSION 1.2</p><span class="release-status">CURRENT</span></div><div><h2>Improved color-control recovery.</h2><ul><li>Fixed false feature-failure warnings when Windows exposes a color pipeline but does not allow the app to change its state.</li><li>Recovery data is retained while Duplicate mode temporarily disables color control, then restored when a controllable display layout returns.</li></ul></div></article>
+        <article><div class="release-version"><p>VERSION 1.1</p></div><div><h2>Initial Windows release.</h2><ul><li>Added per-display Text Contrast, Video Enhance, advanced curves, presets, and e-ink display selection.</li><li>Added compatible Saturation, RGB, Windows Light Mode, and Night Light controls with restoration and crash recovery.</li><li>Added duplicate-display handling, system-tray onboarding, launch at login, updates, and a multilingual installer.</li></ul></div></article>
+      </section>
       <aside class="changelog-github"><p>OPEN SOURCE</p><h2>Like the project?</h2><a class="github-star github-star-dark" href="https://github.com/kiteretsu903/eink-assistant" aria-label="Give E-Ink Assistant a star on GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.5c-2.23.49-2.7-.95-2.7-.95-.36-.93-.89-1.18-.89-1.18-.73-.5.06-.49.06-.49.81.06 1.23.83 1.23.83.72 1.23 1.88.88 2.34.67.07-.52.28-.88.51-1.08-1.78-.2-3.65-.89-3.65-3.96 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.13 0 0 .67-.21 2.2.82A7.64 7.64 0 0 1 8 4.8c.68 0 1.36.09 2 .27 1.53-1.03 2.2-.82 2.2-.82.44 1.11.16 1.93.08 2.13.51.56.82 1.28.82 2.15 0 3.08-1.87 3.75-3.66 3.95.29.25.54.73.54 1.47v2.18c0 .21.15.46.55.38A8 8 0 0 0 8 0Z" /></svg><span>Give E‑Ink Assistant a star on GitHub</span></a></aside>
     </main>
     <footer class="site-footer shell"><span>© 2026 E‑Ink Assistant</span><a href="https://github.com/kiteretsu903/eink-assistant">View source on GitHub <span aria-hidden="true">↗</span></a></footer>
-    <script src="i18n.js?v=20260902-4"></script>
+    <script src="i18n.js?v=20260903-6"></script>
+    <script src="changelog-tabs.js?v=20260903-1"></script>
   </body>
 </html>

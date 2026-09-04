@@ -11,25 +11,18 @@
   <img src="../../Resources/AppIcon.png" alt="E-Ink Assistantのアプリアイコン" width="128">
 </p>
 
-**macOSで白黒・カラー電子ペーパーディスプレイを調整します。**
+**macOSとWindowsで白黒・カラー電子ペーパーディスプレイを調整します。**
 
-白黒とカラーの電子ペーパーには、更新が遅い、コントラストが限られる、暗部がつぶれる、macOSの
-ディザリングが見えるという共通の課題があります。E-Ink Assistantは、MacBookの内蔵画面に
-影響を与えず、指定したディスプレイだけを調整する小さなメニューバーアプリです。カラーパネルでは
-彩度とRGBを直接調整できます。
+E-Ink Assistantは、選んだ電子ペーパーディスプレイの文字、暗部、色を調整し、他の画面は変更しません。
+macOS版はメニューバー、Windows版はシステムトレイで動作します。
 
-MITライセンスです。
+[macOS 2.6をダウンロード](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-v2.6.dmg) ·
+[Windows 1.2をダウンロード](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-Windows-1.2-Setup.exe) ·
+[製品サイト](https://kiteretsu903.github.io/eink-assistant/?lang=ja)
 
-## 最新バージョン
-
-**v2.6 — 2026年9月2日**
-
-- ミラーリング中も、登録した物理電子ペーパーディスプレイだけを安定して調整できるようにしました。
-- ミラーリングと拡張表示を切り替えると、表示設定をすぐに更新して再適用します。
-- 終了時の復元はオンラインのミラーディスプレイにも対応し、未登録のディスプレイは変更しません。
-- 本体設定の案内で、モニター自身のメニューからコントラストを調整することを明記しました。
-
-[最新バージョンをダウンロード](https://github.com/kiteretsu903/eink-assistant/releases/latest) · [変更履歴をすべて読む](../../CHANGELOG.md)
+どちらも無料・オープンソースで、MITライセンスです。Windowsで利用できる機能はOS、GPU、ドライバー、
+接続方式によって異なります。詳しくは[Windowsの互換性とインストール](../../WINDOWS.md)をご覧ください。
+以下の詳細説明は主にmacOS版について記載しています。
 
 <p align="center">
   <img src="../ja/app-main-v2-1.png" alt="E-Ink Assistant v2.1 日本語画面" width="440">

@@ -11,24 +11,17 @@
   <img src="../../Resources/AppIcon.png" alt="電子紙助手 App 圖示" width="128">
 </p>
 
-**在 macOS 上調校黑白與彩色電子紙顯示器。**
+**在 macOS 與 Windows 上調校黑白與彩色電子紙。**
 
-黑白與彩色電子紙都有更新慢、對比度有限、暗部細節容易消失，以及 macOS 抖動圖樣清楚可見等問題。
-電子紙助手是一款輕巧的選單列 App，可逐台顯示器改善這些問題，不影響 Mac 內建螢幕。彩色電子紙
-還能使用彩度與直接 RGB 調校。
+電子紙助手可以調整所選電子紙的文字對比、暗部細節與色彩，其他顯示器保持不變。macOS 版位於選單列，
+Windows 版位於系統匣。
 
-採用 MIT 授權。
+[下載 macOS 2.6](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-v2.6.dmg) ·
+[下載 Windows 1.2](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-Windows-1.2-Setup.exe) ·
+[造訪產品網站](https://kiteretsu903.github.io/eink-assistant/?lang=zh-Hant)
 
-## 最新版本
-
-**v2.6 — 2026 年 9 月 2 日**
-
-- 新增可靠的鏡像模式支援，同時仍只調校已標記的實體電子紙。
-- 在鏡像模式與延伸模式之間切換時，會及時重新整理並套用顯示設定。
-- 結束清理現在也會處理在線的鏡像顯示器，同時不修改未標記的顯示器。
-- 硬體設定提示現在明確說明需要在顯示器內建選單中調整對比度。
-
-[下載最新版本](https://github.com/kiteretsu903/eink-assistant/releases/latest) · [查看完整更新記錄](../../CHANGELOG.md)
+兩個版本都免費、開源，並採用 MIT 授權。Windows 的實際功能取決於系統版本、GPU、驅動程式與顯示器連接方式；
+詳情請參閱 [Windows 相容性與安裝說明](../../WINDOWS.md)。下方的詳細功能說明以 macOS 版為主。
 
 <p align="center">
   <img src="../zh-Hant/app-main-v2-1.png" alt="電子紙助手 v2.1 繁體中文介面" width="440">

@@ -11,24 +11,17 @@
   <img src="../../Resources/AppIcon.png" alt="墨水屏助手应用图标" width="128">
 </p>
 
-**在 macOS 上调校黑白和彩色墨水屏显示器。**
+**在 macOS 和 Windows 上调校黑白和彩色墨水屏。**
 
-黑白和彩色墨水屏都有刷新慢、对比度有限、暗部容易糊成一团，以及 macOS 抖动图案清晰可见等问题。
-墨水屏助手是一款轻巧的菜单栏应用，可逐台显示器改善这些问题，不影响 Mac 内建显示屏。彩色墨水屏还可以
-使用饱和度和直接 RGB 调校。
+墨水屏助手可以调节所选墨水屏的文字对比度、暗部细节和色彩，其他显示器保持不变。macOS 版位于菜单栏，
+Windows 版位于系统托盘。
 
-MIT 开源协议。
+[下载 macOS 2.6](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-v2.6.dmg) ·
+[下载 Windows 1.2](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-Windows-1.2-Setup.exe) ·
+[访问产品网站](https://kiteretsu903.github.io/eink-assistant/?lang=zh-Hans)
 
-## 最新版本
-
-**v2.6 — 2026 年 9 月 2 日**
-
-- 新增可靠的复制模式支持，同时仍只调校已标记的物理墨水屏。
-- 在复制模式与扩展模式之间切换时，会及时刷新并重新应用显示设置。
-- 退出清理现在也会处理在线的镜像显示器，同时不修改未标记的显示器。
-- 硬件设置提示现在明确说明需要在显示器自带菜单中调整对比度。
-
-[下载最新版本](https://github.com/kiteretsu903/eink-assistant/releases/latest) · [查看完整更新日志](../../CHANGELOG.md)
+两个版本都免费、开源，并采用 MIT 许可证。Windows 的具体功能取决于系统版本、GPU、驱动和显示器连接方式；
+详情请参阅 [Windows 兼容性与安装说明](../../WINDOWS.md)。下方的详细功能说明以 macOS 版为主。
 
 <p align="center">
   <img src="../zh-Hans/app-main-v2-1.png" alt="墨水屏助手 v2.1 简体中文界面" width="440">
