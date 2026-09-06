@@ -1,0 +1,21 @@
+{
+  "locale": "is",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact key equality and nonempty values",
+    "Format placeholders, HTML tags and attributes, URLs, and numeric values preserved",
+    "Reviewed enable/disable conditions, rollback timing, persistent changes, and restore-on-quit warnings",
+    "Terminology aligned across app, Windows, website, and historical release notes"
+  ],
+  "concerns": [
+    "No native Icelandic human review. Technical terms for display dithering, tone-curve knee, and black-point crushing merit fluent technical review.",
+    "Windows runtime rendering and Icelandic text layout have not been tested on Windows.",
+    "Product names and actual helper action identifiers (Shortcuts, Add Shortcut, Nothing, on/off) remain unchanged. Existing English screenshots remain described as English."
+  ],
+  "native_speaker_review_required": false
+}

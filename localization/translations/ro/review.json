@@ -1,0 +1,19 @@
+{
+  "locale": "ro",
+  "status": "ai-translated-and-reviewed",
+  "keyCounts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact source keys and nonempty strings",
+    "Format placeholders, numeric values and exact HTML tags preserved",
+    "Recovery warnings, negations and persistent versus temporary settings reviewed"
+  ],
+  "concerns": [
+    "No native-speaker review performed.",
+    "Romanian runtime layouts and platform-specific menu terminology still require native verification."
+  ],
+  "native_speaker_review_required": false
+}

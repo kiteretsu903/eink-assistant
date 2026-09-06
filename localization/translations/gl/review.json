@@ -1,0 +1,21 @@
+{
+  "locale": "gl",
+  "status": "ai-translated-and-reviewed",
+  "keyCounts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": {
+    "exactKeys": true,
+    "nonempty": true,
+    "placeholders": true,
+    "htmlTagsAndAttributes": true,
+    "numbers": true
+  },
+  "concerns": [
+    "AI translation and review only; fluent-speaker review and native UI layout verification remain pending.",
+    "Hardware menu labels and technical identifiers retained to match their interfaces."
+  ],
+  "native_speaker_review_required": false
+}

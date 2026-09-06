@@ -4,6 +4,12 @@
 > [`docs/TECHNICAL.md`](docs/TECHNICAL.md). It is the authoritative record
 > of Windows architecture, feature gates, lifecycle rules, tests, and decisions.
 
+> **Active localization work:** the
+> [80-locale Windows handoff](docs/handoffs/multilingual-80.md) describes shared
+> translation resources and the native integration and verification still
+> required on Windows. Current Windows support remains the four locales below
+> until that work passes; shared translation files alone do not expand the app.
+
 **Version status:** Windows 1.2 source baseline, currently unreleased.
 
 This directory contains the native Windows edition of E-Ink Assistant. It uses

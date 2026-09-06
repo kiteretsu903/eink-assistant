@@ -1,0 +1,19 @@
+{
+  "locale": "kn",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact keys and nonempty UTF-8 strings",
+    "Placeholders, HTML tags and numbers preserved",
+    "Reviewed recovery and enable/disable conditions",
+    "Current download and historical language lists preserved"
+  ],
+  "concerns": [
+    "Native-speaker review needed for specialist tone-curve terms and platform settings names. Kannada shaping, font fallback, text fit and Windows UI remain unverified."
+  ],
+  "native_speaker_review_required": false
+}

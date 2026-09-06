@@ -1,0 +1,21 @@
+{
+  "locale": "th",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact keys, valid JSON and nonempty strings",
+    "Placeholders, markup/attributes, URLs and all numeric values preserved",
+    "Reviewed rollback confirmation conditions, last-display behavior, persistent changes and restore-on-quit warnings",
+    "Consistent Thai control terminology across app, Windows and site"
+  ],
+  "concerns": [
+    "No native Thai human review.",
+    "Thai line breaking, combining marks and long control labels require runtime visual verification; Windows rendering remains untested.",
+    "Gregorian release years and Western numeric digits preserved to match the source. Actual helper identifiers and commands remain unchanged."
+  ],
+  "native_speaker_review_required": false
+}

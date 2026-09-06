@@ -1,0 +1,21 @@
+{
+  "locale": "ca",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "validation": [
+    "Exact keys and nonempty values passed",
+    "Format placeholders preserved",
+    "HTML tags and attributes preserved",
+    "Numeric tokens preserved",
+    "Reviewed restoration, persistent exclusion, enable/disable conditions and experimental rollback instructions"
+  ],
+  "concerns": [
+    "No native human review performed. Runtime layout checks and Windows execution remain pending.",
+    "Hardware menu labels are descriptive translations and may differ from the monitor UI."
+  ],
+  "native_speaker_review_required": false
+}

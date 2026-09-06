@@ -1,0 +1,30 @@
+{
+  "locale": "so",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Complete key sets and nonempty values",
+    "Placeholder multisets preserved",
+    "Exact HTML tags/attributes",
+    "Digit and version-number multisets preserved",
+    "Reviewed activation, mutual exclusion, recovery and experimental confirmation warnings",
+    "Consistent app/site/platform terminology",
+    "Historical/current-download four-language lists unchanged"
+  ],
+  "concerns": [
+    "AI review only. Fluent Somali review recommended for specialized graphics vocabulary and OS setting labels.",
+    "Somali compounds and long safety/help text need native visual layout checks.",
+    "Windows backend and Qt standard-dialog localization remain pending native integration."
+  ],
+  "terminology": {
+    "Text Contrast": "Kontrastiga qoraalka",
+    "Saturation": "Dheregga midabka",
+    "Video Enhance": "Hagaajinta fiidyowga",
+    "Night Light": "Iftiinka habeenkii"
+  },
+  "native_speaker_review_required": false
+}

@@ -330,7 +330,9 @@ enum CurvePresets {
     /// A compact description for tooltips, so a slot is identifiable without
     /// applying it.
     static func summary(_ c: ToneCurve) -> String {
-        String(format: "knee %.2f  γ %.2f  black %.2f  white %.2f",
-               c.knee, c.gamma, c.blackPoint, c.whitePoint)
+        [("curve.knee", c.knee), ("curve.gamma", c.gamma),
+         ("curve.black", c.blackPoint), ("curve.white", c.whitePoint)]
+            .map { L($0.0) + " " + String(format: "%.2f", $0.1) }
+            .joined(separator: "  ")
     }
 }

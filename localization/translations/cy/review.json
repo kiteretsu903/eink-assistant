@@ -1,0 +1,21 @@
+{
+  "locale": "cy",
+  "status": "ai-translated-and-reviewed",
+  "keyCounts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact source keys and nonempty UTF-8 values",
+    "Placeholders, numeric values, exact HTML tags and attributes, Markdown emphasis preserved",
+    "Cross-surface Welsh terminology consistency reviewed",
+    "Recovery warnings, confirmation conditions, helper on/off commands and persistent Night Shift/True Tone exclusion reviewed",
+    "Last-marked-display disconnect behavior and current/historical language lists preserved"
+  ],
+  "concerns": [
+    "Native-speaker review remains outstanding, especially for technical terminology and Welsh grammatical mutations.",
+    "Live layout and Windows rendering have not been verified."
+  ],
+  "native_speaker_review_required": false
+}

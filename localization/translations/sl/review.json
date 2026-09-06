@@ -1,0 +1,21 @@
+{
+  "locale": "sl",
+  "status": "ai-translated-and-reviewed",
+  "keyCounts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact source keys, nonempty UTF-8 values, placeholders",
+    "Exact HTML tags and attributes; Markdown emphasis",
+    "Consistent terminology across app, Windows and site",
+    "Rollback warnings, negations, persistent exclusion and temporary restoration conditions reviewed",
+    "Helper on/off commands and last-display disconnect condition preserved",
+    "Current release language lists and historical claims preserved"
+  ],
+  "concerns": [
+    "Native-speaker terminology review and live macOS/Windows rendering verification remain outstanding."
+  ],
+  "native_speaker_review_required": false
+}

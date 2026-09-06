@@ -1,0 +1,20 @@
+{
+  "locale": "ta",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "validation": [
+    "JSON parse, exact key equality, nonempty values",
+    "Exact placeholders, numbers, HTML tags and attributes, and URLs",
+    "Reviewed recovery warnings, negations, enable/disable conditions, persistent exclusions and current-download language limits"
+  ],
+  "concerns": [
+    "AI translation and review only; no native human review.",
+    "Tamil font shaping, long-label layout and Windows runtime need visual verification.",
+    "OS setting names are descriptive Tamil; installed OS language can show different labels."
+  ],
+  "native_speaker_review_required": false
+}

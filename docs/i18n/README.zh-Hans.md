@@ -1,215 +1,151 @@
-# 墨水屏助手
+# E-Ink Assistant
+
+<!-- BEGIN README LANGUAGES -->
+<p align="center">
+  <a href="../../README.md" lang="en" dir="ltr">English</a> &nbsp;·&nbsp;
+  <b lang="zh-Hans" dir="ltr">简体中文</b> &nbsp;·&nbsp;
+  <a href="README.zh-Hant.md" lang="zh-Hant" dir="ltr">繁體中文</a> &nbsp;·&nbsp;
+  <a href="README.ja.md" lang="ja" dir="ltr">日本語</a> &nbsp;·&nbsp;
+  <a href="README.ko.md" lang="ko" dir="ltr">한국어</a> &nbsp;·&nbsp;
+  <a href="README.es.md" lang="es" dir="ltr">Español</a> &nbsp;·&nbsp;
+  <a href="README.fr.md" lang="fr" dir="ltr">Français</a> &nbsp;·&nbsp;
+  <a href="README.de.md" lang="de" dir="ltr">Deutsch</a> &nbsp;·&nbsp;
+  <a href="README.pt-BR.md" lang="pt-BR" dir="ltr">Português (Brasil)</a> &nbsp;·&nbsp;
+  <a href="README.ru.md" lang="ru" dir="ltr">Русский</a> &nbsp;·&nbsp;
+  <a href="README.ar.md" lang="ar" dir="rtl">العربية</a> &nbsp;·&nbsp;
+  <a href="README.hi.md" lang="hi" dir="ltr">हिन्दी</a>
+</p>
+<!-- END README LANGUAGES -->
 
 <p align="center">
-  <a href="../../README.md">English</a> &nbsp;·&nbsp;
-  <b>简体中文</b> &nbsp;·&nbsp;
-  <a href="README.zh-Hant.md">繁體中文</a> &nbsp;·&nbsp;
-  <a href="README.ja.md">日本語</a>
+  <img src="../../Resources/AppIcon.png" alt="E-Ink Assistant 应用图标" width="128">
 </p>
 
-<p align="center">
-  <img src="../../Resources/AppIcon.png" alt="墨水屏助手应用图标" width="128">
-</p>
+**为 macOS 和 Windows 上的黑白及彩色墨水屏调校显示效果。**
 
-**在 macOS 和 Windows 上调校黑白和彩色墨水屏。**
+[访问产品网站](https://kiteretsu903.github.io/eink-assistant/zh-Hans/)
 
-墨水屏助手可以调节所选墨水屏的文字对比度、暗部细节和色彩，其他显示器保持不变。macOS 版位于菜单栏，
-Windows 版位于系统托盘。
+E-Ink Assistant（墨水屏助手）调节所选墨水屏的文字对比度、暗部细节与色彩。其他显示器保持不变。macOS 版运行于菜单栏，Windows 版运行于系统托盘。
 
 [下载 macOS 2.6](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-v2.6.dmg) ·
 [下载 Windows 1.2](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-Windows-1.2-Setup.exe) ·
-[访问产品网站](https://kiteretsu903.github.io/eink-assistant/?lang=zh-Hans)
+[查看所有版本](https://github.com/kiteretsu903/eink-assistant/releases)
 
-两个版本都免费、开源，并采用 MIT 许可证。Windows 的具体功能取决于系统版本、GPU、驱动和显示器连接方式；
-详情请参阅 [Windows 兼容性与安装说明](../../WINDOWS.md)。下方的详细功能说明以 macOS 版为主。
+免费开源，采用 MIT 许可证。
 
-<p align="center">
-  <img src="../zh-Hans/app-main-v2-1.png" alt="墨水屏助手 v2.1 简体中文界面" width="440">
-</p>
+## 功能与系统要求
 
-## 主要功能
+| 功能 | macOS | Windows |
+|---|---|---|
+| 支持的系统 | **macOS 14 或更新版本**<br>仅支持 Apple 芯片 | **Windows 7 SP1 至 Windows 11**<br>x64 计算机 |
+| 应用所在位置 | 菜单栏 | 系统托盘 |
+| 选择指定的墨水屏 | 支持。其他显示器保持不变。 | 与 macOS 相同 |
+| 文字对比度 | 四个级别：中等、强、锐利、实边 | 与 macOS 相同 |
+| 视频暗部增强 | 三个级别：轻微、中等、强 | 与 macOS 相同 |
+| 高级曲线与预设 | 实时曲线编辑器与五个命名预设 | 与 macOS 相同 |
+| 饱和度与 RGB | 按显示器设置颜色配置文件；饱和度 0%–300%，RGB 0%–200% | 适用于符合条件的 Windows 10 2004 和 Windows 11 21H2+ 系统；可用方式取决于系统和硬件 |
+| 减少抖动 | 适用于受支持的外接显示器；将显示器标记为墨水屏时自动开启 | 不支持。Windows 没有统一的公开接口来按显示器控制抖动，而且多数 Windows 系统可能并不需要此功能。 |
+| 减少透明度与动态效果 | 通过用户确认一次的辅助指令提供 | 从 Windows 7 SP1 起可通过兼容的系统 API 使用 |
+| 系统浅色模式 | 不更改 | Windows 10 1903+ 支持仅在应用运行期间使用 Windows 浅色模式 |
+| Night Shift / 夜间模式 | 按显示器排除 Night Shift 与原彩显示；需要管理员批准并重新连接显示器 | Windows 10 1703+ 可打开夜间模式设置；Windows 11 24H2+ 可直接禁用夜间模式 |
+| 镜像 / 复制显示器 | 镜像中的物理显示器仍可单独选择 | 色调曲线影响共享的显示源；饱和度与 RGB 需要扩展模式 |
+| 恢复更改 | 退出时恢复临时曲线、颜色配置文件和抖动设置；Night Shift / 原彩显示排除设置会保留 | 退出时恢复临时伽马、色彩、视觉效果和夜间模式更改；异常退出后也可恢复色彩和夜间模式 |
+| 登录时打开 | 支持 | 支持 |
+| 界面语言 | 英语、简体中文、繁体中文、日语 | 与 macOS 相同 |
+| 管理员权限 | 仅可选的 Night Shift / 原彩显示排除设置需要 | 安装程序和应用均需要 |
 
-- **黑白和彩色墨水屏都适用**：减少抖动闪烁、加深文字、恢复视频和照片的暗部细节，并减少系统
-  透明度与动态效果。
-- **彩色墨水屏专用**：通过饱和度补偿偏窄的色域，并直接调节红、绿、蓝来校正偏色。
-- **阅读与媒体分开**：文字对比度和视频暗部增强分别服务于相反的场景，并且互斥。
-- **逐显示器控制**：只调校已标记的墨水屏，其他显示器不受影响。
-- **安全还原**：退出时还原显示调整，启动时重新应用；辅助功能会在退出时关闭。
-- **高级调校**：直接调整完整色调曲线，并保存 5 个可命名预设。
-
-### 彩色墨水屏能获得哪些改善
-
-- 包含下方黑白墨水屏可获得的全部改善。
-- **饱和度补偿**：增强偏窄的色域，提供六个预设和 0%–300% 滑块。
-- **直接 RGB 校正**：每个通道可在 0%–200% 范围内调节，用于去除偏红、偏绿或偏蓝；每台显示器
-  分别保存自己的 RGB 数值。
-- **逐显示器控制 Night Shift 与原彩显示**：避免 macOS 的色温处理干扰有意设置的颜色调校。
-
-### 黑白墨水屏能获得哪些改善
-
-- **减少抖动**：在支持的显示器上停止清晰可见的 macOS 抖动闪烁。
-- **文字对比度**：加深浅色和次要文字，提升易读性。
-- **视频暗部增强**：恢复视频和照片中的暗部细节。
-- **减少透明度与动态效果**：简化系统视觉效果，并避免慢刷新屏幕难以呈现的动画。
-- **高级色调曲线调校**：针对面板自身的对比度响应进行调整。
-- **可选的 Night Shift 与原彩显示控制**：当 macOS 色调偏移明显影响灰阶输出时使用。
-
----
-
-## 功能详解
-
-### 减少抖动——黑白与彩色
-
-macOS 会用抖动（dithering）让渐变更平滑。LCD 会在刷新中把图案抹掉，而墨水屏会保持每个像素，
-于是图案可能变成持续闪烁。关闭抖动后画面会稳定下来。在支持的显示器上，标记为墨水屏后会自动开启。
-
-### 文字对比度——黑白与彩色
-
-加深文字，让它在低对比度面板上更容易从页面中分离。浅色和次要文字受益最大；在最强档位下，
-其信号对比度大约可提升到四倍。
-
-![文字对比度调整前后对比](../en/text-contrast-editorial.png)
-
-四个档位：**中等、强、锐利、实边**。“中等”现在相当于之前的“强”，之后每档都更激进。
-“实边”会大幅压缩黑点以获得最高区分度，显示更清晰，但会损失更多灰阶细节，字缘也会偏硬。
-
-### 视频暗部增强——黑白与彩色
-
-只提亮最暗的色调，中间调和高光保持不变，让墨水屏通常会压没的暗部细节重新可见。
-
-![视频暗部增强调整前后对比](../en/video-enhance-editorial.png)
-
-三个档位：**轻微、中等、强**。它无法区分暗部画面和深色文字，所以文字也会变浅。
-**看视频和照片时开启，阅读时关闭。** 视频暗部增强与文字对比度互斥。
-
-### 饱和度——彩色墨水屏
-
-彩色墨水屏在黑白面板上增加彩色滤光层，因此损失大量色域。饱和度补偿可以恢复更强的颜色信号。
-黑白墨水屏保持 100% 即可。
-
-![饱和度调整前后对比](../en/saturation-editorial.png)
-
-预设 **黑白 / 淡彩 / 原厂 / 增强 / 艳丽 / 动漫**，或使用 0%–300% 滑块。
-
-### RGB——彩色墨水屏
-
-直接在 **0%–200%** 范围内调节**红、绿、蓝**，校正面板偏色。每台显示器分别保存自己的 RGB
-数值。控制项默认收起；点击 **RGB** 即可显示三个滑块。收起时仍会显示当前数值。点击**重置 RGB**
-可将三个通道恢复为中性的 100%。
-
-RGB 与饱和度共用同一个逐显示器颜色配置文件，因此两者可以一起使用，也不会干扰文字对比度或
-视频暗部增强。
-
-### 关闭 Night Shift 与原彩显示——主要用于彩色墨水屏
-
-两者都会改变颜色和色调，可能与显示调校互相干扰。墨水屏助手可以只把所选显示器标记为电视，
-让 macOS 不对该面板应用这两项功能。受系统色调偏移影响的黑白墨水屏也可能受益。
-
-其他屏幕仍保留 Night Shift 与原彩显示。此操作需要管理员密码，并需**断开后重新连接该显示器**，也是唯一不会在退出时
-还原的设置。已有覆盖项（包括自定义缩放分辨率）会被保留。
-
-### 减少透明度与动态效果——黑白与彩色
-
-这两项系统辅助功能可提升易读性，并避免慢刷新面板无法良好显示的动画。一次由用户确认的辅助捷径
-让应用获得安全的开／关控制，并可选择自动跟随显示器连接状态。
-
-### 高级——黑白与彩色
-
-直接控制拐点、伽马、黑点和白点，带实时曲线图以及五个可保存、可重命名的槽位。
+[macOS 详细说明](../../macos/README.md) ·
+[Windows 兼容性与设置](../../WINDOWS.md) ·
+[macOS 更新日志](../../CHANGELOG.md) ·
+[Windows 更新日志](../../windows/CHANGELOG.md)
 
 <p align="center">
-  <img src="../zh-Hans/app-advanced-v2-1.png" alt="墨水屏助手 v2.1 简体中文高级模式" width="440">
+  <img src="../../docs/en/app-main-v2-1.png" alt="E-Ink Assistant v2.1 英文界面" width="440">
 </p>
 
-> 对比图使用应用真实的变换生成，并在 LCD 上渲染。文字和视频示例还模拟了低对比度墨水屏；
-> 饱和度示例直接展示颜色变换。实际效果取决于面板。
+## 控制选项
 
----
+| 控制项 | 适用场景 | 作用 |
+|---|---|---|
+| 文字对比度 | 阅读 | 通过中等、强、锐利、实边四个级别加深浅色文字。更强的级别会牺牲灰阶细节，产生更硬的边缘。 |
+| 视频暗部增强 | 照片和视频 | 通过轻微、中等、强三个级别呈现阴影细节。阅读时请关闭，因为它也会让深色文字变浅。 |
+| 饱和度与 RGB | 彩色墨水屏 | 在平台支持时提供六个饱和度预设、0%–300% 饱和度滑块，以及 0%–200% RGB 校正。 |
+| 减少抖动 | 受支持的 macOS 显示器 | 停止可见的抖动闪烁，并为已标记为墨水屏的显示器自动开启。 |
+| Night Shift 与原彩显示 | 受色温变化影响的显示器 | 将所选 macOS 显示器排除在这两项功能之外。需要管理员批准并重新连接显示器，退出后设置仍会保留。 |
+| 减少透明度与动态效果 | 刷新较慢的面板 | 简化系统视觉效果。macOS 通过用户确认一次的辅助指令实现。 |
+| 高级曲线 | 针对具体面板微调 | 配合实时曲线图调节拐点、伽马、黑点和白点，并提供五个命名预设。 |
+
+<p align="center">
+  <img src="../../docs/en/text-contrast-editorial.png" alt="文字对比度调整前后的示意图" width="31%">
+  <img src="../../docs/en/video-enhance-editorial.png" alt="视频暗部增强前后的示意图" width="31%">
+  <img src="../../docs/en/saturation-editorial.png" alt="饱和度调整前后的示意图" width="31%">
+</p>
+
+> 这些图片仅用于说明控制项的效果。实际效果取决于面板和源内容。
 
 ## 安装
 
-需要 **macOS 14 或更高版本**，以及 **Apple Silicon**。
+### macOS 14+，Apple 芯片
 
-```
-git clone https://github.com/kiteretsu903/eink-assistant.git
-cd eink-assistant
-./build.sh
-open "E-Ink Assistant.app"
-```
+1. 使用上方链接下载 macOS 2.6 DMG。
+2. 打开 DMG，将 **E-Ink Assistant** 拖入**应用程序**。
+3. 先尝试打开应用一次。如果 macOS 阻止打开，请前往**系统设置 → 隐私与安全性**，选择**仍要打开**。
 
-推荐从 [Releases](https://github.com/kiteretsu903/eink-assistant/releases) 下载 `.dmg`，打开后将**墨水屏助手**拖到安装器中显示的
-**应用程序**文件夹。
+这是独立开发的软件，目前尚未上架 App Store。macOS 会在首次打开时显示“无法验证”警告。代码完全开源，你可以先审阅，再决定是否使用。
 
-### 首次启动：通过 Gatekeeper
-
-本应用是**自签名（ad-hoc），未经过 Apple 公证**，所以 macOS 第一次会拒绝打开下载版本。
-**在 macOS 15 及以上版本，右键“打开”已不再有效。**
-
-1. 先尝试打开一次应用，然后关闭警告。
-2. 打开**系统设置 → 隐私与安全性**。
-3. 找到应用被阻止的提示，点击**仍要打开**。
-4. 确认。
-
-将应用拖入**“应用程序”**文件夹后，如果仍没有该按钮，可直接清除隔离标记：
+如果将应用移入“应用程序”后仍未出现**仍要打开**，请打开终端并运行：
 
 ```
 xattr -dr com.apple.quarantine "/Applications/E-Ink Assistant.app"
 ```
 
-自行从源码编译不会带有隔离标记。
+### Windows 7 SP1 至 Windows 11，x64
 
----
+1. 使用上方链接下载 Windows 1.2 安装程序。
+2. 运行安装程序并批准管理员权限提示。
+3. 从开始菜单或系统托盘打开 E-Ink Assistant。
+
+请参阅 [WINDOWS.md](../../WINDOWS.md)，了解不同 Windows 版本、GPU、驱动程序和显示连接方式下各功能的具体可用性。
 
 ## 使用方法
 
 <p align="center">
-  <img src="../zh-Hans/app-displays-v2-1.png" alt="墨水屏助手 v2.1 简体中文标记显示器界面" width="440">
+  <img src="../../docs/en/app-displays-v2-1.png" alt="在 E-Ink Assistant v2.1 中标记显示器（英文界面）" width="440">
 </p>
 
-1. 从菜单栏打开应用。
-2. 标记需要调校的黑白或彩色墨水屏。
-3. 在支持的显示器上，减少抖动会自动开启。
-4. 彩色墨水屏可调整饱和度与 RGB；黑白墨水屏全部保持 100%。
-5. 阅读时选择文字对比度，观看媒体时选择视频暗部增强，两者不要同时使用。
+1. 从 macOS 菜单栏或 Windows 系统托盘打开应用。
+2. 标记每台需要调校的黑白或彩色墨水屏。
+3. 先在显示器自带菜单中设置均衡的硬件对比度。
+4. 阅读时选择文字对比度，观看媒体时选择视频暗部增强，不要同时开启两者。
+5. 使用彩色墨水屏时，可在平台支持的情况下调节饱和度与 RGB。
 
-系统级的**减少透明度与动态效果**需要一次性**安装并开启**。在 Apple“快捷指令”中确认
-**添加快捷指令**。随附的辅助指令只接受文本，只识别完全一致的 `on` 与 `off`，忽略其他输入，
-并以“无”操作结束，因此不会产生输出。它不会出现在共享表单、Spotlight、快速操作或锁定屏幕界面中。
-为了确保自动跟随显示器和退出清理正常工作，它可以在 Mac 锁定时由应用在后台运行；应用不会列出或查看
-你的其他快捷指令。
+**退出应用时恢复显示调整**，启动时重新应用。开启**登录时打开**即可自动启动。
 
-自动模式会在已标记的墨水屏连接时开启两项设置，并且只有最后一台已标记墨水屏断开后才会关闭。
-退出应用时也会关闭两项设置。
+## 显示器设置
 
-**退出时会还原显示调整**，启动时重新应用。打开**登录时启动**即可自动启动。
+调节应用前，请先在显示器自带菜单中设置均衡的对比度。内置预设是在 **Bigme B251 Pro**（R2 FW V2.0）上，使用**网页模式、硬件伽马等级 3、对比度 50、关闭色彩还原模式**，通过目视调校得出。黑白面板或其他彩色型号需要各自适合的数值。高级模式提供完整的曲线调节功能，每台显示器的设置单独保存。
 
----
+减少抖动仅支持 Apple Silicon，在不支持的设备上会自动隐藏。
 
-## 显示器范围与预设
+<details>
+<summary>macOS 减少透明度与动态效果辅助指令</summary>
 
-减少抖动、文字对比度、视频暗部增强、系统辅助功能和高级曲线都可以让**黑白和彩色墨水屏**受益。
-饱和度补偿与 RGB 校色则专门面向彩色面板。
+首次使用时，需要在 Apple 的“快捷指令”应用中确认**添加快捷指令**。内置辅助指令只接受完全匹配的文本命令 `on` 和 `off`，不产生输出，也不会出现在共享表单、聚焦搜索、快速操作或锁定屏幕界面中。它可以在 Mac 锁定时运行。应用不会列出或查看你的其他快捷指令。
 
-请先设置好显示器硬件。内置预设是针对 **Bigme B251 Pro**（R2 FW V2.0），在**网页模式、
-硬件伽马等级 3、对比度 50、关闭色彩还原模式**下用眼睛调校的。黑白面板或其他彩色型号需要
-自己的数值；高级模式为此提供完整曲线。请根据面板的实际显示效果进行自定义调校。
+自动模式会在已标记的墨水屏连接时开启这两项设置，并在最后一台已标记的显示器断开后关闭。退出应用也会关闭这两项设置。
 
-减少抖动仅支持 Apple Silicon，在不支持的位置会自动隐藏。
+</details>
 
----
+## 项目文档
 
-## 更多
+- [CHANGELOG.md](../../CHANGELOG.md)：各版本的变更
+- [TECHNICAL.md](../../TECHNICAL.md)：实现方式、测量结果，以及在现代 macOS 上*不起作用*的方法
+- [mac-saturation](https://github.com/kiteretsu903/mac-saturation)：色彩机制研究和配置文件导出命令行工具
 
-- [CHANGELOG.md](../../CHANGELOG.md)：各版本更新内容
-- [TECHNICAL.md](../../TECHNICAL.md)：实现原理、实测数据，以及新版 macOS 上**行不通**的方法（英文）
-- [mac-saturation](https://github.com/kiteretsu903/mac-saturation)：颜色机制调查和配置文件导出工具（英文）
+## 许可证与致谢
 
-## 许可与致谢
+采用 MIT 许可证，详见 [LICENSE](../../LICENSE)。
 
-MIT，见 [LICENSE](../../LICENSE)。
-
-**减少抖动基于 [Stillcolor](https://github.com/aiaf/Stillcolor)（作者 Abdullah Arif，MIT）。**
-Stillcolor 发现可以通过 `enableDither` I/O Registry 属性关闭显示器抖动。本项目按显示器重新实现
-这一思路；发现方法的功劳属于 Stillcolor。感谢。
+**减少抖动基于 Abdullah Arif 开发的 [Stillcolor](https://github.com/aiaf/Stillcolor)**（MIT）。Stillcolor 发现可以通过 `enableDither` I/O Registry 属性禁用显示抖动。本项目将这一思路重新实现为按显示器控制；这一发现的功劳属于 Stillcolor。感谢！
 
 完整声明见 [THIRD-PARTY-NOTICES.md](../../THIRD-PARTY-NOTICES.md)。

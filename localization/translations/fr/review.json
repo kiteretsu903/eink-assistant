@@ -1,0 +1,20 @@
+{
+  "locale": "fr",
+  "status": "ai-translated-and-reviewed",
+  "keyCounts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact source keys and nonempty strings",
+    "Format placeholders, numeric values and exact HTML tags preserved",
+    "Display recovery warnings and persistent versus temporary settings reviewed",
+    "Full README translated; commands preserved and relative links validated"
+  ],
+  "concerns": [
+    "No native-speaker review performed.",
+    "French UI rendering and platform-specific menu terminology still require native runtime verification."
+  ],
+  "native_speaker_review_required": false
+}

@@ -1,0 +1,18 @@
+{
+  "locale": "uk",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact source keys and nonempty strings",
+    "Placeholders, HTML tags and attributes, and URLs preserved",
+    "Reviewed enable/disable, rollback, restoration, and persistent exclusion meaning"
+  ],
+  "concerns": [
+    "Not reviewed by a native human; platform layout verification remains pending."
+  ],
+  "native_speaker_review_required": false
+}

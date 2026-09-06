@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="{{LOCALE}}" dir="{{DIRECTION}}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{{A:changelog.description.138}}">
+    <meta name="theme-color" content="#f8f6f0">
+    <title>{{H:changelog.text.139}}</title>
+    <link rel="stylesheet" href="site.css">
+    <link rel="stylesheet" href="a11y.css">
+    <link rel="stylesheet" href="light-theme.css">
+    <link rel="stylesheet" href="changelog.css?v=20260903-2">
+    <link rel="stylesheet" href="i18n.css?v=20260814-5">
+  {{SEO_LINKS}}
+  </head>
+  <body data-site-root="{{ASSET_PREFIX}}" data-page="changelog">
+    <div class="paper-grain" aria-hidden="true"></div>
+    <header class="site-header shell">
+      <a class="brand" href="./" aria-label="{{A:index.aria-label.003}}"><img src="app-icon.png" alt="" width="44" height="44"><span>{{H:index.text.004}}</span></a>
+      <nav aria-label="{{A:index.aria-label.005}}"><a href="./#comparison-text">{{H:index.text.006}}</a><a href="./#features">{{H:index.text.007}}</a><a href="./#platforms">{{H:index.text.008}}</a><a href="changelog.html" aria-current="page">{{H:index.text.009}}</a></nav>
+      <label class="language-picker"><span class="sr-only">{{H:index.text.010}}</span><select id="site-language" aria-label="{{A:index.text.010}}">{{LANGUAGE_OPTIONS}}</select></label>
+      <a class="button button-small" href="./#download">{{H:changelog.text.140}}</a>
+    </header>
+    <main class="changelog shell">
+      <div class="changelog-toolbar"><p class="section-number">{{H:changelog.text.141}}</p><div class="platform-tabs" role="tablist" aria-label="{{A:changelog.aria-label.142}}"><button class="platform-tab is-active" type="button" role="tab" id="macos-changelog-tab" aria-controls="macos-changelog" aria-selected="true" data-changelog-platform="macos">{{H:index.text.071}}</button><button class="platform-tab" type="button" role="tab" id="windows-changelog-tab" aria-controls="windows-changelog" aria-selected="false" tabindex="-1" data-changelog-platform="windows">{{H:index.text.072}}</button></div></div>
+      <section class="release-list platform-release-list" id="macos-changelog" role="tabpanel" aria-labelledby="macos-changelog-tab" data-changelog-panel="macos">
+        <article class="release-current"><div class="release-version"><p>{{H:changelog.text.143}}</p><time datetime="2026-09-02">{{H:changelog.text.144}}</time></div><div><h2>{{H:changelog.text.145}}</h2><ul><li>{{H:changelog.text.146}}</li><li>{{H:changelog.text.147}}</li><li>{{H:changelog.text.148}}</li><li>{{H:changelog.text.149}}</li></ul></div></article>
+        <article><div class="release-version"><p>{{H:changelog.text.150}}</p><time datetime="2026-09-02">{{H:changelog.text.144}}</time></div><div><h2>{{H:changelog.text.151}}</h2><ul><li>{{H:changelog.text.152}}</li><li>{{H:changelog.text.153}}</li><li>{{H:changelog.text.154}}</li><li>{{H:changelog.text.155}}</li></ul></div></article>
+        <article><div class="release-version"><p>{{H:changelog.text.156}}</p><time datetime="2026-09-01">{{H:changelog.text.157}}</time></div><div><h2>{{H:changelog.text.158}}</h2><ul><li>{{H:changelog.text.159}}</li><li>{{H:changelog.text.160}}</li></ul></div></article>
+        <article><div class="release-version"><p>{{H:changelog.text.161}}</p><time datetime="2026-09-01">{{H:changelog.text.157}}</time></div><div><h2>{{H:changelog.text.162}}</h2><ul><li>{{H:changelog.text.163}}</li><li>{{H:changelog.text.164}}</li></ul></div></article>
+        <article><div class="release-version"><p>{{H:changelog.text.165}}</p><time datetime="2026-08-14">{{H:changelog.text.166}}</time></div><div><h2>{{H:changelog.text.167}}</h2><ul><li>{{H:changelog.text.168}}</li></ul></div></article>
+        <article><div class="release-version"><p>{{H:changelog.text.169}}</p><time datetime="2026-08-14">{{H:changelog.text.166}}</time></div><div><h2>{{H:changelog.text.170}}</h2><ul><li>{{H:changelog.text.171}}</li><li>{{H:changelog.text.172}}</li></ul></div></article>
+        <article><div class="release-version"><p>{{H:changelog.text.173}}</p><time datetime="2026-08-13">{{H:changelog.text.174}}</time></div><div><h2>{{H:changelog.text.175}}</h2><ul><li>{{H:changelog.text.176}}</li><li>{{H:changelog.text.177}}</li><li>{{H:changelog.text.178}}</li></ul></div></article>
+        <article><div class="release-version"><p>{{H:changelog.text.179}}</p></div><div><h2>{{H:changelog.text.180}}</h2><ul><li>{{H:changelog.text.181}}</li></ul></div></article>
+        <article><div class="release-version"><p>{{H:changelog.text.182}}</p></div><div><h2>{{H:changelog.text.183}}</h2><ul><li>{{H:changelog.text.184}}</li></ul></div></article>
+      </section>
+      <section class="release-list platform-release-list" id="windows-changelog" role="tabpanel" aria-labelledby="windows-changelog-tab" data-changelog-panel="windows" hidden>
+        <article class="release-current"><div class="release-version"><p>{{H:changelog.text.185}}</p><span class="release-status">{{H:changelog.text.186}}</span></div><div><h2>{{H:changelog.text.187}}</h2><ul><li>{{H:changelog.text.188}}</li><li>{{H:changelog.text.189}}</li></ul></div></article>
+        <article><div class="release-version"><p>{{H:changelog.text.179}}</p></div><div><h2>{{H:changelog.text.190}}</h2><ul><li>{{H:changelog.text.191}}</li><li>{{H:changelog.text.192}}</li><li>{{H:changelog.text.193}}</li></ul></div></article>
+      </section>
+      <aside class="changelog-github"><p>{{H:changelog.text.194}}</p><h2>{{H:changelog.text.195}}</h2><a class="github-star github-star-dark" href="https://github.com/kiteretsu903/eink-assistant" aria-label="{{A:changelog.aria-label.196}}"><svg viewbox="0 0 16 16" aria-hidden="true"><path d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.5c-2.23.49-2.7-.95-2.7-.95-.36-.93-.89-1.18-.89-1.18-.73-.5.06-.49.06-.49.81.06 1.23.83 1.23.83.72 1.23 1.88.88 2.34.67.07-.52.28-.88.51-1.08-1.78-.2-3.65-.89-3.65-3.96 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.13 0 0 .67-.21 2.2.82A7.64 7.64 0 0 1 8 4.8c.68 0 1.36.09 2 .27 1.53-1.03 2.2-.82 2.2-.82.44 1.11.16 1.93.08 2.13.51.56.82 1.28.82 2.15 0 3.08-1.87 3.75-3.66 3.95.29.25.54.73.54 1.47v2.18c0 .21.15.46.55.38A8 8 0 0 0 8 0Z"></svg><span>{{H:changelog.text.197}}</span></a></aside>
+    </main>
+    <footer class="site-footer shell"><span>{{H:index.text.136}}</span><a href="https://github.com/kiteretsu903/eink-assistant">{{H:index.text.137}}</a></footer>
+
+    <script src="changelog-tabs.js?v=20260903-1"></script>
+  <script src="locale.js"></script>
+  </body>
+</html>

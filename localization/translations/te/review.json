@@ -1,0 +1,19 @@
+{
+  "locale": "te",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact source keys and nonempty strings",
+    "Placeholders, HTML tags and attributes, URLs, and numbers preserved",
+    "Reviewed enable/disable, rollback, restoration, and persistent exclusion meaning"
+  ],
+  "concerns": [
+    "AI translation only, with no native human review. Telugu terminology and platform font shaping/layout need fluent review and visual verification.",
+    "macOS system action labels are translated descriptively because Telugu OS interface labels may not be available."
+  ],
+  "native_speaker_review_required": false
+}

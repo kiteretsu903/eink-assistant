@@ -1,0 +1,21 @@
+{
+  "locale": "gu",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "validation": [
+    "Exact key sets and nonempty strings passed",
+    "Format placeholders preserved",
+    "HTML tags and attributes preserved",
+    "Numeric tokens preserved",
+    "Reviewed negations, restoration behavior, persistent Night Shift exclusion and experimental rollback warnings"
+  ],
+  "concerns": [
+    "No native human review performed. Gujarati font fallback, shaping and UI truncation require runtime visual verification on both platforms.",
+    "Monitor menu labels are descriptive translations and may differ from menus on physical hardware. Applications, Terminal and Shortcuts names retained for recognition."
+  ],
+  "native_speaker_review_required": false
+}

@@ -1,0 +1,22 @@
+{
+  "locale": "ko",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "readme": true,
+  "checks": [
+    "Exact source key equality and nonempty strings",
+    "Format placeholders preserved",
+    "HTML tags and attributes preserved",
+    "Catalog URLs preserved",
+    "README commands and local link targets verified",
+    "Reviewed enable/disable, rollback, quit restoration, and persistent Night Shift exclusion meaning"
+  ],
+  "concerns": [
+    "Not reviewed by a native human; Korean font rendering and layout require platform verification."
+  ],
+  "native_speaker_review_required": false
+}

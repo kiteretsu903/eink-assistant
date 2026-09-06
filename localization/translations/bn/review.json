@@ -1,0 +1,17 @@
+{
+  "locale": "bn",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact keys, nonempty values, placeholders, HTML, URLs, Unicode and Markdown emphasis validated",
+    "Reviewed recovery warnings, enable and disable conditions, persistent settings and historical release language lists"
+  ],
+  "concerns": [
+    "Native-speaker review and platform visual testing have not been performed. Bengali shaping and control widths need native platform checks. Apple menu/action names retained where they identify exact controls."
+  ],
+  "native_speaker_review_required": false
+}

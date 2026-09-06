@@ -1,0 +1,20 @@
+{
+  "locale": "ms",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact source keys, nonempty UTF-8 JSON strings and no duplicate keys",
+    "Format placeholders, HTML tags and attributes, URLs and numeric values preserved",
+    "Reviewed automatic rollback and confirm-only-if-normal conditions, quit restoration and persistent Night Shift/True Tone exception",
+    "Current-download four-language list and English screenshot descriptions preserved"
+  ],
+  "concerns": [
+    "AI translation and review only; no native human review.",
+    "Technical term dithering is retained with a Malay explanation; translated operating-system labels should be checked against native Malay OS interfaces during platform QA."
+  ],
+  "native_speaker_review_required": false
+}

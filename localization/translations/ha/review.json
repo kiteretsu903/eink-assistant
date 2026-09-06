@@ -1,0 +1,20 @@
+{
+  "locale": "ha",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "validation": [
+    "JSON parse, exact key equality and nonempty values",
+    "Exact placeholders, numbers, HTML tags and attributes, and URLs",
+    "Reviewed recovery warnings, negations, enable/disable conditions and persistent exceptions"
+  ],
+  "concerns": [
+    "AI translation and review only; fluent Hausa review recommended for technical display terminology.",
+    "Long-label rendering and Windows runtime need visual verification.",
+    "Latin-script Hausa; OS setting names are descriptive and may differ from installed OS labels."
+  ],
+  "native_speaker_review_required": false
+}

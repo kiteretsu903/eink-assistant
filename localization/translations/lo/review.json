@@ -1,0 +1,20 @@
+{
+  "locale": "lo",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact source keys and nonempty strings",
+    "Placeholders, HTML tags and attributes, URLs, and numbers preserved",
+    "Reviewed enable/disable, rollback, restoration, and persistent exclusion meaning"
+  ],
+  "concerns": [
+    "No native human review. Lao technical terminology and safety-critical recovery instructions require fluent review before claiming validated translation quality.",
+    "Lao font shaping, line breaking, and layout require platform visual verification.",
+    "OS action labels are descriptive translations and may not match the installed OS language."
+  ],
+  "native_speaker_review_required": false
+}

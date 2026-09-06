@@ -1,0 +1,17 @@
+{
+  "locale": "mn",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact keys, nonempty values, placeholders, HTML, URLs, Unicode and Markdown emphasis validated",
+    "Reviewed recovery and enable/disable conditions, persistent settings, and historical release language coverage"
+  ],
+  "concerns": [
+    "Native Mongolian review and platform visual testing have not been performed. Technical terminology, particularly tonal curve descriptions, should receive fluent review. Exact Apple menu/action identifiers retained where useful."
+  ],
+  "native_speaker_review_required": false
+}

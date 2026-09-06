@@ -1,0 +1,21 @@
+{
+  "locale": "eu",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact keys, valid JSON and nonempty strings",
+    "Placeholders, markup and attributes, URLs and numeric values preserved",
+    "Reviewed rollback confirmation, last-display disconnect, persistent settings and quit restoration",
+    "Standard Basque terminology used consistently across app, Windows and site"
+  ],
+  "concerns": [
+    "No native Basque human review; specialized display terminology merits technical review.",
+    "Long Basque labels require runtime layout verification, especially on Windows.",
+    "Percent signs remain after digits to preserve the source formatting and avoid collision with runtime placeholders. OS menu names are descriptive translations; actual labels depend on the OS language."
+  ],
+  "native_speaker_review_required": false
+}

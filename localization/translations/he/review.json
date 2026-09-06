@@ -1,0 +1,21 @@
+{
+  "locale": "he",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "validation": [
+    "Exact key sets and nonempty values passed",
+    "Format placeholders preserved",
+    "HTML tags and attributes preserved",
+    "Numeric tokens preserved",
+    "Reviewed enable/disable conditions, display restoration, persistent Night Shift exclusion, and experimental rollback warnings"
+  ],
+  "concerns": [
+    "No native human review performed. Hebrew RTL layout, mixed Hebrew/Latin direction, typography and truncation require runtime verification on macOS and Windows.",
+    "Hardware menu labels are translated descriptively; actual monitor menus may remain in English."
+  ],
+  "native_speaker_review_required": false
+}

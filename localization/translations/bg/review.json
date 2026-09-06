@@ -1,0 +1,20 @@
+{
+  "locale": "bg",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "validation": [
+    "JSON parse, exact key equality, nonempty values",
+    "Exact placeholders, numbers, HTML tags and attributes, and URLs",
+    "Reviewed recovery warnings, negations, enable/disable and restoration conditions"
+  ],
+  "concerns": [
+    "AI translation and review only; no native human review.",
+    "UI rendering and Windows runtime verification remain integration tasks.",
+    "Localized macOS menu labels are descriptive; installed OS language may show different labels."
+  ],
+  "native_speaker_review_required": false
+}

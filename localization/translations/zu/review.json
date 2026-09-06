@@ -1,0 +1,22 @@
+{
+  "locale": "zu",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact source keys, nonempty UTF-8 strings and no duplicate keys",
+    "Format placeholders, HTML tags and attributes, URLs and numeric values preserved",
+    "Reviewed confirm-only-if-normal rollback warnings, restoration on quit and persistent Night Shift/True Tone exclusion",
+    "Current-download four-language list and English screenshot descriptions retained"
+  ],
+  "concerns": [
+    "AI translation and review only; no native human review.",
+    "Fluent isiZulu review is especially recommended for technical terminology and grammatical agreement in longer instructions.",
+    "Contrast is rendered as ukugqama and brightness as ukukhanya; the distinction and display hardware-menu terminology should receive fluent review. Dithering remains a technical loan with an explanation.",
+    "Operating-system action names are translated descriptively; verify matching native or English OS labels during platform QA."
+  ],
+  "native_speaker_review_required": false
+}

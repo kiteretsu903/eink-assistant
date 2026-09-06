@@ -1,0 +1,24 @@
+{
+  "locale": "ja",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "readme": "Full current English README translated; sections, tables, command and existing image paths preserved.",
+  "checks": [
+    "JSON exact key parity and nonempty strings",
+    "Format placeholder parity",
+    "Exact inline HTML tag/attribute parity",
+    "README section/table counts, command parity and local links",
+    "Semantic review of negation, restore behavior, platform constraints and safety warnings"
+  ],
+  "concerns": [
+    "AI-reviewed only; no native-speaker review or runtime visual certification.",
+    "Windows runtime and backend/Qt-standard-dialog localization remain pending the Windows handoff.",
+    "Current download comparison and historical release language lists intentionally remain four locales."
+  ],
+  "preserved_existing_translations": "Existing Japanese app and Windows catalogs reviewed; Windows help terminology changed from 動画補正 to 映像の暗部補正 for consistency.",
+  "native_speaker_review_required": false
+}

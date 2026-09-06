@@ -220,3 +220,51 @@ html[lang="ja"] .feature-group h3 {
     font-size: 30px;
   }
 }
+
+/* Shared layout for all scripts, including longer translations and RTL text. */
+.language-picker { flex-shrink: 0; }
+.language-picker select { max-width: 190px; font-size: 13px; }
+.hero-copy, .hero-copy > *, .advanced > *, .feature-catalogue > *, .download-content { min-width: 0; }
+h1, h2, h3, p, li, dd, th, td, .button { overflow-wrap: break-word; }
+.hero-actions, .platform-actions, .dialog-actions { flex-wrap: wrap; }
+.button, .platform-download { white-space: normal; text-align: center; }
+.feature-comparison th, .feature-comparison td { text-align: start; }
+html[dir="rtl"] body { letter-spacing: normal; }
+html[dir="rtl"] h1, html[dir="rtl"] h2, html[dir="rtl"] h3 { letter-spacing: normal; line-height: 1.3; }
+html[dir="rtl"] .language-picker select { padding-inline: 9px 27px; background-position: 12px 50%; }
+html[dir="rtl"] .language-picker { margin-left: 0; margin-right: auto; }
+html[dir="rtl"] .dialog-close { right: auto; left: 18px; }
+html[dir="rtl"] .dialog-panel { text-align: right; }
+html[dir="rtl"] .install-steps { padding-left: 0; padding-right: 24px; }
+html[dir="rtl"] .hero-visual, html[dir="rtl"] .advanced-image, .command-row code { direction: ltr; }
+.command-row code { unicode-bidi: isolate; text-align: left; }
+html[dir="rtl"] .command-row { direction: ltr; }
+html[dir="rtl"] .command-row button { direction: rtl; }
+html[dir="rtl"] .release-version { text-align: start; }
+html[lang="th"] body, html[lang="lo"] body, html[lang="km"] body, html[lang="my"] body { line-height: 1.8; letter-spacing: normal; }
+html[lang="th"] h1, html[lang="lo"] h1, html[lang="km"] h1, html[lang="my"] h1 { line-height: 1.35; letter-spacing: normal; }
+@media (max-width: 1200px) {
+  .site-header nav { display: none; }
+}
+@media (max-width: 1050px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-copy { max-width: 760px; }
+}
+@media (max-width: 760px) {
+  .language-picker select { max-width: 145px; }
+  .hero h1 { font-size: clamp(32px, 8vw, 46px); }
+  .download-content { width: 100%; }
+  html[dir="rtl"] .language-picker { margin-inline-start: auto; margin-inline-end: 0; }
+}
+.gallery-card::before { content: attr(data-before); }
+.gallery-card::after { content: attr(data-after); }
+.advanced-image::before { content: attr(data-label); }
+html[dir="rtl"] .feature-group li { padding-left: 0; padding-right: 15px; }
+html[dir="rtl"] .feature-group li::before { left: auto; right: 1px; }
+html[dir="rtl"] .install-steps li { padding-left: 0; padding-right: 36px; }
+html[dir="rtl"] .install-steps li::before { left: auto; right: 0; }
+
+/* Long compound words must not enlarge grid tracks beyond the viewport. */
+.improvements-head > *, .intro-grid > *, .comparison > *,
+.comparison-gallery > *, .feature-group, .site-footer > * { min-width: 0; }
+h1, h2, h3, p, li, dd, th, td, .button { overflow-wrap: anywhere; }

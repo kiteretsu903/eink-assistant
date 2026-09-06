@@ -1,0 +1,21 @@
+{
+  "locale": "es",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "readme": "Full translation completed; relative links adjusted; LANGUAGE_NAV placeholder retained.",
+  "validation": [
+    "JSON parse, exact key equality, nonempty values",
+    "Format placeholders, numeric values, HTML tags and attributes, and URLs match source",
+    "Reviewed restoration warnings, enable/disable conditions, current download language limits and screenshot language descriptions"
+  ],
+  "concerns": [
+    "AI translation and review only; no native human review.",
+    "UI rendering and Windows runtime verification remain integration tasks.",
+    "Spanish uses broadly understandable terminology with standard Spain software spellings (vídeo, ajustes)."
+  ],
+  "native_speaker_review_required": false
+}

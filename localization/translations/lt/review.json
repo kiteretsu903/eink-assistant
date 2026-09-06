@@ -1,0 +1,21 @@
+{
+  "locale": "lt",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "validation": [
+    "Exact keys and nonempty strings passed",
+    "Format placeholders preserved",
+    "HTML tags and attributes preserved",
+    "Numeric tokens preserved",
+    "Reviewed restore-on-quit, persistent exclusion, enable/disable conditions and experimental rollback instructions"
+  ],
+  "concerns": [
+    "No native human review performed. Runtime UI layout checks and Windows testing remain pending.",
+    "Hardware menu labels are descriptive translations; actual device labels may differ."
+  ],
+  "native_speaker_review_required": false
+}

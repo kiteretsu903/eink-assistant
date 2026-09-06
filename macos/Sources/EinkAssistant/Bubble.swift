@@ -37,8 +37,13 @@ struct BubbleShape: Shape {
     }
 }
 
+@MainActor
+private final class BubbleAnchor: ObservableObject {
+    @Published var arrowX: CGFloat = 0
+}
+
 private struct Bubble: View {
-    let arrowX: CGFloat
+    @ObservedObject var anchor: BubbleAnchor
     let content: AnyView
 
     /// Vertical room reserved above the content for the menu-bar arrow.
@@ -50,7 +55,7 @@ private struct Bubble: View {
         content
             .padding(.top, Self.arrowRoom)
             .background(
-                BubbleShape(arrowX: arrowX)
+                BubbleShape(arrowX: anchor.arrowX)
                     .fill(Color(nsColor: .windowBackgroundColor))
                     .shadow(color: .black.opacity(0.28), radius: 14, y: 5)
             )
@@ -69,6 +74,7 @@ private final class KeyablePanel: NSPanel {
 final class BubbleWindow {
     private var panel: NSPanel?
     private var outsideClickMonitor: Any?
+    private var resizeObserver: NSObjectProtocol?
     private let closesOnOutsideClick: Bool
     /// Controls draw in their inactive gray state unless the app is active.
     /// Worth doing for a panel the user just clicked open; not for a tip that
@@ -117,7 +123,8 @@ final class BubbleWindow {
                              @ViewBuilder content: () -> Content) {
         close()
         let wrapped = AnyView(content())
-        let hosting = NSHostingController(rootView: Bubble(arrowX: 0, content: wrapped))
+        let bubbleAnchor = BubbleAnchor()
+        let hosting = NSHostingController(rootView: Bubble(anchor: bubbleAnchor, content: wrapped))
         let size = hosting.view.fittingSize
         let inset = Bubble.inset
 
@@ -142,7 +149,7 @@ final class BubbleWindow {
                              y: screen.frame.midY - size.height / 2)
             arrowX = size.width / 2
         }
-        hosting.rootView = Bubble(arrowX: arrowX, content: wrapped)
+        bubbleAnchor.arrowX = arrowX
 
         // .nonactivatingPanel prevents the app becoming active at all, which is
         // what kept the controls gray. The panel the user just clicked open
@@ -171,6 +178,26 @@ final class BubbleWindow {
         }
         panel = window
 
+        // SwiftUI resizes the hosting window when a longer language is selected.
+        // Re-clamp its position and arrow without replacing the view hierarchy.
+        resizeObserver = NotificationCenter.default.addObserver(
+            forName: NSWindow.didResizeNotification, object: window, queue: .main
+        ) { [weak self, weak window, weak button] _ in
+            Task { @MainActor in
+                guard let self, let window, self.panel === window else { return }
+                let screen = self.screen(for: button)
+                let width = window.frame.width
+                let lower = screen.visibleFrame.minX - inset + self.horizontalScreenMargin
+                let upper = screen.visibleFrame.maxX - width + inset - self.horizontalScreenMargin
+                let centre = button?.window?.frame.midX ?? screen.visibleFrame.midX
+                let x = min(max(centre - width / 2, lower), max(lower, upper))
+                let y = button?.window.map { $0.frame.minY - window.frame.height + inset + self.menuBarOverlap }
+                    ?? (screen.visibleFrame.midY - window.frame.height / 2)
+                window.setFrameOrigin(CGPoint(x: x, y: y))
+                bubbleAnchor.arrowX = centre - x - inset
+            }
+        }
+
         guard closesOnOutsideClick else { return }
         outsideClickMonitor = NSEvent.addGlobalMonitorForEvents(
             matching: [.leftMouseDown, .rightMouseDown]
@@ -186,6 +213,10 @@ final class BubbleWindow {
     }
 
     func close() {
+        if let observer = resizeObserver {
+            NotificationCenter.default.removeObserver(observer)
+            resizeObserver = nil
+        }
         if let monitor = outsideClickMonitor {
             NSEvent.removeMonitor(monitor)
             outsideClickMonitor = nil

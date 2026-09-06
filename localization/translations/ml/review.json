@@ -1,0 +1,23 @@
+{
+  "locale": "ml",
+  "status": "ai-translated-and-reviewed",
+  "keyCounts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "validation": {
+    "exactKeys": true,
+    "nonempty": true,
+    "placeholders": true,
+    "htmlTagsAndAttributes": true,
+    "numbers": true,
+    "urls": true
+  },
+  "concerns": [
+    "No native-speaker review performed; Malayalam UI terminology should receive fluent-speaker review.",
+    "Malayalam complex-script shaping, font fallback, line wrapping and platform-specific OS labels require native visual review."
+  ],
+  "semanticReview": "Reviewed experimental rollback warnings, enable/disable and automatic display-following conditions, persistent Night Shift/True Tone exception, and historical/current-download four-language claims.",
+  "native_speaker_review_required": false
+}

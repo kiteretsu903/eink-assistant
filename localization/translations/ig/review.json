@@ -1,0 +1,23 @@
+{
+  "locale": "ig",
+  "status": "ai-translated-and-reviewed",
+  "keyCounts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "validation": {
+    "exactKeys": true,
+    "nonempty": true,
+    "placeholders": true,
+    "htmlTagsAndAttributes": true,
+    "numbers": true,
+    "urls": true
+  },
+  "concerns": [
+    "No native-speaker review performed. Igbo technical UI terminology, especially saturation, contrast, curve controls and accessibility settings, needs fluent-speaker review before claiming production translation quality.",
+    "Igbo diacritics, font coverage, long descriptive labels and OS-specific labels require native platform visual review."
+  ],
+  "semanticReview": "Reviewed experimental rollback warnings, enable/disable and automatic display-following conditions, persistent Night Shift/True Tone exception, and historical/current-download four-language claims. Used descriptive phrasing for transparency to avoid confusing it with understanding.",
+  "native_speaker_review_required": false
+}

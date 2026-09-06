@@ -1,0 +1,17 @@
+{
+  "locale": "sk",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact key equality, nonempty strings, placeholders, HTML, URLs, Unicode and Markdown emphasis validated",
+    "Reviewed enable/disable, recovery warnings, persistent settings and historical language coverage"
+  ],
+  "concerns": [
+    "Native-speaker review and platform visual testing have not been performed."
+  ],
+  "native_speaker_review_required": false
+}

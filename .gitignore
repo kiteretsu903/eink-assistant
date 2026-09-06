@@ -16,3 +16,6 @@ build-*/
 artifacts/
 .tools/
 aqtinstall.log
+
+# Python localization tools
+__pycache__/

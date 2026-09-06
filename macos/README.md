@@ -13,3 +13,6 @@ Shared localization and product artwork remain in the repository-level
 `Resources/` directory so the macOS and Windows editions use the same strings
 and branding assets. Product documentation and release information remain in
 the repository root and `docs/` website.
+
+See [localization and safe preview checks](LOCALIZATION.md) for the 80-locale
+development implementation.

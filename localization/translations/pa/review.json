@@ -1,0 +1,24 @@
+{
+  "locale": "pa",
+  "status": "ai-translated-and-reviewed",
+  "keyCounts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "script": "Gurmukhi",
+  "checks": [
+    "Exact source keys and nonempty UTF-8 values",
+    "Placeholders, all numeric values, exact HTML tags and attributes, Markdown emphasis preserved",
+    "Gurmukhi script throughout human-facing translations",
+    "Consistent terminology across app, Windows and website",
+    "Rollback warnings, missing-confirmation behavior, restoration and persistent exceptions reviewed",
+    "Helper on/off commands and final-marked-display disconnect condition preserved",
+    "Current-download and historical language lists preserved"
+  ],
+  "concerns": [
+    "Native-speaker review remains outstanding, particularly for technical display terminology.",
+    "Live Gurmukhi shaping, font coverage, line wrapping and Windows rendering have not been verified."
+  ],
+  "native_speaker_review_required": false
+}

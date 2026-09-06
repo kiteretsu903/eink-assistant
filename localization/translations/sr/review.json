@@ -1,0 +1,20 @@
+{
+  "locale": "sr",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact keys, nonempty values, placeholders, HTML tags and URLs validated.",
+    "Serbian Cyrillic used for prose; brand names, identifiers and commands preserved.",
+    "Reviewed negations, enable/disable conditions, persistent Night Shift exclusion, and Windows experimental rollback wording.",
+    "Current downloadable builds retain their historical four-language description."
+  ],
+  "concerns": [
+    "AI translation and review only; no native human review.",
+    "Native UI layout and Serbian OS-label verification remain required."
+  ],
+  "native_speaker_review_required": false
+}

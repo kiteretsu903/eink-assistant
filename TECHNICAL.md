@@ -4,6 +4,15 @@ Background for anyone modifying this app, or investigating the same problem.
 The [README](README.md) covers using it; this covers why it works the way it
 does. Every number here was measured on a Bigme B251 Pro under macOS 27.
 
+## Localization
+
+The multilingual development branch uses one 80-locale registry for native
+resources and static website generation, with 12 README locales. See the
+[localization architecture and checks](localization/README.md),
+[macOS preview and matching rules](macos/LOCALIZATION.md), and
+[Windows integration handoff](windows/docs/handoffs/multilingual-80.md).
+Released downloads retain their existing language coverage until a new release.
+
 ## Why three mechanisms
 
 | feature | mechanism | persists |

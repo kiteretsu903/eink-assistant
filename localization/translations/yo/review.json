@@ -1,0 +1,18 @@
+{
+  "locale": "yo",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact keys, nonempty values, placeholders, HTML, URLs, Unicode and Markdown emphasis validated",
+    "Reviewed negations, rollback confirmation, persistent settings and historical release coverage",
+    "Yoruba tone marks and dotted vowels used throughout prose"
+  ],
+  "concerns": [
+    "Fluent Yoruba review is required for terminology and tonal spelling, especially technical curve and accessibility descriptions. No native-human review or platform visual verification performed. Exact Apple control identifiers retained where needed."
+  ],
+  "native_speaker_review_required": false
+}

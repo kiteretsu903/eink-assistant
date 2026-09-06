@@ -1,0 +1,19 @@
+{
+  "locale": "bs",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact keys and nonempty UTF-8 strings",
+    "Placeholders, HTML and numeric values preserved",
+    "Reviewed display recovery warnings and enable/disable conditions",
+    "Current release language claims preserved"
+  ],
+  "concerns": [
+    "No native-speaker or visual UI review. Platform settings names are descriptive Bosnian translations; match installed OS interface language during handoff review."
+  ],
+  "native_speaker_review_required": false
+}

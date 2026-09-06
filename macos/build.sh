@@ -10,6 +10,19 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$REPO_ROOT"
 
 TARGET="arm64-apple-macos14.0"
+# One registry drives both the picker and LaunchServices metadata.
+LOCALIZATIONS_XML="$(python3 - <<'PYLOCALES'
+import json
+from pathlib import Path
+from xml.sax.saxutils import escape
+locales = json.loads(Path("localization/locales.json").read_text())
+missing = [locale["code"] for locale in locales
+           if not (Path("Resources") / (locale["code"] + ".lproj") / "Localizable.strings").is_file()]
+if missing:
+    raise SystemExit("Missing localization resources; run the localization generator first: " + ", ".join(missing))
+print("".join("<string>" + escape(locale["code"]) + "</string>" for locale in locales))
+PYLOCALES
+)"
 
 bundle() {  # bundle <name> <bundle-id> <extra-plist>
   local name="$1" ident="$2" extra="${3:-}"
@@ -35,8 +48,7 @@ bundle() {  # bundle <name> <bundle-id> <extra-plist>
   <key>CFBundleDevelopmentRegion</key><string>en</string>
   <key>CFBundleLocalizations</key>
   <array>
-    <string>en</string><string>zh-Hans</string>
-    <string>zh-Hant</string><string>ja</string>
+    $LOCALIZATIONS_XML
   </array>
 $extra
 </dict>
@@ -47,6 +59,7 @@ PLIST
   if [ -d Resources ]; then
     mkdir -p "$app/Contents/Resources"
     cp -R Resources/*.lproj "$app/Contents/Resources/"
+    cp localization/locales.json "$app/Contents/Resources/locales.json"
     if [ -d Resources/Shortcuts ]; then
       cp Resources/Shortcuts/*.shortcut "$app/Contents/Resources/"
     fi

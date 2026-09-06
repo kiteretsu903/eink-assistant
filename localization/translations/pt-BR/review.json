@@ -1,0 +1,20 @@
+{
+  "locale": "pt-BR",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "readme": "Complete translation; relative links and exact shell command validated.",
+  "checks": [
+    "Exact keys and nonempty strings",
+    "Placeholders, HTML tags and numeric values preserved",
+    "Reviewed enable/disable and display recovery conditions",
+    "Current download language claims preserved"
+  ],
+  "concerns": [
+    "No native-speaker review or rendered UI verification performed. Windows UI labels and text fit require Windows handoff verification."
+  ],
+  "native_speaker_review_required": false
+}

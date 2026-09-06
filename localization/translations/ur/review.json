@@ -1,0 +1,21 @@
+{
+  "locale": "ur",
+  "status": "ai-translated-and-reviewed",
+  "keyCounts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact source keys and nonempty strings",
+    "Format placeholders, numeric values and exact HTML tags preserved",
+    "Recovery warnings, negations and persistent versus temporary settings reviewed",
+    "Latin command tokens and technical names preserved in RTL text"
+  ],
+  "concerns": [
+    "No native-speaker review performed.",
+    "Urdu shaping, RTL mixed-script ordering, line height and runtime layout require native verification.",
+    "Platform menu labels are descriptive Urdu translations and require checking against the installed OS language."
+  ],
+  "native_speaker_review_required": false
+}

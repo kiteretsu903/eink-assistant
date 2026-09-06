@@ -1,0 +1,23 @@
+{
+  "locale": "nb",
+  "status": "ai-translated-and-reviewed",
+  "keyCounts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact source keys and nonempty UTF-8 values",
+    "Placeholders and HTML tags/attributes preserved",
+    "Markdown emphasis preserved",
+    "Terminology consistency reviewed",
+    "Recovery warnings and negations reviewed",
+    "Persistent Night Shift and True Tone exclusion distinguished from temporary settings",
+    "Helper on/off commands and disconnect/quit behavior preserved",
+    "Current downloads and historical language lists retained"
+  ],
+  "concerns": [
+    "No native-speaker review or live macOS/Windows rendering verification performed."
+  ],
+  "native_speaker_review_required": false
+}

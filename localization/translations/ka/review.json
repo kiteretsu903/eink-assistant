@@ -1,0 +1,20 @@
+{
+  "locale": "ka",
+  "status": "ai-translated-and-reviewed",
+  "keyCounts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact source keys and nonempty strings",
+    "Format placeholders, numeric values and exact HTML tags preserved",
+    "Recovery warnings, negations and persistent versus temporary settings reviewed"
+  ],
+  "concerns": [
+    "No native-speaker review performed.",
+    "Georgian font coverage, runtime layout and terminology require native verification.",
+    "OS menu labels are descriptive Georgian translations and should be checked against the installed OS language."
+  ],
+  "native_speaker_review_required": false
+}

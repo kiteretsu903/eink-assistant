@@ -1,215 +1,163 @@
-# 電子紙助手
+# E-Ink Assistant
+
+<!-- BEGIN README LANGUAGES -->
+<p align="center">
+  <a href="../../README.md" lang="en" dir="ltr">English</a> &nbsp;·&nbsp;
+  <a href="README.zh-Hans.md" lang="zh-Hans" dir="ltr">简体中文</a> &nbsp;·&nbsp;
+  <b lang="zh-Hant" dir="ltr">繁體中文</b> &nbsp;·&nbsp;
+  <a href="README.ja.md" lang="ja" dir="ltr">日本語</a> &nbsp;·&nbsp;
+  <a href="README.ko.md" lang="ko" dir="ltr">한국어</a> &nbsp;·&nbsp;
+  <a href="README.es.md" lang="es" dir="ltr">Español</a> &nbsp;·&nbsp;
+  <a href="README.fr.md" lang="fr" dir="ltr">Français</a> &nbsp;·&nbsp;
+  <a href="README.de.md" lang="de" dir="ltr">Deutsch</a> &nbsp;·&nbsp;
+  <a href="README.pt-BR.md" lang="pt-BR" dir="ltr">Português (Brasil)</a> &nbsp;·&nbsp;
+  <a href="README.ru.md" lang="ru" dir="ltr">Русский</a> &nbsp;·&nbsp;
+  <a href="README.ar.md" lang="ar" dir="rtl">العربية</a> &nbsp;·&nbsp;
+  <a href="README.hi.md" lang="hi" dir="ltr">हिन्दी</a>
+</p>
+<!-- END README LANGUAGES -->
 
 <p align="center">
-  <a href="../../README.md">English</a> &nbsp;·&nbsp;
-  <a href="README.zh-Hans.md">简体中文</a> &nbsp;·&nbsp;
-  <b>繁體中文</b> &nbsp;·&nbsp;
-  <a href="README.ja.md">日本語</a>
+  <img src="../../Resources/AppIcon.png" alt="E-Ink Assistant App 圖示" width="128">
 </p>
 
-<p align="center">
-  <img src="../../Resources/AppIcon.png" alt="電子紙助手 App 圖示" width="128">
-</p>
+**在 macOS 與 Windows 上調校黑白及彩色電子紙顯示器。**
 
-**在 macOS 與 Windows 上調校黑白與彩色電子紙。**
+[瀏覽產品網站](https://kiteretsu903.github.io/eink-assistant/zh-Hant/)
 
-電子紙助手可以調整所選電子紙的文字對比、暗部細節與色彩，其他顯示器保持不變。macOS 版位於選單列，
-Windows 版位於系統匣。
+E-Ink Assistant 為你選取的電子紙顯示器調整文字對比度、暗部細節與色彩。
+其他顯示器維持原狀。macOS 版在選單列執行；Windows 版在系統匣執行。
 
 [下載 macOS 2.6](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-v2.6.dmg) ·
 [下載 Windows 1.2](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-Windows-1.2-Setup.exe) ·
-[造訪產品網站](https://kiteretsu903.github.io/eink-assistant/?lang=zh-Hant)
+[查看所有版本](https://github.com/kiteretsu903/eink-assistant/releases)
 
-兩個版本都免費、開源，並採用 MIT 授權。Windows 的實際功能取決於系統版本、GPU、驅動程式與顯示器連接方式；
-詳情請參閱 [Windows 相容性與安裝說明](../../WINDOWS.md)。下方的詳細功能說明以 macOS 版為主。
+免費、開放原始碼，採用 MIT 授權。
 
-<p align="center">
-  <img src="../zh-Hant/app-main-v2-1.png" alt="電子紙助手 v2.1 繁體中文介面" width="440">
-</p>
+## 功能與系統需求
 
-## 主要功能
+| 功能 | macOS | Windows |
+|---|---|---|
+| 支援的系統 | **macOS 14 或更新版本**<br>僅限 Apple silicon | **Windows 7 SP1 至 Windows 11**<br>x64 電腦 |
+| App 執行位置 | 選單列 | 系統匣 |
+| 選取特定電子紙顯示器 | 支援。其他顯示器維持原狀。 | 與 macOS 相同 |
+| 文字對比度 | 四種等級：中等、強、銳利、實邊 | 與 macOS 相同 |
+| 影片暗部增強 | 三種等級：輕微、中等、強 | 與 macOS 相同 |
+| 進階曲線與預設 | 即時曲線編輯器，以及五組具名稱的預設 | 與 macOS 相同 |
+| 彩度與 RGB | 各顯示器獨立的色彩描述檔；彩度 0%–300%，RGB 0%–200% | 適用於符合條件的 Windows 10 2004 與 Windows 11 21H2+ 系統；可用方式取決於系統與硬體 |
+| 減少閃爍 | 適用於支援的外接顯示器；將顯示器標記為電子紙時自動開啟 | 不提供。Windows 沒有統一的公開介面可控制單一顯示器的抖動，而且大多數 Windows 系統可能不需要這項功能。 |
+| 降低透明度與動態效果 | 透過使用者確認安裝一次的輔助捷徑提供 | Windows 7 SP1 起可透過相容的系統 API 使用 |
+| 系統淺色模式 | 不變更 | Windows 10 1903+ 提供僅在本次執行期間生效的 Windows 淺色模式 |
+| Night Shift／夜間模式 | 可將個別顯示器排除於 Night Shift 與原彩之外；需要管理員核准並重新連接 | Windows 10 1703+ 可開啟夜間模式設定；Windows 11 24H2+ 可直接使用「停用夜間模式」控制項 |
+| 鏡像／同步顯示器 | 鏡像模式下仍可個別選取實體顯示器 | 色調曲線會影響共用的訊號來源；彩度與 RGB 需要延伸模式 |
+| 還原變更 | 結束時還原暫時套用的曲線、色彩描述檔與抖動設定；Night Shift／原彩排除設定會持續保留 | 結束時還原暫時套用的 Gamma、色彩、視覺效果與夜間模式變更；異常結束後也能復原色彩與夜間模式 |
+| 登入時啟動 | 支援 | 支援 |
+| 介面語言 | 英文、簡體中文、繁體中文、日文 | 與 macOS 相同 |
+| 管理員權限 | 僅選用的 Night Shift／原彩排除功能需要 | 安裝程式與 App 皆需要 |
 
-- **黑白與彩色電子紙皆適用**：減少抖動閃爍、加深文字、恢復影片與照片的暗部細節，並降低系統
-  透明度與動態效果。
-- **彩色電子紙專用**：以彩度補償較窄的色域，並直接調整紅、綠、藍來校正偏色。
-- **閱讀與媒體模式分開**：文字對比度與影片暗部增強分別處理相反情境，兩者互斥。
-- **逐顯示器控制**：只調校已標記的電子紙，其他顯示器保持不變。
-- **自動還原**：結束時還原顯示調整，啟動時重新套用；輔助使用設定也會在結束時關閉。
-- **進階調校**：直接調整完整色調曲線，並儲存五組可命名預設。
-
-### 彩色電子紙能獲得哪些改善
-
-- 包含下方黑白電子紙可獲得的所有改善。
-- **彩度補償**：增強較窄的色域，提供六組預設與 0%–300% 滑桿。
-- **直接 RGB 校正**：每個色彩通道可在 0%–200% 範圍內調整，用來消除偏紅、偏綠或偏藍；每台
-  顯示器會分別儲存自己的 RGB 數值。
-- **逐顯示器控制 Night Shift 與原彩**：避免 macOS 的色溫處理干擾刻意設定的色彩調校。
-
-### 黑白電子紙能獲得哪些改善
-
-- **減少閃爍**：在支援的顯示器上停止清楚可見的 macOS 抖動閃爍。
-- **文字對比度**：加深淡色與次要文字，提升易讀性。
-- **影片暗部增強**：恢復影片與照片中的暗部細節。
-- **降低透明度與動態效果**：簡化系統視覺效果，並避免慢速更新螢幕難以呈現的動畫。
-- **進階色調曲線調校**：針對面板本身的對比度反應進行調整。
-- **選用的 Night Shift 與原彩控制**：當 macOS 色調偏移明顯影響灰階輸出時使用。
-
----
-
-## 功能詳解
-
-### 減少閃爍——黑白與彩色
-
-macOS 會使用抖動（dithering）讓漸層更平滑。LCD 會在更新時把圖樣消除；電子紙會保留每個像素，
-因此圖樣可能變成持續閃爍。關閉抖動後畫面會穩定下來。在支援的顯示器上，標記為電子紙後會自動開啟。
-
-### 文字對比度——黑白與彩色
-
-加深文字，讓它在低對比度面板上更容易與頁面分離。淡色與次要文字受益最大；在最強等級下，
-其訊號對比度約可提升為四倍。
-
-![文字對比度調整前後](../en/text-contrast-editorial.png)
-
-四個等級：**中等、強、銳利、實邊**。「中等」現在相當於先前的「強」，之後每級都更積極。
-「實邊」會大幅壓縮黑點以取得最高區分度，顯示更清晰，但會損失更多灰階細節，字緣也會較硬。
-
-### 影片暗部增強——黑白與彩色
-
-只提亮最暗的色調，中間調與亮部保持不變，讓電子紙上容易消失的暗部細節重新可見。
-
-![影片暗部增強調整前後](../en/video-enhance-editorial.png)
-
-三個等級：**輕微、中等、強**。它無法區分暗色畫面與深色文字，因此文字也會變淡。
-**觀看影片與照片時開啟，閱讀時關閉。** 影片暗部增強與文字對比度互斥。
-
-### 彩度——彩色電子紙
-
-彩色電子紙在黑白面板上增加彩色濾光層，因此損失大量色域。彩度補償可以恢復更強的色彩訊號。
-黑白電子紙維持 100% 即可。
-
-![彩度調整前後](../en/saturation-editorial.png)
-
-預設 **黑白 / 淡彩 / 原廠 / 增強 / 鮮豔 / 動漫**，或使用 0%–300% 滑桿。
-
-### RGB——彩色電子紙
-
-直接在 **0%–200%** 範圍內調整**紅、綠、藍**，校正面板偏色。每台顯示器會分別儲存自己的
-RGB 數值。控制項預設收合；按一下 **RGB** 即可顯示三個滑桿。收合時仍會顯示目前數值。
-按一下**重設 RGB**可將三個色彩通道恢復為中性的 100%。
-
-RGB 與彩度共用同一個逐顯示器色彩描述檔，因此兩者可一起使用，也不會干擾文字對比度或影片
-暗部增強。
-
-### 關閉 Night Shift 與原彩——主要用於彩色電子紙
-
-兩者都會改變色彩與色調，可能與顯示調校互相干擾。電子紙助手可只將所選顯示器標記為電視，
-讓 macOS 不對該面板套用這兩項功能。受到系統色調偏移影響的黑白電子紙也可能受益。
-
-其他螢幕仍保留 Night Shift 與原彩。此操作需要管理員密碼，並需**中斷後重新連接該顯示器**，也是唯一不會在結束時
-還原的設定。既有覆寫項目（包括自訂縮放解析度）會保留。
-
-### 降低透明度與動態效果——黑白與彩色
-
-這兩項系統輔助使用設定可提升易讀性，並避免慢速更新面板無法良好呈現的動畫。一次由使用者確認的
-輔助捷徑，讓 App 取得安全的開啟／關閉控制，並可選擇自動跟隨顯示器連接狀態。
-
-### 進階——黑白與彩色
-
-直接控制轉折點、Gamma、黑點與白點，提供即時曲線圖和五個可儲存、可重新命名的槽位。
+[macOS 詳情](../../macos/README.md) ·
+[Windows 相容性與設定](../../WINDOWS.md) ·
+[macOS 更新紀錄](../../CHANGELOG.md) ·
+[Windows 更新紀錄](../../windows/CHANGELOG.md)
 
 <p align="center">
-  <img src="../zh-Hant/app-advanced-v2-1.png" alt="電子紙助手 v2.1 繁體中文進階模式" width="440">
+  <img src="../../docs/en/app-main-v2-1.png" alt="E-Ink Assistant v2.1 英文版" width="440">
 </p>
 
-> 比較圖片使用 App 的實際轉換產生，並在 LCD 上呈現。文字與影片範例另外模擬低對比度電子紙；
-> 彩度範例直接呈現色彩變換。實際效果取決於面板。
+## 控制項
 
----
+| 控制項 | 適用情境 | 作用 |
+|---|---|---|
+| 文字對比度 | 閱讀 | 以中等、強、銳利與實邊等級加深淡色文字。較強的等級會犧牲灰階細節，換取更硬的邊緣。 |
+| 影片暗部增強 | 照片與影片 | 以輕微、中等與強等級呈現暗部細節。閱讀時請關閉，因為它也會讓深色文字變淡。 |
+| 彩度與 RGB | 彩色電子紙 | 在平台支援時，提供六種彩度預設、0%–300% 彩度滑桿，以及 0%–200% RGB 校正。 |
+| 減少閃爍 | 支援的 macOS 顯示器 | 停止可見的抖動閃爍，並為標記為電子紙的顯示器自動開啟。 |
+| Night Shift 與原彩 | 受色溫變化影響的顯示器 | 將選取的 macOS 顯示器排除於這些功能之外。需要管理員核准並重新連接顯示器，結束 App 後仍保留此設定。 |
+| 降低透明度與動態效果 | 更新較慢的面板 | 簡化系統視覺效果。macOS 使用需要使用者確認安裝一次的輔助捷徑。 |
+| 進階曲線 | 各面板的專屬調校 | 調整轉折點、Gamma、黑點與白點，提供即時曲線圖與五組具名稱的預設。 |
+
+<p align="center">
+  <img src="../../docs/en/text-contrast-editorial.png" alt="文字對比度調整前後的示意圖" width="31%">
+  <img src="../../docs/en/video-enhance-editorial.png" alt="影片暗部增強前後的示意圖" width="31%">
+  <img src="../../docs/en/saturation-editorial.png" alt="彩度調整前後的示意圖" width="31%">
+</p>
+
+> 這些圖片用於示範控制項的效果。實際結果取決於面板與原始素材。
 
 ## 安裝
 
-需要 **macOS 14 或以上版本**以及 **Apple Silicon**。
+### macOS 14+，Apple silicon
 
-```
-git clone https://github.com/kiteretsu903/eink-assistant.git
-cd eink-assistant
-./build.sh
-open "E-Ink Assistant.app"
-```
+1. 使用上方連結下載 macOS 2.6 DMG。
+2. 開啟檔案，並將 **E-Ink Assistant** 拖入**應用程式**。
+3. 先嘗試開啟 App 一次。如果 macOS 阻擋開啟，請前往**系統設定 → 隱私權與安全性**，
+   然後選擇**強制打開**。
 
-建議從 [Releases](https://github.com/kiteretsu903/eink-assistant/releases) 下載 `.dmg`，開啟後將**電子紙助手**拖到安裝程式中顯示的
-**應用程式**資料夾。
+這是獨立開發的軟體，目前未上架 App Store。首次開啟時，macOS 會顯示「無法驗證」警告。
+程式碼完全開放，你可以先檢視，再決定是否使用。
 
-### 第一次啟動：通過 Gatekeeper
-
-本 App 使用 **ad-hoc 簽署，未經 Apple 公證**，因此 macOS 第一次會拒絕開啟下載版本。
-**在 macOS 15 或以上版本，按右鍵 →「打開」已不再有效。**
-
-1. 先嘗試開啟一次 App，然後關閉警告。
-2. 開啟**系統設定 → 隱私權與安全性**。
-3. 找到 App 遭封鎖的訊息，按一下**強制打開**。
-4. 確認。
-
-將 App 拖入**「應用程式」**資料夾後，如果仍未顯示按鈕，可直接清除隔離旗標：
+如果將 App 移至「應用程式」後未出現**強制打開**，請開啟「終端機」並執行：
 
 ```
 xattr -dr com.apple.quarantine "/Applications/E-Ink Assistant.app"
 ```
 
-自行從原始碼建置不會帶有隔離旗標。
+### Windows 7 SP1 至 Windows 11，x64
 
----
+1. 使用上方連結下載 Windows 1.2 安裝程式。
+2. 執行安裝程式，並核准管理員權限提示。
+3. 從「開始」功能表或系統匣開啟 E-Ink Assistant。
+
+請參閱 [WINDOWS.md](../../WINDOWS.md)，了解各項功能依 Windows 版本、GPU、
+驅動程式與顯示器連線方式而定的確切支援情況。
 
 ## 使用方式
 
 <p align="center">
-  <img src="../zh-Hant/app-displays-v2-1.png" alt="電子紙助手 v2.1 繁體中文標記顯示器介面" width="440">
+  <img src="../../docs/en/app-displays-v2-1.png" alt="在 E-Ink Assistant v2.1 中標記顯示器" width="440">
 </p>
 
-1. 從選單列開啟 App。
-2. 標記要調校的黑白或彩色電子紙。
-3. 在支援的顯示器上，減少閃爍會自動開啟。
-4. 彩色電子紙可調整彩度與 RGB；黑白電子紙全部維持 100%。
-5. 閱讀時選擇文字對比度，觀看媒體時選擇影片暗部增強，兩者不要同時使用。
+1. 從 macOS 選單列或 Windows 系統匣開啟 App。
+2. 標記每一台你想調校的黑白或彩色電子紙顯示器。
+3. 先在顯示器內建選單中設定均衡的硬體對比度。
+4. 閱讀時選擇「文字對比度」，觀看媒體時選擇「影片暗部增強」，兩者不可同時使用。
+5. 在彩色電子紙上，若平台支援，即可調整彩度與 RGB。
 
-系統全域的**降低透明度與動態效果**需要一次性**安裝並開啟**。在 Apple「捷徑」中確認
-**加入捷徑**。隨附的輔助捷徑只接受文字，只辨識完全相符的 `on` 與 `off`，忽略其他輸入，
-並以「無」動作結束，因此不會產生輸出。它不會出現在分享表單、Spotlight、快速動作或鎖定畫面介面中。
-為了確保自動跟隨顯示器與結束時清理正常運作，它可在 Mac 鎖定時由 App 於背景執行；App 不會列出或
-檢查你的其他捷徑。
+**結束時會還原顯示調整**，啟動時則重新套用。開啟**登入時啟動**即可自動啟動。
 
-自動模式會在已標記的電子紙連接時開啟兩項設定，並且只有最後一台已標記電子紙中斷連接後才關閉。
-結束 App 時也會關閉兩項設定。
+## 顯示器設定
 
-**結束時會還原顯示調整**，啟動時重新套用。開啟**登入時啟動**即可自動啟動。
+在調整 App 之前，請先於顯示器內建選單中設定均衡的對比度。隨附預設是在
+**Bigme B251 Pro**（R2 FW V2.0）上，以**網頁模式、硬體 Gamma 等級 3、
+對比度 50、關閉色彩還原模式**進行目視調校。黑白面板或其他彩色機型需要各自適合的數值。
+進階模式可調整完整曲線，每台顯示器的設定會分開儲存。
 
----
+「減少閃爍」僅支援 Apple Silicon，在不支援的環境中會自動隱藏。
 
-## 顯示器範圍與預設
+<details>
+<summary>macOS 降低透明度與動態效果輔助捷徑</summary>
 
-減少閃爍、文字對比度、影片暗部增強、系統輔助使用設定與進階曲線，都能讓**黑白與彩色電子紙**受益。
-彩度補償與 RGB 校色則專門用於彩色面板。
+首次使用時，需要在 Apple 的「捷徑」App 中確認**加入捷徑**。隨附的輔助捷徑只接受
+完全相符的文字指令 `on` 與 `off`，不提供輸出，也不會出現在分享表單、Spotlight、
+快速動作或鎖定畫面介面中。它可在 Mac 鎖定時執行。本 App 不會列出或檢查你的其他捷徑。
 
-請先完成顯示器硬體設定。內建預設是針對 **Bigme B251 Pro**（R2 FW V2.0），在**網頁模式、
-硬體 Gamma 等級 3、對比度 50、關閉色彩還原模式**下目視調校。黑白面板或其他彩色型號需要
-自己的數值；進階模式為此提供完整曲線。請依面板的實際顯示效果進行自訂調校。
+自動模式會在已標記的電子紙顯示器連接時開啟兩項設定，並在最後一台已標記顯示器中斷連接後
+關閉。結束 App 時也會關閉這兩項設定。
 
-減少閃爍只支援 Apple Silicon，在不支援的位置會自動隱藏。
+</details>
 
----
+## 專案文件
 
-## 更多資訊
-
-- [CHANGELOG.md](../../CHANGELOG.md)：各版本更新內容
-- [TECHNICAL.md](../../TECHNICAL.md)：實作原理、測量資料，以及新版 macOS 上**無法運作**的方法（英文）
-- [mac-saturation](https://github.com/kiteretsu903/mac-saturation)：色彩機制調查與描述檔匯出工具（英文）
+- [CHANGELOG.md](../../CHANGELOG.md)：各版本的變更
+- [TECHNICAL.md](../../TECHNICAL.md)：實作、測量結果，以及在現代 macOS 上*無法*使用的方法
+- [mac-saturation](https://github.com/kiteretsu903/mac-saturation)：色彩機制研究與描述檔匯出的命令列工具
 
 ## 授權與致謝
 
-MIT，請參閱 [LICENSE](../../LICENSE)。
+採用 MIT 授權，詳見 [LICENSE](../../LICENSE)。
 
-**減少閃爍以 [Stillcolor](https://github.com/aiaf/Stillcolor)（作者 Abdullah Arif，MIT）為基礎。**
-Stillcolor 發現可透過 `enableDither` I/O Registry 屬性關閉顯示器抖動。本專案按顯示器重新實作
-這個概念；發現方法的功勞屬於 Stillcolor。謝謝。
+**「減少閃爍」基於 Abdullah Arif 開發的 [Stillcolor](https://github.com/aiaf/Stillcolor)**
+（MIT 授權）。Stillcolor 發現可透過 I/O Registry 的 `enableDither` 屬性停用顯示器抖動。
+本專案以各顯示器獨立控制的方式重新實作這個概念；這項發現的功勞屬於 Stillcolor。謹此致謝。
 
 完整聲明請見 [THIRD-PARTY-NOTICES.md](../../THIRD-PARTY-NOTICES.md)。

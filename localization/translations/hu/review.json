@@ -1,0 +1,23 @@
+{
+  "locale": "hu",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact JSON keys and nonempty values",
+    "Placeholder multisets preserved",
+    "HTML tags and attributes identical to source",
+    "Negations, conditional support, experimental confirmation and rollback semantics reviewed",
+    "Shared terminology consistent across app, Windows and website",
+    "Current downloads and historical releases retain their four-language lists"
+  ],
+  "concerns": [
+    "AI review only; no native-speaker review or native layout certification.",
+    "Long Hungarian labels require native macOS/Windows layout checks, particularly confirmation buttons and accessibility controls.",
+    "Windows backend errors and standard Qt dialog buttons remain pending native integration."
+  ],
+  "native_speaker_review_required": false
+}

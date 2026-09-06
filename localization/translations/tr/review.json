@@ -1,0 +1,20 @@
+{
+  "locale": "tr",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact source keys and nonempty UTF-8 JSON values",
+    "Format placeholders, HTML tags and attributes, URLs and numeric values preserved",
+    "Reviewed disable/enable, automatic rollback, quit restoration, persistent Night Shift/True Tone exclusion and compatibility boundaries",
+    "Current-download language list and English screenshot descriptions preserved"
+  ],
+  "concerns": [
+    "AI translation and review only; no native human review.",
+    "Turkish normally places the percent sign before the number; percentage notation retains the source suffix form to avoid collision with Windows numeric placeholders."
+  ],
+  "native_speaker_review_required": false
+}

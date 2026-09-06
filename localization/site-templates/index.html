@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="{{LOCALE}}" dir="{{DIRECTION}}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{{A:index.description.001}}">
+    <meta name="theme-color" content="#f2f0ea">
+    <title>{{H:index.text.002}}</title>
+    <link rel="stylesheet" href="site.css">
+    <link rel="stylesheet" href="a11y.css">
+    <link rel="stylesheet" href="comparison.css">
+    <link rel="stylesheet" href="features.css?v=20260903-1">
+    <link rel="stylesheet" href="light-theme.css">
+    <link rel="stylesheet" href="gallery.css">
+    <link rel="stylesheet" href="changelog.css">
+    <link rel="stylesheet" href="i18n.css?v=20260903-1">
+    <link rel="stylesheet" href="platforms.css?v=20260903-9">
+  {{SEO_LINKS}}
+  </head>
+  <body data-site-root="{{ASSET_PREFIX}}" data-page="home">
+    <div class="paper-grain" aria-hidden="true"></div>
+    <header class="site-header shell">
+      <a class="brand" href="#top" aria-label="{{A:index.aria-label.003}}"><img src="app-icon.png" alt="" width="44" height="44"><span>{{H:index.text.004}}</span></a>
+      <nav aria-label="{{A:index.aria-label.005}}"><a href="#comparison-text">{{H:index.text.006}}</a><a href="#features">{{H:index.text.007}}</a><a href="#platforms">{{H:index.text.008}}</a><a href="changelog.html">{{H:index.text.009}}</a></nav>
+      <label class="language-picker"><span class="sr-only">{{H:index.text.010}}</span><select id="site-language" aria-label="{{A:index.text.010}}">{{LANGUAGE_OPTIONS}}</select></label>
+      <a class="button button-small" href="#download">{{H:index.text.011}}</a>
+    </header>
+    <main id="top">
+      <section class="hero shell">
+        <div class="hero-copy">
+          <h1>{{H:index.text.012}}</h1>
+          <p class="lede">{{H:index.text.013}}</p>
+          <div class="hero-actions platform-actions">
+            <a class="button platform-download" data-download-platform="mac" href="https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-v2.6.dmg">
+              <svg class="platform-icon" viewbox="0 0 24 24" aria-hidden="true"><path d="M16.7 12.8c0-2.2 1.8-3.3 1.9-3.4a4.1 4.1 0 0 0-3.2-1.7c-1.4-.1-2.7.8-3.4.8-.7 0-1.7-.8-2.9-.8a4.4 4.4 0 0 0-3.7 2.2c-1.6 2.8-.4 6.9 1.1 9.1.8 1.1 1.7 2.3 2.9 2.2 1.1 0 1.6-.7 3.1-.7 1.4 0 1.9.7 3.1.7 1.3 0 2.1-1.1 2.8-2.2.9-1.3 1.2-2.5 1.2-2.6-.1 0-2.9-1.1-2.9-3.6ZM14.5 6.2c.6-.8 1.1-1.9 1-3-.9 0-2 .6-2.7 1.4-.6.7-1.1 1.8-1 2.9 1 .1 2-.5 2.7-1.3Z"></svg>
+              <span>{{H:index.text.014}}</span><span aria-hidden="true">↓</span>
+            </a>
+            <a class="button button-windows platform-download" data-download-platform="windows" href="https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-Windows-1.2-Setup.exe">
+              <svg class="platform-icon" viewbox="0 0 24 24" aria-hidden="true"><path d="M3 5.2 10.6 4v7.3H3V5.2Zm8.6-1.4L21 2.5v8.8h-9.4V3.8ZM3 12.3h7.6v7.3L3 18.5v-6.2Zm8.6 0H21v8.8l-9.4-1.3v-7.5Z"></svg>
+              <span>{{H:index.text.015}}</span><span aria-hidden="true">↓</span>
+            </a>
+            <a class="button button-star" href="https://github.com/kiteretsu903/eink-assistant">{{H:index.text.016}}</a>
+          </div>
+          <p class="fine-print">{{H:index.text.017}}</p>
+        </div>
+        <div class="hero-visual" aria-label="{{A:index.aria-label.018}}">
+          <div class="sun"></div><div class="hero-orbit orbit-one"></div><div class="hero-orbit orbit-two"></div><div class="device-shadow"></div>
+          <img class="app-window" src="en/app-main-v2-1.png" alt="{{A:index.alt.019}}">
+          <div class="display-tag">{{H:index.text.020}}</div><div class="calibration-mark" aria-hidden="true">+</div>
+        </div>
+      </section>
+
+      <section class="ticker" aria-label="{{A:index.aria-label.021}}"><div class="ticker-track">{{H:index.text.022}}</div></section>
+
+      <section class="comparison shell" id="comparison-text">
+        <div class="improvements-head"><div><p class="section-number">{{H:index.text.023}}</p><h2>{{H:index.text.024}}</h2></div><p>{{H:index.text.025}}</p></div>
+        <div class="comparison-gallery">
+          <figure class="gallery-card" data-before="{{A:label.before}}" data-after="{{A:label.after}}"><img src="en/text-contrast-editorial.png" alt="{{A:index.alt.026}}"><figcaption><strong>{{H:index.text.027}}</strong><span>{{H:index.text.028}}</span></figcaption></figure>
+          <figure class="gallery-card" data-before="{{A:label.before}}" data-after="{{A:label.after}}"><img src="en/video-enhance-editorial.png" alt="{{A:index.alt.029}}"><figcaption><strong>{{H:index.text.030}}</strong><span>{{H:index.text.031}}</span></figcaption></figure>
+          <figure class="gallery-card" data-before="{{A:label.before}}" data-after="{{A:label.after}}"><img src="en/saturation-editorial.png" alt="{{A:index.alt.032}}"><figcaption><strong>{{H:index.text.033}}</strong><span>{{H:index.text.034}}</span></figcaption></figure>
+        </div>
+        <p class="gallery-note">{{H:index.text.035}}</p>
+      </section>
+
+      <section class="feature-catalogue shell" id="features" aria-label="{{A:index.aria-label.036}}">
+        <p class="section-number catalogue-section-number">{{H:index.text.037}}</p>
+        <aside class="macos-card platform-summary">
+          <p class="catalogue-kicker">{{H:index.text.038}}</p>
+          <h3>{{H:index.text.039}}</h3>
+          <p>{{H:index.text.040}}</p>
+          <dl><div><dt>{{H:index.text.041}}</dt><dd>{{H:index.text.042}}</dd></div><div><dt>{{H:index.text.043}}</dt><dd>{{H:index.text.044}}</dd></div><div><dt>{{H:index.text.045}}</dt><dd>{{H:index.text.046}}</dd></div></dl>
+        </aside>
+        <div class="catalogue-groups">
+          <article class="feature-group"><p>{{H:index.text.047}}</p><h3>{{H:index.text.048}}</h3><ul><li>{{H:index.text.049}}</li><li>{{H:index.text.050}}</li></ul></article>
+          <article class="feature-group"><p>{{H:index.text.051}}</p><h3>{{H:index.text.052}}</h3><ul><li>{{H:index.text.053}}</li><li>{{H:index.text.054}}</li></ul></article>
+          <article class="feature-group"><p>{{H:index.text.055}}</p><h3>{{H:index.text.056}}</h3><ul><li>{{H:index.text.057}}</li><li>{{H:index.text.058}}</li></ul></article>
+          <article class="feature-group"><p>{{H:index.text.059}}</p><h3>{{H:index.text.060}}</h3><ul><li>{{H:index.text.061}}</li><li>{{H:index.text.062}}</li></ul></article>
+        </div>
+      </section>
+
+      <section class="advanced shell"><div class="advanced-image" data-label="{{A:label.advanced}}"><img src="en/app-advanced-v2-1.png" alt="{{A:index.alt.063}}"></div><div class="advanced-copy"><p class="section-number">{{H:index.text.064}}</p><h2>{{H:index.text.065}}</h2><p>{{H:index.text.066}}</p><p>{{H:index.text.067}}</p></div></section>
+
+      <section class="platform-details shell" id="platforms">
+        <section class="platform-comparison" aria-labelledby="comparison-title">
+          <div class="comparison-title"><h3 id="comparison-title">{{H:index.text.068}}</h3></div>
+          <div class="comparison-table-wrap" tabindex="0" role="region" aria-label="{{A:index.aria-label.069}}">
+            <table class="feature-comparison">
+              <thead><tr><th scope="col">{{H:index.text.070}}</th><th scope="col"><span class="platform-column-title"><svg viewbox="0 0 32 32" aria-hidden="true"><rect x="4" y="6" width="24" height="16" rx="2"><path d="M11 27h10M16 22v5"></svg><span>{{H:index.text.071}}</span></span></th><th scope="col"><span class="platform-column-title"><svg viewbox="0 0 32 32" aria-hidden="true"><rect x="5" y="4" width="22" height="24" rx="2"><path d="M5 21h22M21 24.5h.1M24.5 24.5h.1"></svg><span>{{H:index.text.072}}</span></span></th></tr></thead>
+              <tbody>
+                <tr><th scope="row">{{H:index.text.073}}</th><td>{{H:index.text.074}}</td><td>{{H:index.text.075}}</td></tr>
+                <tr><th scope="row">{{H:index.text.076}}</th><td>{{H:index.text.077}}</td><td>{{H:index.text.078}}</td></tr>
+                <tr><th scope="row">{{H:index.text.079}}</th><td>{{H:index.text.080}}</td><td>{{H:index.text.081}}</td></tr>
+                <tr><th scope="row">{{H:index.text.027}}</th><td>{{H:index.text.082}}</td><td>{{H:index.text.081}}</td></tr>
+                <tr><th scope="row">{{H:index.text.030}}</th><td>{{H:index.text.083}}</td><td>{{H:index.text.081}}</td></tr>
+                <tr><th scope="row">{{H:index.text.084}}</th><td>{{H:index.text.085}}</td><td>{{H:index.text.081}}</td></tr>
+                <tr><th scope="row">{{H:index.text.086}}</th><td>{{H:index.text.087}}</td><td>{{H:index.text.088}}</td></tr>
+                <tr><th scope="row">{{H:index.text.089}}</th><td>{{H:index.text.090}}</td><td>{{H:index.text.091}}</td></tr>
+                <tr><th scope="row">{{H:index.text.092}}</th><td>{{H:index.text.093}}</td><td>{{H:index.text.094}}</td></tr>
+                <tr><th scope="row">{{H:index.text.095}}</th><td>{{H:index.text.096}}</td><td>{{H:index.text.097}}</td></tr>
+                <tr><th scope="row">{{H:index.text.098}}</th><td>{{H:index.text.099}}</td><td>{{H:index.text.100}}</td></tr>
+                <tr><th scope="row">{{H:index.text.101}}</th><td>{{H:index.text.102}}</td><td>{{H:index.text.103}}</td></tr>
+                <tr><th scope="row">{{H:index.text.104}}</th><td>{{H:index.text.105}}</td><td>{{H:index.text.106}}</td></tr>
+                <tr><th scope="row">{{H:index.text.107}}</th><td>{{H:index.text.108}}</td><td>{{H:index.text.108}}</td></tr>
+                <tr><th scope="row">{{H:index.text.109}}</th><td>{{H:index.text.110}}</td><td>{{H:index.text.081}}</td></tr>
+                <tr><th scope="row">{{H:index.text.111}}</th><td>{{H:index.text.112}}</td><td>{{H:index.text.113}}</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section class="download shell" id="download"><div class="download-content"><p class="section-number">{{H:index.text.114}}</p><h2>{{H:index.text.115}}</h2><p>{{H:index.text.116}}</p><div class="download-platforms">{{H:index.text.117}}</div><p class="fine-print light">{{H:index.text.118}}</p></div><img src="app-icon.png" alt="" class="giant-icon"></section>
+    </main>
+
+    <dialog class="download-dialog" id="mac-download-dialog" aria-labelledby="mac-dialog-title">
+      <div class="dialog-panel"><button class="dialog-close" type="button" data-dialog-close aria-label="{{A:index.aria-label.119}}">×</button><p class="dialog-platform">{{H:index.text.014}}</p><h2 id="mac-dialog-title">{{H:index.text.120}}</h2><ol class="install-steps"><li>{{H:index.text.121}}</li><li>{{H:index.text.122}}</li><li>{{H:index.text.123}}</li></ol><p class="dialog-note">{{H:index.text.124}}</p><details><summary>{{H:index.text.125}}</summary><p>{{H:index.text.126}}</p><div class="command-row"><code>xattr -dr com.apple.quarantine "/Applications/E-Ink Assistant.app"</code><button type="button" data-copy-command>{{H:index.text.127}}</button></div></details><div class="dialog-actions">{{H:index.text.128}}</div></div>
+    </dialog>
+
+    <dialog class="download-dialog" id="windows-download-dialog" aria-labelledby="windows-dialog-title">
+      <div class="dialog-panel"><button class="dialog-close" type="button" data-dialog-close aria-label="{{A:index.aria-label.119}}">×</button><p class="dialog-platform">{{H:index.text.129}}</p><h2 id="windows-dialog-title">{{H:index.text.130}}</h2><ol class="install-steps"><li>{{H:index.text.131}}</li><li>{{H:index.text.132}}</li><li>{{H:index.text.133}}</li></ol><p class="dialog-note">{{H:index.text.134}}</p><div class="dialog-actions">{{H:index.text.135}}</div></div>
+    </dialog>
+
+    <footer class="site-footer shell"><span>{{H:index.text.136}}</span><a href="https://github.com/kiteretsu903/eink-assistant">{{H:index.text.137}}</a></footer>
+
+
+    <script src="downloads.js?v=20260903-2"></script>
+  <script src="locale.js"></script>
+  </body>
+</html>

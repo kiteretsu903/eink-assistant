@@ -50,8 +50,11 @@ enum WelcomeWindow {
     static func show() {
         guard !bubble.isVisible else { return }
         let button = AssistantDelegate.shared?.statusButton
+        let maximumHeight = bubble.maximumContentHeight(from: button)
         bubble.show(from: button) {
-            WelcomeView(close: dismissAndOpenPanel)
+            HeightLimitedLocalizationView(width: 480, maximumHeight: maximumHeight) {
+                WelcomeView(model: .shared, close: dismissAndOpenPanel)
+            }
         }
         watchForPanel()
     }
@@ -87,6 +90,7 @@ enum WelcomeWindow {
 // MARK: - Content
 
 struct WelcomeView: View {
+    @ObservedObject var model: AssistantModel
     let close: () -> Void
     @State private var suppress = WelcomeWindow.isSuppressed
 
@@ -120,7 +124,9 @@ struct WelcomeView: View {
         }
         .font(.system(size: 16))
         .padding(24)
-        .frame(width: 430)
+        .frame(width: 480)
+        .environment(\.locale, Locale(identifier: Localization.resource))
+        .environment(\.layoutDirection, Localization.isRightToLeft ? .rightToLeft : .leftToRight)
     }
 
     private func tip(_ symbol: String, _ title: String, _ body: String) -> some View {

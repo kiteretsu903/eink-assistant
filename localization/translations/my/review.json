@@ -1,0 +1,22 @@
+{
+  "locale": "my",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "validation": [
+    "Exact keys and nonempty values passed",
+    "Format placeholders preserved",
+    "HTML tags and attributes preserved",
+    "Numeric tokens preserved",
+    "Reviewed enable/disable, persistent exclusion, restore-on-quit and experimental rollback instructions"
+  ],
+  "concerns": [
+    "No native human review performed. Burmese terminology should be checked by a fluent reviewer before describing it as professionally verified.",
+    "Myanmar Unicode font fallback, shaping, line breaking and long labels require runtime visual checks on both platforms. Windows runtime is untested.",
+    "Dithering and platform application names retained as recognizable technical terms. Monitor menu translations are descriptive."
+  ],
+  "native_speaker_review_required": false
+}

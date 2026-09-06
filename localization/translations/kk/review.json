@@ -1,0 +1,23 @@
+{
+  "locale": "kk",
+  "status": "ai-translated-and-reviewed",
+  "keyCounts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "script": "Cyrillic",
+  "checks": [
+    "Exact source keys and nonempty UTF-8 values",
+    "Placeholders, numeric values, HTML tags and attributes, Markdown emphasis preserved",
+    "Kazakh Cyrillic script and cross-surface terminology reviewed",
+    "Rollback warnings, missing-confirmation behavior and restoration conditions reviewed",
+    "Persistent Night Shift/True Tone exclusion and helper on/off commands preserved",
+    "Last-marked-display disconnect condition and current/historical language lists preserved"
+  ],
+  "concerns": [
+    "Native-speaker review remains outstanding, especially for technical display terminology.",
+    "Live font coverage, layout and Windows rendering have not been verified."
+  ],
+  "native_speaker_review_required": false
+}

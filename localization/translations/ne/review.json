@@ -1,0 +1,30 @@
+{
+  "locale": "ne",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact JSON keys and nonempty values",
+    "Placeholder multisets and HTML tags/attributes preserved",
+    "Source digits/version labels retained",
+    "Reviewed negations, mutual exclusion, conditional platform support, confirmation and rollback warnings",
+    "Current downloads and historical releases retain four-language lists",
+    "Refined Nepali saturation spelling and distinguished activate/on from open actions"
+  ],
+  "concerns": [
+    "AI review only; fluent Nepali review is recommended for specialized color-management vocabulary and platform setting labels.",
+    "Devanagari shaping, conjuncts, line height and long safety buttons need native visual testing.",
+    "Windows backend error and standard Qt dialog translation remains pending native integration."
+  ],
+  "terminology": {
+    "Text Contrast": "पाठ कन्ट्रास्ट",
+    "Video Enhance": "भिडियो सुधार",
+    "Saturation": "सन्तृप्ति",
+    "Reduce Shaking": "झिलमिलाहट कम गर्ने",
+    "Night Light": "रात्रि प्रकाश"
+  },
+  "native_speaker_review_required": false
+}

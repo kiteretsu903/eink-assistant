@@ -1,0 +1,19 @@
+{
+  "locale": "fi",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact keys, UTF-8 JSON and nonempty strings",
+    "Placeholders, HTML tags and numeric values preserved",
+    "Reviewed enable/disable and restoration conditions",
+    "Current download and historical language lists preserved"
+  ],
+  "concerns": [
+    "No native-speaker or rendered UI review. Long Finnish compounds and platform-specific labels need visual verification on macOS and Windows."
+  ],
+  "native_speaker_review_required": false
+}

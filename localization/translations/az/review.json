@@ -1,0 +1,24 @@
+{
+  "locale": "az",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Complete source key sets and nonempty strings",
+    "Placeholder multisets preserved",
+    "HTML tags and attributes preserved",
+    "All digit and version-number multisets preserved",
+    "Reviewed safety confirmation, automatic rollback, persistent exclusions and mutual exclusion",
+    "Azerbaijani Latin script; shared terminology across surfaces",
+    "Current download and historical four-language lists preserved"
+  ],
+  "concerns": [
+    "AI review only; fluent Azerbaijani review recommended for specialist display terms and OS setting names.",
+    "Long button labels and native typography require visual testing.",
+    "Windows backend and Qt standard-dialog translations remain pending native integration."
+  ],
+  "native_speaker_review_required": false
+}

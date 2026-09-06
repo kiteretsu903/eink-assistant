@@ -1,0 +1,18 @@
+{
+  "locale": "zh-Hans",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact key equality, nonempty values, placeholders and site HTML tags validated",
+    "Reviewed restore conditions, negations, historical language coverage, and display recovery warnings",
+    "Full README translated with repository-relative links and unchanged commands"
+  ],
+  "concerns": [
+    "Native human review and platform visual testing not performed. Existing approved localized app branding and Gamma terminology preserved."
+  ],
+  "native_speaker_review_required": false
+}

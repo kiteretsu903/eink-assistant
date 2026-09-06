@@ -1,0 +1,23 @@
+{
+  "locale": "ar",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "readme": "complete; translated all sections and tables; relative links checked",
+  "validation": [
+    "Exact catalog key equality and nonempty values passed",
+    "All format placeholders preserved",
+    "All HTML tags and attributes preserved",
+    "All numeric tokens preserved",
+    "README repository-relative links resolve",
+    "Reviewed enable/disable, restore-on-quit, persistent Night Shift exclusion, and experimental rollback warnings"
+  ],
+  "concerns": [
+    "No native human review performed. Arabic RTL layout, mixed Arabic/Latin direction, font shaping and UI truncation still require runtime visual verification on both platforms.",
+    "Hardware menu names translated descriptively; users should match them to their monitor menu. Existing product/version identifiers preserved."
+  ],
+  "native_speaker_review_required": false
+}

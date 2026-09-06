@@ -1,11 +1,21 @@
 # E-Ink Assistant
 
+<!-- BEGIN README LANGUAGES -->
 <p align="center">
-  <b>English</b> &nbsp;·&nbsp;
-  <a href="docs/i18n/README.zh-Hans.md">简体中文</a> &nbsp;·&nbsp;
-  <a href="docs/i18n/README.zh-Hant.md">繁體中文</a> &nbsp;·&nbsp;
-  <a href="docs/i18n/README.ja.md">日本語</a>
+  <b lang="en" dir="ltr">English</b> &nbsp;·&nbsp;
+  <a href="docs/i18n/README.zh-Hans.md" lang="zh-Hans" dir="ltr">简体中文</a> &nbsp;·&nbsp;
+  <a href="docs/i18n/README.zh-Hant.md" lang="zh-Hant" dir="ltr">繁體中文</a> &nbsp;·&nbsp;
+  <a href="docs/i18n/README.ja.md" lang="ja" dir="ltr">日本語</a> &nbsp;·&nbsp;
+  <a href="docs/i18n/README.ko.md" lang="ko" dir="ltr">한국어</a> &nbsp;·&nbsp;
+  <a href="docs/i18n/README.es.md" lang="es" dir="ltr">Español</a> &nbsp;·&nbsp;
+  <a href="docs/i18n/README.fr.md" lang="fr" dir="ltr">Français</a> &nbsp;·&nbsp;
+  <a href="docs/i18n/README.de.md" lang="de" dir="ltr">Deutsch</a> &nbsp;·&nbsp;
+  <a href="docs/i18n/README.pt-BR.md" lang="pt-BR" dir="ltr">Português (Brasil)</a> &nbsp;·&nbsp;
+  <a href="docs/i18n/README.ru.md" lang="ru" dir="ltr">Русский</a> &nbsp;·&nbsp;
+  <a href="docs/i18n/README.ar.md" lang="ar" dir="rtl">العربية</a> &nbsp;·&nbsp;
+  <a href="docs/i18n/README.hi.md" lang="hi" dir="ltr">हिन्दी</a>
 </p>
+<!-- END README LANGUAGES -->
 
 <p align="center">
   <img src="Resources/AppIcon.png" alt="E-Ink Assistant app icon" width="128">

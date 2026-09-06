@@ -1,0 +1,17 @@
+{
+  "locale": "id",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact keys, nonempty values, placeholders, HTML, URLs, Unicode and Markdown emphasis validated",
+    "Reviewed recovery confirmation, enable/disable conditions, persistent settings and historical language lists"
+  ],
+  "concerns": [
+    "Native-speaker review and platform visual testing have not been performed."
+  ],
+  "native_speaker_review_required": false
+}

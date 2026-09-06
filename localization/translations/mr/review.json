@@ -1,0 +1,19 @@
+{
+  "locale": "mr",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact keys, nonempty values, placeholders, numbers, HTML tags and URLs validated.",
+    "Reviewed Marathi terminology consistency, negations, enable/disable conditions, persistent Night Shift exclusion, and Windows experimental rollback wording.",
+    "Current downloadable builds retain their historical four-language description."
+  ],
+  "concerns": [
+    "AI translation and review only; no native human review.",
+    "Native Devanagari shaping, UI layout, and Marathi OS-label verification remain required."
+  ],
+  "native_speaker_review_required": false
+}

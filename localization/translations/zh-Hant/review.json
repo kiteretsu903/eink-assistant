@@ -1,0 +1,28 @@
+{
+  "locale": "zh-Hant",
+  "status": "ai-translated-and-reviewed",
+  "keyCounts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "readme": {
+    "translated": true,
+    "fullSourceStructurePreserved": true,
+    "relativeLinksValidated": true,
+    "commandsPreserved": true
+  },
+  "checks": [
+    "Exact source key equality and nonempty UTF-8 values",
+    "Placeholder equality",
+    "Site HTML tag and attribute equality",
+    "Existing approved app terminology reviewed and preserved",
+    "Windows saturation terminology standardized to 彩度",
+    "Recovery, quit restoration, persistent display exclusion and helper on/off conditions reviewed",
+    "Current released downloads and historical language lists remain four locales"
+  ],
+  "concerns": [
+    "No native-speaker review or live Windows rendering verification performed."
+  ],
+  "native_speaker_review_required": false
+}

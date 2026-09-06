@@ -1,0 +1,22 @@
+{
+  "locale": "sw",
+  "status": "ai-translated-and-reviewed",
+  "keyCounts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": {
+    "exactKeys": true,
+    "nonempty": true,
+    "placeholders": true,
+    "htmlTagsAndAttributes": true,
+    "numbers": true
+  },
+  "concerns": [
+    "AI translation and review only; fluent-speaker review is recommended for technical color terminology.",
+    "Native UI rendering and long-label layout verification remain pending.",
+    "Hardware menu labels, dithering, and technical identifiers retained where useful for identification."
+  ],
+  "native_speaker_review_required": false
+}

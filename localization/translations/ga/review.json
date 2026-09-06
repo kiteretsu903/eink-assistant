@@ -1,0 +1,20 @@
+{
+  "locale": "ga",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact keys, nonempty values, placeholders, numbers, HTML tags and URLs validated.",
+    "Reviewed Irish terminology consistency, negations, enable/disable conditions, persistent Night Shift exclusion, and Windows experimental rollback wording.",
+    "Current downloadable builds retain their historical four-language description."
+  ],
+  "concerns": [
+    "AI translation and review only; no native human review.",
+    "Irish fluent-speaker review of technical tone-curve vocabulary and OS-label terminology is recommended. Technical dithering term retained to avoid an uncertain invented equivalent.",
+    "Native UI layout verification remains required."
+  ],
+  "native_speaker_review_required": false
+}

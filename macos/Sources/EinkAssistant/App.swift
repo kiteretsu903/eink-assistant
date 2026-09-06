@@ -35,6 +35,14 @@ struct PanelState: Identifiable, Equatable {
     var roleNeedsReconnect: Bool
 }
 
+struct LocalizedAppError {
+    let key: String
+    var argument: String? = nil
+    var message: String {
+        argument.map { String(format: L(key), $0) } ?? L(key)
+    }
+}
+
 @MainActor
 final class AssistantModel: ObservableObject {
     static let shared = AssistantModel()
@@ -50,7 +58,7 @@ final class AssistantModel: ObservableObject {
     /// user-confirmed Shortcuts helper because direct defaults writes fail.
     @Published var reduceTransparency = false
     @Published var reduceMotion = false
-    @Published var helperReady = Shortcuts.wasInstalled
+    @Published var helperReady = false
     @Published var helperInstalling = false
     @Published var helperRunning = false
     @Published var helperFailed = false
@@ -64,7 +72,7 @@ final class AssistantModel: ObservableObject {
     /// action stores an explicit opt-out so it stays hidden after relaunch.
     @Published var showsHardwareSetupNotice = !UserDefaults.standard.bool(
         forKey: AssistantModel.hardwareNoticeSuppressKey)
-    @Published var lastError: String?
+    @Published var lastError: LocalizedAppError?
 
     // Writing a gamma table or a color profile makes macOS post a storm of
     // didChangeScreenParameters notifications — measured at 13 and 15 for a
@@ -118,8 +126,24 @@ final class AssistantModel: ObservableObject {
         }
     }
 
-    init() {
+    let isLocalizationPreview: Bool
+
+    init(localizationPreview: Bool = false) {
+        isLocalizationPreview = localizationPreview
         Localization.refresh()
+        if localizationPreview {
+            // Fictional display IDs, no discovery, notifications, profile/gamma
+            // writes, helpers, login-item registration, or restoration hooks.
+            panels = [PanelState(id: 0, name: "E-Ink Preview", isBuiltin: false,
+                isEink: true, saturation: 1.3, saturationPreset: 3,
+                rgbBalance: .identity, enhance: .off, textLevel: .medium,
+                advanced: false, custom: .identity, reduceShaking: false,
+                shakingSupported: true, isTelevision: false, roleNeedsReconnect: true)]
+            helperReady = false
+            showsHardwareSetupNotice = true
+            return
+        }
+        helperReady = Shortcuts.wasInstalled
         refresh()
         launchAtLogin = SMAppService.mainApp.status == .enabled
 
@@ -365,7 +389,7 @@ final class AssistantModel: ObservableObject {
                                 displayName: panel.name)
             lastError = nil
         } catch {
-            lastError = String(format: L("error.color"), panel.name)
+            lastError = LocalizedAppError(key: "error.color", argument: panel.name)
         }
         // A profile write clears the hardware gamma table. Restore any active
         // Text Contrast, Video Enhance, or custom curve afterward.
@@ -445,7 +469,7 @@ final class AssistantModel: ObservableObject {
             } catch {
                 await MainActor.run {
                     if let j = self.index(of: id) { self.panels[j].isTelevision = previous }
-                    self.lastError = L("role.error")
+                    self.lastError = LocalizedAppError(key: "role.error")
                 }
             }
         }
@@ -652,6 +676,7 @@ final class AssistantModel: ObservableObject {
     }
 
     func refreshAccessibility() {
+        guard !isLocalizationPreview else { return }
         let workspace = NSWorkspace.shared
         // NSWorkspace can retain its old values after Shortcuts changes these
         // settings while our panel remains open. CFPreferences reads the live
@@ -718,7 +743,7 @@ final class AssistantModel: ObservableObject {
             }
             lastError = nil
         } catch {
-            lastError = L("error.login")
+            lastError = LocalizedAppError(key: "error.login")
         }
         launchAtLogin = SMAppService.mainApp.status == .enabled
     }
@@ -849,13 +874,17 @@ struct PanelRow: View {
                     if !editing { model.setSaturation(panel.saturation, for: panel.id) }
                 }
             )
-            HStack(spacing: 6) {
+            LocalizedOptionsLayout() {
                 ForEach(0..<presets.count, id: \.self) { i in
                     let preset = presets[i]
                     let selected = panel.saturationPreset == i
-                    Button(L(preset.key)) {
+                    Button {
                         model.setSaturation(preset.value, presetIndex: i,
                                             for: panel.id)
+                    } label: {
+                        Text(L(preset.key))
+                            .fixedSize(horizontal: true, vertical: false)
+                            .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(EinkOutlinedButtonStyle(compact: true))
                     .font(.system(size: 14,
@@ -935,7 +964,8 @@ struct PanelRow: View {
         HStack(spacing: 8) {
             Text(title)
                 .font(.system(size: 13, weight: .semibold))
-                .frame(width: 48, alignment: .leading)
+                .frame(minWidth: 48, idealWidth: 80, maxWidth: 120, alignment: .leading)
+                .fixedSize(horizontal: false, vertical: true)
             EinkSlider(
                 value: value,
                 in: 0.0...2.0,
@@ -967,6 +997,7 @@ struct PanelRow: View {
                     .font(.system(size: 13)).foregroundStyle(EinkPalette.secondaryText)
             }
             CurvePlot(curve: displayedCurve, height: 96)
+                .environment(\.layoutDirection, .leftToRight)
         }
     }
 
@@ -1052,6 +1083,7 @@ struct PanelRow: View {
             if panel.advanced {
                 Text(L("advanced.note"))
                     .font(.system(size: 13)).foregroundStyle(EinkPalette.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
                 slider(L("curve.knee"), value: panel.custom.knee, range: 0.05...1.00) {
                     var c = panel.custom; c.knee = $0
                     model.setCustomCurve(c, for: panel.id)
@@ -1204,7 +1236,7 @@ struct PanelRow: View {
         label: @escaping (Option) -> String,
         set: @escaping (Option) -> Void
     ) -> some View {
-        HStack(spacing: 0) {
+        LocalizedOptionsLayout(spacing: 0) {
             ForEach(options.indices, id: \.self) { index in
                 let option = options[index]
                 let selected = option == selection
@@ -1215,7 +1247,9 @@ struct PanelRow: View {
                         .font(.system(size: 13,
                                       weight: selected ? .black : .regular))
                         .foregroundStyle(Color.primary)
-                        .frame(maxWidth: .infinity)
+                        .fixedSize(horizontal: true, vertical: false)
+                        .frame(minWidth: 64, maxWidth: .infinity)
+                        .padding(.horizontal, 6)
                         .padding(.vertical, 4)
                         .contentShape(Rectangle())
                 }
@@ -1226,11 +1260,6 @@ struct PanelRow: View {
                     }
                 }
 
-                if index < options.count - 1 {
-                    Rectangle()
-                        .fill(Color.primary)
-                        .frame(width: 1)
-                }
             }
         }
         .einkOutlinedArea(cornerRadius: 5)
@@ -1278,7 +1307,7 @@ struct HowItWorks: View {
 
 /// System-wide accessibility settings that help on e-ink, shown above the
 /// per-display controls because they apply to the whole Mac.
-private struct AccessibilityInstallGuide: View {
+struct AccessibilityInstallGuide: View {
     @Environment(\.dismiss) private var dismiss
     let install: () -> Void
 
@@ -1371,8 +1400,11 @@ struct SystemDisplayRow: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 8) {
                 Text(L("system.title")).font(.system(size: 15, weight: .semibold))
+                Spacer(minLength: 8)
                 Text(status).font(.system(size: 14)).foregroundStyle(EinkPalette.secondaryText)
-                Spacer()
+            }
+            HStack(spacing: 8) {
+                Spacer(minLength: 0)
                 if busy {
                     einkBusyIndicator
                 } else if model.helperReady {
@@ -1389,9 +1421,9 @@ struct SystemDisplayRow: View {
                     .font(.system(size: 13, weight: .semibold))
                     .buttonStyle(.plain)
                     .padding(.horizontal, 7)
-                    .frame(height: 30)
+                    .frame(minHeight: 30)
                     .einkOutlinedArea(cornerRadius: 5)
-                    .fixedSize()
+                    .fixedSize(horizontal: false, vertical: true)
                 }
                 Menu {
                     Button(L("system.open")) { model.openAccessibilitySettings() }
@@ -1438,8 +1470,11 @@ struct SystemDisplayRow: View {
         }
         .onAppear { model.refreshAccessibility() }
         .sheet(isPresented: $showInstallGuide) {
-            AccessibilityInstallGuide {
-                model.installAndEnableAccessibilityHelper()
+            HeightLimitedLocalizationView(width: 480, maximumHeight: max(300,
+                (NSScreen.main?.visibleFrame.height ?? 800) - 120)) {
+                AccessibilityInstallGuide {
+                    model.installAndEnableAccessibilityHelper()
+                }
             }
         }
     }
@@ -1466,9 +1501,7 @@ private struct HardwareSetupNotice: View {
                     Text((try? AttributedString(
                         markdown: L("hardware.notice.body")))
                         ?? AttributedString(L("hardware.notice.body")))
-                        .lineLimit(2)
-                        .minimumScaleFactor(0.88)
-                        .allowsTightening(true)
+                        .fixedSize(horizontal: false, vertical: true)
                     Text(L("hardware.notice.bigme"))
                 }
                 .fixedSize(horizontal: false, vertical: true)
@@ -1516,7 +1549,7 @@ struct AssistantView: View {
             }
 
             if let error = model.lastError {
-                Text(error).font(.system(size: 14)).foregroundStyle(.red)
+                Text(error.message).font(.system(size: 14)).foregroundStyle(.red)
             }
 
             HowItWorks(language: model.language)
@@ -1527,8 +1560,7 @@ struct AssistantView: View {
                 Text(L("language.title")).font(.system(size: 15))
                 Spacer()
                 Menu {
-                    ForEach(0..<AppLanguage.allCases.count, id: \.self) { i in
-                        let lang = AppLanguage.allCases[i]
+                    ForEach(AppLanguage.allCases) { lang in
                         Button(lang.label) { model.setLanguage(lang) }
                     }
                 } label: {
@@ -1538,7 +1570,7 @@ struct AssistantView: View {
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
                 .einkOutlinedArea(cornerRadius: 5)
-                .fixedSize()
+                .fixedSize(horizontal: false, vertical: true)
             }
 
             HStack(spacing: 8) {
@@ -1581,6 +1613,24 @@ struct AssistantScroll: View {
 
     /// Height of the pinned header, which the content measurement excludes.
     private static let headerHeight: CGFloat = 48
+
+    /// Include selected (heaviest) labels and real button/card padding so
+    /// changing the selection never changes the window width.
+    private var localizedPanelWidth: CGFloat {
+        func row(_ labels: [String], fontSize: CGFloat, minimum: CGFloat,
+                 padding: CGFloat, spacing: CGFloat) -> CGFloat {
+            let font = NSFont.systemFont(ofSize: fontSize, weight: .black)
+            return labels.reduce(CGFloat.zero) { total, label in
+                total + max(minimum, ceil((label as NSString).size(withAttributes: [.font: font]).width))
+                    + padding + 4
+            } + CGFloat(max(0, labels.count - 1)) * spacing
+        }
+        let saturation = row(["preset.bw", "preset.faded", "preset.factory", "preset.enhanced", "preset.vivid", "preset.anime"].map { L($0) },
+                             fontSize: 14, minimum: 0, padding: 14, spacing: 6)
+        let contrast = row(TextLevel.allCases.map(\.label), fontSize: 13, minimum: 64, padding: 12, spacing: 0)
+        let video = row(EnhanceLevel.allCases.map(\.label), fontSize: 13, minimum: 64, padding: 12, spacing: 0)
+        return max(540, max(saturation, contrast, video) + 32 + 28)
+    }
 
     private var clampedHeight: CGFloat {
         min(max(contentHeight + Self.headerHeight, Self.minHeight),
@@ -1625,7 +1675,9 @@ struct AssistantScroll: View {
         }
         // minWidth cannot be combined with a fixed height, so the height is
         // pinned by giving min and max the same value.
-        .frame(width: 540, height: clampedHeight)
+        .frame(width: localizedPanelWidth, height: clampedHeight)
+        .environment(\.locale, Locale(identifier: Localization.resource))
+        .environment(\.layoutDirection, Localization.isRightToLeft ? .rightToLeft : .leftToRight)
     }
 }
 
@@ -1687,6 +1739,14 @@ final class AssistantDelegate: NSObject, NSApplicationDelegate {
         NSApp.setActivationPolicy(.accessory)
         model = .shared
         installStatusItem()
+        NotificationCenter.default.addObserver(forName: Localization.didChange,
+            object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.statusItem?.button?.image = NSImage(systemSymbolName: "book.pages",
+                    accessibilityDescription: L("app.title"))
+                self?.statusItem?.button?.toolTip = L("app.title")
+            }
+        }
         // After the status item exists, so the tip's arrow has something to
         // point at.
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
@@ -1733,6 +1793,7 @@ final class AssistantDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
+#if !LOCALIZATION_PREVIEW
 @main
 struct EinkAssistantApp: App {
     @NSApplicationDelegateAdaptor(AssistantDelegate.self) var delegate
@@ -1743,3 +1804,5 @@ struct EinkAssistantApp: App {
         Settings { EmptyView() }
     }
 }
+
+#endif

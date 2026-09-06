@@ -1,0 +1,21 @@
+{
+  "locale": "fa",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": [
+    "Exact key equality and nonempty values",
+    "Placeholders, HTML tags/attributes, URLs and numeric values preserved",
+    "Reviewed negations, automatic rollback, last-display disconnect behavior and persistent Night Shift changes",
+    "Persian terminology consistent across all three catalogs; Latin command tokens and identifiers unchanged"
+  ],
+  "concerns": [
+    "No native Persian human review.",
+    "Actual RTL shaping, mixed Latin/Persian labels, and overflow still need runtime visual verification, especially on Windows.",
+    "OS menu names are translated descriptively; exact labels vary with the operating-system language. Existing screenshots remain correctly described as English."
+  ],
+  "native_speaker_review_required": false
+}

@@ -101,7 +101,7 @@ struct EinkSwitchToggleStyle: ToggleStyle {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityValue(configuration.isOn ? "on" : "off")
+            .accessibilityValue(L(configuration.isOn ? "system.on" : "system.off"))
         }
         .foregroundStyle(Color.primary)
     }
@@ -187,7 +187,10 @@ struct EinkSlider: View {
                     }
             )
         }
+        // Numeric scales and tone-curve graphs retain increasing values from
+        // left to right in every language. Labels and surrounding layout mirror.
         .frame(height: 28)
+        .environment(\.layoutDirection, .leftToRight)
         .accessibilityElement()
         .accessibilityLabel(accessibilityLabel)
         .accessibilityValue(String(format: "%.2f", value))

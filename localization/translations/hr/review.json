@@ -1,0 +1,21 @@
+{
+  "locale": "hr",
+  "status": "ai-translated-and-reviewed",
+  "key_counts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "validation": [
+    "Exact key sets and nonempty strings passed",
+    "Format placeholders preserved",
+    "HTML tags and attributes preserved",
+    "Numeric tokens preserved",
+    "Reviewed negations, restore-on-quit behavior, persistent display exclusion and experimental rollback warnings"
+  ],
+  "concerns": [
+    "No native human review performed; runtime visual verification and Windows testing remain pending.",
+    "Dithering is retained as an established technical loanword. Hardware menu labels are descriptive translations and may differ from English monitor menus."
+  ],
+  "native_speaker_review_required": false
+}

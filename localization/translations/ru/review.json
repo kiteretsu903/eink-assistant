@@ -1,0 +1,24 @@
+{
+  "locale": "ru",
+  "status": "ai-translated-and-reviewed",
+  "keyCounts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "readme": "full translation; code blocks and local links verified",
+  "validation": {
+    "exactKeys": true,
+    "nonempty": true,
+    "placeholders": true,
+    "htmlTagsAndAttributes": true,
+    "numbers": true,
+    "urls": true
+  },
+  "concerns": [
+    "Native-speaker review has not been performed.",
+    "Russian UI length and platform-specific system labels require native macOS/Windows visual review."
+  ],
+  "semanticReview": "Reviewed enable/disable conditions, experimental rollback warnings, automatic display following, persistent Night Shift/True Tone exception, current four-language downloads, and historical release language lists.",
+  "native_speaker_review_required": false
+}

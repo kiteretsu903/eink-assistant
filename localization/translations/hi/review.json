@@ -1,0 +1,24 @@
+{
+  "locale": "hi",
+  "status": "ai-translated-and-reviewed",
+  "keyCounts": {
+    "app": 117,
+    "windows": 40,
+    "site": 203
+  },
+  "checks": {
+    "exactKeys": true,
+    "nonempty": true,
+    "placeholders": true,
+    "htmlTagsAndAttributes": true,
+    "numbers": true,
+    "readmeFullTranslation": true,
+    "readmeCommandsPreserved": true
+  },
+  "concerns": [
+    "AI translation and review only; no native-speaker review or macOS/Windows visual rendering verification.",
+    "Official hardware menu labels and Apple shortcut action identifiers remain in English where needed for identification.",
+    "Hindi complex-script shaping and long control labels need native UI verification on Windows."
+  ],
+  "native_speaker_review_required": false
+}
