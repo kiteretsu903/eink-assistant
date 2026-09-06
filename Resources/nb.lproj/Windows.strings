@@ -40,3 +40,4 @@
 "help.windows" = "Metning og RGB bruker automatisk fargebehandling i Windows 11 24H2 eller nyere, eller MHC2-profilmetoden i Windows 10-bygg 19041–19045. Tekstkontrast, Videoforbedring og Avansert bruker en gammakurve per skjerm. Alle skjermjusteringer gjenopprettes når appen avsluttes, og brukes på nytt ved oppstart.";
 "welcome.windows.tray" = "Åpne menyen for skjulte ikoner til høyre på oppgavelinjen, finn dette bokikonet og dra det til det synlige området.";
 "welcome.windows.tray.title" = "Fest systemstatusikonet";
+"error.operation" = "Handlingen kunne ikke fullføres. Utvid for å se detaljer.";

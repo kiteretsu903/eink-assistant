@@ -38,5 +38,6 @@
   "night.disable.warning": "Fún àwọn ojú-ìwò e-ink, a dábàá pípa Ìmọ́lẹ̀ Alẹ́.",
   "help.windows": "Ìkún àwọ̀ àti RGB ń lo Ìṣàkóso Àwọ̀ Aládàáṣiṣẹ́ lórí Windows 11 24H2 tàbí tuntun ju bẹ́ẹ̀ lọ, tàbí ọ̀nà prófáìlì MHC2 lórí Windows 10 àwọn build 19041–19045. Ìyàtọ̀ Ìmọ́lẹ̀ Ọ̀rọ̀, Ìmúdára Fídíò àti Àwọn ètò jinlẹ̀ ń lo tábìlì gamma fún ojú-ìwò kọ̀ọ̀kan. Gbogbo àtúnṣe ojú-ìwò máa padà nígbà jíjáde, a sì tún lò wọ́n nígbà ṣíṣí.",
   "welcome.windows.tray": "Ṣí àkójọ àwọn àmì tí a fi pamọ́ ní ọ̀tún ọ̀pá iṣẹ́, rí àmì àwọn ojú ìwé yìí, kí o sì fà á sí àgbègbè tí ó hàn.",
-  "welcome.windows.tray.title": "So àmì agbègbè ìfitónilétí mọ́lẹ̀"
+  "welcome.windows.tray.title": "So àmì agbègbè ìfitónilétí mọ́lẹ̀",
+  "error.operation": "A kò lè parí iṣẹ́ náà. Ṣí i sí i láti rí àlàyé."
 }

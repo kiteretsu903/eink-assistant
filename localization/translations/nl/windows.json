@@ -38,5 +38,6 @@
   "night.disable.warning": "Voor e-inkschermen raden we aan Nachtlamp uit te schakelen.",
   "help.windows": "Verzadiging en RGB gebruiken automatisch kleurbeheer op Windows 11 24H2 of nieuwer, of de MHC2-profielmethode op Windows 10-builds 19041–19045. Tekstcontrast, Videoverbetering en Geavanceerd gebruiken een gammacurve per scherm. Alle schermaanpassingen worden hersteld wanneer de app stopt en opnieuw toegepast bij het starten.",
   "welcome.windows.tray": "Open het menu met verborgen pictogrammen rechts op de taakbalk, zoek dit pictogram met boekpagina's en sleep het naar het zichtbare gebied.",
-  "welcome.windows.tray.title": "Systeemvakpictogram vastmaken"
+  "welcome.windows.tray.title": "Systeemvakpictogram vastmaken",
+  "error.operation": "De bewerking kon niet worden voltooid. Klap het bericht uit voor meer informatie."
 }

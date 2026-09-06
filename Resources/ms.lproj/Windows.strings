@@ -40,3 +40,4 @@
 "help.windows" = "Ketepuan dan RGB menggunakan Pengurusan Warna Automatik pada Windows 11 24H2 atau lebih baharu, atau laluan profil MHC2 pada binaan Windows 10 19041–19045. Kontras Teks, Peningkatan Video dan Lanjutan menggunakan lengkung gamma bagi setiap paparan. Semua pelarasan paparan dipulihkan apabila aplikasi ditutup dan digunakan semula semasa pelancaran.";
 "welcome.windows.tray" = "Buka menu ikon tersembunyi di sebelah kanan bar tugas, cari ikon halaman buku ini, kemudian seretnya ke kawasan yang kelihatan.";
 "welcome.windows.tray.title" = "Sematkan ikon dulang";
+"error.operation" = "Operasi tidak dapat diselesaikan. Kembangkan untuk melihat butiran.";

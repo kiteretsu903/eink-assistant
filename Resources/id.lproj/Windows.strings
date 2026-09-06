@@ -40,3 +40,4 @@
 "help.windows" = "Saturasi dan RGB menggunakan Manajemen Warna Otomatis pada Windows 11 24H2 atau lebih baru, atau jalur profil MHC2 pada Windows 10 build 19041–19045. Kontras Teks, Peningkatan Video, dan Lanjutan menggunakan ramp gamma per layar. Semua penyesuaian layar dipulihkan saat aplikasi ditutup dan diterapkan ulang saat dijalankan.";
 "welcome.windows.tray" = "Buka menu ikon tersembunyi di kanan taskbar, temukan ikon halaman buku ini, lalu seret ke area yang terlihat.";
 "welcome.windows.tray.title" = "Sematkan ikon baki";
+"error.operation" = "Operasi tidak dapat diselesaikan. Perluas untuk melihat detail.";

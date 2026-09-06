@@ -38,5 +38,6 @@
   "night.disable.warning": "För e-pappersskärmar rekommenderar vi att du stänger av Nattläge.",
   "help.windows": "Mättnad och RGB använder automatisk färghantering i Windows 11 24H2 eller senare, eller MHC2-profilmetoden i Windows 10-versionerna 19041–19045. Textkontrast, Videoförbättring och Avancerat använder en gammakurva per skärm. Alla skärmjusteringar återställs när appen avslutas och tillämpas igen vid start.",
   "welcome.windows.tray": "Öppna menyn med dolda ikoner till höger i aktivitetsfältet, leta upp den här ikonen med boksidor och dra den till det synliga området.",
-  "welcome.windows.tray.title": "Fäst ikonen i meddelandefältet"
+  "welcome.windows.tray.title": "Fäst ikonen i meddelandefältet",
+  "error.operation": "Åtgärden kunde inte slutföras. Visa mer för att se detaljer."
 }

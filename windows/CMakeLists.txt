@@ -45,6 +45,12 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 find_package(Qt5 5.15 REQUIRED COMPONENTS Core Gui Widgets Test)
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+# Validate on every build, including direct Ninja builds, before AUTORCC runs.
+# Catalog edits require the documented shared generator; stale output is an error.
+add_custom_target(eink_localization_check
+    COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/../scripts/build-localizations.py" --check
+    VERBATIM)
 
 set(EINK_CORE_SOURCES
     src/core/AppState.cpp
@@ -103,6 +109,7 @@ if(WIN32)
 endif()
 
 add_library(eink_app STATIC ${EINK_APP_SOURCES})
+add_dependencies(eink_app eink_localization_check)
 target_include_directories(eink_app PUBLIC src)
 target_link_libraries(eink_app PUBLIC eink_core Qt5::Core Qt5::Gui Qt5::Widgets)
 if(WIN32)
@@ -122,6 +129,7 @@ target_link_libraries(EinkAssistant PRIVATE eink_app)
 
 enable_testing()
 add_executable(eink_core_tests tests/CoreTests.cpp tests/FakePlatform.cpp tests/FakePlatform.h)
+target_compile_definitions(eink_core_tests PRIVATE EINK_SOURCE_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
 target_link_libraries(eink_core_tests PRIVATE eink_app Qt5::Test)
 add_test(NAME core COMMAND eink_core_tests)
 

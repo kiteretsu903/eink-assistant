@@ -40,3 +40,4 @@
 "help.windows" = "Litmettun og RGB nota sjálfvirka litastýringu á Windows 11 24H2 eða nýrra, eða MHC2-litasniðsleiðina á Windows 10 smíðum 19041–19045. Birtuskil texta, Myndbæting og Ítarlegt nota gamma-feril fyrir hvern skjá. Allar skjástillingar eru endurstilltar þegar forritinu er lokað og notaðar aftur við ræsingu.";
 "welcome.windows.tray" = "Opnaðu valmynd falinna tákna hægra megin á verkstikunni, finndu þetta tákn með bókarsíðum og dragðu það á sýnilega svæðið.";
 "welcome.windows.tray.title" = "Festa táknið á tilkynningasvæðinu";
+"error.operation" = "Ekki tókst að ljúka aðgerðinni. Stækkaðu skilaboðin til að sjá nánari upplýsingar.";

@@ -38,5 +38,6 @@
   "night.disable.warning": "Elektroninio rašalo ekranams rekomenduojame išjungti naktinį apšvietimą.",
   "help.windows": "Sodrumas ir RGB naudoja automatinį spalvų valdymą sistemoje Windows 11 24H2 arba naujesnėje, arba MHC2 profilio kelią Windows 10 komponavimo versijose 19041–19045. Teksto kontrastas, Vaizdo gerinimas ir Išplėstinės naudoja kiekvieno ekrano Gamma rampą. Visos ekrano korekcijos atkuriamos išeinant iš programos ir iš naujo pritaikomos ją paleidus.",
   "welcome.windows.tray": "Atverkite paslėptų piktogramų meniu užduočių juostos dešinėje, raskite šią knygos puslapių piktogramą ir nuvilkite ją į matomą sritį.",
-  "welcome.windows.tray.title": "Prisegti sistemos dėklo piktogramą"
+  "welcome.windows.tray.title": "Prisegti sistemos dėklo piktogramą",
+  "error.operation": "Nepavyko užbaigti operacijos. Išskleiskite, kad pamatytumėte išsamią informaciją."
 }

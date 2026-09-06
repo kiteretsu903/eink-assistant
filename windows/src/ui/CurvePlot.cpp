@@ -5,7 +5,7 @@
 
 namespace eink {
 
-CurvePlot::CurvePlot(QWidget *parent):QWidget(parent) { setMinimumHeight(96); setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed); }
+CurvePlot::CurvePlot(QWidget *parent):QWidget(parent) { setLayoutDirection(Qt::LeftToRight);setMinimumHeight(96); setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed); }
 
 void CurvePlot::paintEvent(QPaintEvent *) {
     QPainter p(this); p.setRenderHint(QPainter::Antialiasing,true); QRectF r=rect().adjusted(1,1,-1,-1);

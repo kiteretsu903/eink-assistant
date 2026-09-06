@@ -38,5 +38,6 @@
   "night.disable.warning": "Dla ekranów z papierem elektronicznym zalecamy wyłączenie wyświetlania nocnego.",
   "help.windows": "Nasycenie i RGB korzystają z automatycznego zarządzania kolorami w Windows 11 24H2 lub nowszym albo ze ścieżki profilu MHC2 w kompilacjach Windows 10 19041–19045. Kontrast tekstu, ulepszanie wideo i ustawienia zaawansowane korzystają z krzywej gamma dla każdego ekranu. Wszystkie zmiany obrazu są przywracane po zamknięciu aplikacji i stosowane ponownie przy uruchomieniu.",
   "welcome.windows.tray": "Otwórz menu ukrytych ikon po prawej stronie paska zadań, znajdź tę ikonę stron książki i przeciągnij ją do widocznego obszaru.",
-  "welcome.windows.tray.title": "Przypnij ikonę w zasobniku"
+  "welcome.windows.tray.title": "Przypnij ikonę w zasobniku",
+  "error.operation": "Nie udało się ukończyć operacji. Rozwiń komunikat, aby zobaczyć szczegóły."
 }

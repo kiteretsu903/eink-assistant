@@ -356,7 +356,7 @@ int main(int argc,char **argv) {
     }
 #endif
     QObject::connect(&tray,&QSystemTrayIcon::messageClicked,&panel,[&]{welcome.hide();panel.showPanel();});
-    QObject::connect(&controller,&ApplicationController::stateChanged,&tray,[&]{tray.setToolTip(L("app.title"));open->setText(L("app.title"));quit->setText(L("quit"));});
+    QObject::connect(&Localization::instance(),&Localization::languageChanged,&tray,[&]{tray.setToolTip(L("app.title"));open->setText(L("app.title"));quit->setText(L("quit"));});
     tray.show();
     QObject::connect(&welcome,&QDialog::finished,&panel,[&](int){panel.showPanelAfterTransientWindow();});
     const bool shouldShowWelcome=!backgroundLaunch&&controller.settings().showWelcome

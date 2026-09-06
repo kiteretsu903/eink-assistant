@@ -38,5 +38,6 @@
   "night.disable.warning": "Kwa skrini za e-ink, tunapendekeza kuzima Mwanga wa usiku.",
   "help.windows": "Ukolezi wa rangi na RGB hutumia Auto Color Management kwenye Windows 11 24H2 au mpya zaidi, au njia ya wasifu wa MHC2 kwenye Windows 10 matoleo 19041–19045. Utofauti wa maandishi, Uboreshaji wa video na mipangilio ya kina hutumia mkondo wa gamma kwa kila skrini. Marekebisho yote ya skrini hurejeshwa programu inapofungwa na kutumika tena inapoanzishwa.",
   "welcome.windows.tray": "Fungua menyu ya ikoni zilizofichwa upande wa kulia wa upau wa kazi, tafuta ikoni hii ya kurasa za kitabu, kisha iburute hadi eneo linaloonekana.",
-  "welcome.windows.tray.title": "Bandika ikoni ya eneo la taarifa"
+  "welcome.windows.tray.title": "Bandika ikoni ya eneo la taarifa",
+  "error.operation": "Haikuwezekana kukamilisha kitendo. Panua ili kuona maelezo."
 }

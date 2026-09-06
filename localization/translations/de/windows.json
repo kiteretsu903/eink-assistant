@@ -38,5 +38,6 @@
   "night.disable.warning": "Für E-Ink-Displays empfehlen wir, den Nachtmodus zu deaktivieren.",
   "help.windows": "Sättigung und RGB verwenden die automatische Farbverwaltung unter Windows 11 24H2 oder neuer beziehungsweise das MHC2-Profilverfahren unter Windows 10 Build 19041–19045. Textkontrast, Videoverbesserung und Erweitert verwenden eine Gamma-Rampe pro Display. Alle Displayanpassungen werden beim Beenden der App wiederhergestellt und beim Start erneut angewendet.",
   "welcome.windows.tray": "Öffnen Sie rechts in der Taskleiste das Menü für ausgeblendete Symbole, suchen Sie dieses Buchseitensymbol und ziehen Sie es in den sichtbaren Bereich.",
-  "welcome.windows.tray.title": "Symbol im Infobereich anheften"
+  "welcome.windows.tray.title": "Symbol im Infobereich anheften",
+  "error.operation": "Der Vorgang konnte nicht abgeschlossen werden. Blenden Sie weitere Details ein."
 }

@@ -38,5 +38,6 @@
   "night.disable.warning": "Elektron siyohli ekranlar uchun tungi yorug‘likni o‘chirishni tavsiya qilamiz.",
   "help.windows": "Rang to‘yinganligi va RGB Windows 11 24H2 yoki yangirog‘ida avtomatik rang boshqaruvidan yoki Windows 10 19041–19045 yig‘ilmalarida MHC2 profil usulidan foydalanadi. Matn kontrasti, videoni yaxshilash va kengaytirilgan sozlamalar har bir ekran uchun gamma jadvalidan foydalanadi. Barcha ekran o‘zgarishlari chiqishda tiklanadi va ishga tushirishda qayta qo‘llanadi.",
   "welcome.windows.tray": "Vazifalar satrining o‘ng tomonidagi yashirin belgilar menyusini oching, kitob sahifalari belgisini toping va uni ko‘rinadigan qismga sudrang.",
-  "welcome.windows.tray.title": "Tizim paneli belgisini mahkamlash"
+  "welcome.windows.tray.title": "Tizim paneli belgisini mahkamlash",
+  "error.operation": "Amalni yakunlab bo‘lmadi. Tafsilotlarni ko‘rish uchun kengaytiring."
 }

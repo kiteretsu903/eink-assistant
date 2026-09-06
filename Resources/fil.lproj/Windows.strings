@@ -40,3 +40,4 @@
 "help.windows" = "Gumagamit ang Saturation at RGB ng Auto Color Management sa Windows 11 24H2 o mas bago, o ng MHC2 profile na paraan sa Windows 10 build 19041–19045. Gumagamit ang Contrast ng Teksto, Pagpapahusay ng Video, at Advanced ng gamma ramp bawat display. Ibinabalik sa dati ang lahat ng pagsasaayos ng display kapag isinara ang app at muling inilalapat kapag sinimulan.";
 "welcome.windows.tray" = "Buksan ang menu ng mga nakatagong icon sa kanan ng taskbar, hanapin ang icon na ito na may mga pahina ng aklat, at i-drag ito papunta sa nakikitang bahagi.";
 "welcome.windows.tray.title" = "I-pin ang icon sa system tray";
+"error.operation" = "Hindi makumpleto ang operasyon. Palawakin upang makita ang mga detalye.";

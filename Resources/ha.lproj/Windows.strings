@@ -40,3 +40,4 @@
 "help.windows" = "Ƙarfin launi da RGB suna amfani da Sarrafa Launi ta Atomatik a Windows 11 24H2 ko sabuwa, ko hanyar bayanin launi MHC2 a ginin Windows 10 na 19041–19045. Bambancin hasken rubutu, Inganta bidiyo da Na ci gaba suna amfani da teburin gamma ga kowane allo. Ana maido da duk daidaitawar allo lokacin fita daga manhajar kuma a sake amfani da su lokacin buɗewa.";
 "welcome.windows.tray" = "Buɗe menu na ɓoyayyun alamomi a dama na sandar aiki, nemo wannan alamar shafukan littafi, sannan ja ta zuwa wurin da ake iya gani.";
 "welcome.windows.tray.title" = "Tsayar da alamar tiren tsarin";
+"error.operation" = "Ba a iya kammala aikin ba. Faɗaɗa don ganin cikakken bayani.";

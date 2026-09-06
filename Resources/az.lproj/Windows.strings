@@ -40,3 +40,4 @@
 "help.windows" = "Doyma və RGB Windows 11 24H2 və ya daha yeni versiyalarda avtomatik rəng idarəetməsindən, Windows 10-un 19041–19045 yığımlarında isə MHC2 profil üsulundan istifadə edir. Mətn kontrastı, Video yaxşılaşdırma və Qabaqcıl ayarlar ekranbaşına qamma cədvəlindən istifadə edir. Tətbiqdən çıxarkən bütün ekran tənzimləmələri geri qaytarılır, başladıqda yenidən tətbiq olunur.";
 "welcome.windows.tray" = "Tapşırıq panelinin sağındakı gizli nişanlar menyusunu açın, bu kitab səhifələri nişanını tapın və görünən sahəyə sürükləyin.";
 "welcome.windows.tray.title" = "Bildiriş sahəsi nişanını bərkidin";
+"error.operation" = "Əməliyyatı tamamlamaq mümkün olmadı. Təfərrüatları görmək üçün genişləndirin.";

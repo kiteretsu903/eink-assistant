@@ -40,3 +40,4 @@
 "help.windows" = "La saturation et RGB utilisent la gestion automatique des couleurs sous Windows 11 24H2 ou version ultérieure, ou la méthode de profil MHC2 sous Windows 10 builds 19041–19045. Le contraste du texte, l’amélioration vidéo et le mode avancé utilisent une rampe Gamma par écran. Tous les réglages d’affichage sont rétablis à la fermeture de l’application et réappliqués au lancement.";
 "welcome.windows.tray" = "Ouvrez le menu des icônes masquées à droite de la barre des tâches, repérez cette icône en forme de pages de livre, puis faites-la glisser dans la zone visible.";
 "welcome.windows.tray.title" = "Épingler l’icône de notification";
+"error.operation" = "L’opération n’a pas pu être terminée. Affichez les détails pour en savoir plus.";

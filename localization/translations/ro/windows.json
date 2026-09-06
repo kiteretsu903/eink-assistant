@@ -38,5 +38,6 @@
   "night.disable.warning": "Pentru ecranele e-ink, recomandăm dezactivarea Luminii de noapte.",
   "help.windows": "Saturație și RGB folosesc gestionarea automată a culorilor în Windows 11 24H2 sau versiunile ulterioare, ori metoda profilului MHC2 în Windows 10 compilările 19041–19045. Contrastul textului, Îmbunătățire video și Avansat folosesc o curbă gamma pentru fiecare ecran. Toate ajustările de afișare sunt restabilite la închiderea aplicației și reaplicate la lansare.",
   "welcome.windows.tray": "Deschideți meniul pictogramelor ascunse din dreapta barei de activități, găsiți această pictogramă cu pagini de carte, apoi trageți-o în zona vizibilă.",
-  "welcome.windows.tray.title": "Fixează pictograma în zona de notificare"
+  "welcome.windows.tray.title": "Fixează pictograma în zona de notificare",
+  "error.operation": "Operațiunea nu a putut fi finalizată. Extindeți pentru detalii."
 }

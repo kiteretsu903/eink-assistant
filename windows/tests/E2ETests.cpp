@@ -16,6 +16,9 @@
 #include <QFontInfo>
 #include <QLabel>
 #include <QImage>
+#include <QInputDialog>
+#include <QMenu>
+#include <QTimer>
 #include <QPainter>
 #include <QScrollArea>
 #include <QScrollBar>
@@ -35,6 +38,9 @@ class E2ETests : public QObject {
     Q_OBJECT
 private slots:
     void completeUserJourney();
+    void allLocalesNativeJourney();
+    void languageSwitchDuringSafetyTest();
+    void allLocalesExtendedControls();
     void windows7CapabilityPath();
     void windows10CompatibilityColorPath();
     void cloneModeWarningAndSingleOwner();
@@ -65,6 +71,142 @@ private slots:
     void nightLightTransitionKeepsPanelVisible();
     void buttonFocusFramesAreSuppressed();
 };
+
+
+
+
+void E2ETests::allLocalesExtendedControls() {
+    const QString captures=qEnvironmentVariable("EINK_LOCALE_CAPTURES");
+    if(!captures.isEmpty())QDir().mkpath(captures);
+    for(const auto &locale:Localization::locales()) {
+        QTemporaryDir dir;auto fake=std::make_unique<FakePlatform>();
+        ApplicationController controller(std::move(fake),SettingsStore(dir.filePath("extended.ini")));
+        controller.initialize();controller.setLanguage(locale.code);controller.setEink("fake-external",true);
+        controller.setAdvanced("fake-external",true);controller.saveCurve(0,ToneCurve::identity());controller.waitForPendingOperations();
+        MainPanel panel(&controller);panel.setConfigurationBusy(true);panel.showPanel();
+        QCoreApplication::processEvents();
+        auto *rgb=panel.findChild<QPushButton*>("rgb-toggle");QVERIFY(rgb);rgb->click();
+        panel.findChild<QPushButton*>("help-toggle")->click();
+        QCoreApplication::processEvents();QCoreApplication::sendPostedEvents(nullptr,QEvent::DeferredDelete);
+        auto *red=panel.findChild<QSlider*>("rgb-red");QVERIFY(red);
+        QCOMPARE(red->layoutDirection(),Qt::LeftToRight);
+        auto *gamma=panel.findChild<QSlider*>("curve-gamma");QVERIFY(gamma);
+        QCOMPARE(gamma->layoutDirection(),Qt::LeftToRight);
+        auto *scroll=panel.findChild<QScrollArea*>();QVERIFY(scroll);
+        if(!captures.isEmpty())QVERIFY(scroll->widget()->grab().save(captures+"/"+locale.code+"-expanded.png"));
+        auto *slot=panel.findChild<QPushButton*>("curve-slot-1");QVERIFY(slot);
+        bool inspected=false;
+        QTimer::singleShot(0,&panel,[&]{
+            auto *menu=qobject_cast<QMenu*>(QApplication::activePopupWidget());
+            if(!menu){QFAIL("Preset menu did not open");}
+            QCOMPARE(menu->actions().first()->text(),L("presets.rename"));
+            menu->setActiveAction(menu->actions().first());
+            QTimer::singleShot(0,&panel,[&]{
+                auto *dialog=qobject_cast<QInputDialog*>(QApplication::activeModalWidget());
+                if(!dialog){QFAIL("Rename dialog did not open");}
+                QCOMPARE(dialog->okButtonText(),L("presets.rename"));
+                QCOMPARE(dialog->cancelButtonText(),L("system.install.cancel"));
+                dialog->setTextValue(QString::fromUtf8("My curve / 曲線"));
+                Localization::instance().setLanguage("en");
+                QCOMPARE(dialog->okButtonText(),L("presets.rename"));
+                Localization::instance().setLanguage(locale.code);
+                QCOMPARE(dialog->okButtonText(),L("presets.rename"));
+                if(!captures.isEmpty())QVERIFY(dialog->grab().save(captures+"/"+locale.code+"-rename.png"));
+                inspected=true;dialog->accept();
+            });
+            QTest::keyClick(menu,Qt::Key_Return);
+        });
+        // Bound a failed nested dialog interaction without touching any real app.
+        QTimer::singleShot(3000,&panel,[]{
+            if(auto *dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget()))dialog->reject();
+            if(auto *menu=qobject_cast<QMenu*>(QApplication::activePopupWidget()))menu->close();
+        });
+        QVERIFY(QMetaObject::invokeMethod(slot,"customContextMenuRequested",Qt::DirectConnection,Q_ARG(QPoint,QPoint(4,4))));
+        QVERIFY(inspected);QCOMPARE(controller.settings().savedCurves[0].name,QString::fromUtf8("My curve / 曲線"));
+        panel.hide();controller.shutdown();QCoreApplication::sendPostedEvents(nullptr,QEvent::DeferredDelete);
+    }
+    Localization::instance().setLanguage("en");
+}
+
+void E2ETests::languageSwitchDuringSafetyTest() {
+    QTemporaryDir dir;auto fake=std::make_unique<FakePlatform>();auto *raw=fake.get();
+    auto &display=raw->displayList[0];display.acmSupported=false;display.acmEnabled=false;display.colorAdjustmentSupported=true;display.usesWindows10Mhc2=true;display.colorCapabilityFingerprint="translation-test";
+    ApplicationController controller(std::move(fake),SettingsStore(dir.filePath("safety.ini")));controller.initialize();controller.setEink("fake-external",true);controller.waitForPendingOperations();
+    controller.setColorSafetyTickIntervalForTests(100);
+    MainPanel panel(&controller);panel.showPanel();
+    controller.setExperimentalColorEnabled("fake-external",true);
+    QCOMPARE(controller.colorSafetyPhase("fake-external"),ColorSafetyPhase::Preparing);
+    Localization::instance().setLanguage("ar");QCoreApplication::processEvents();
+    QCOMPARE(panel.findChild<QLabel*>("color-safety-title")->text(),L("saturation.experimental.dialog.preparing.title"));
+    QTRY_COMPARE(controller.colorSafetyPhase("fake-external"),ColorSafetyPhase::AwaitingConfirmation);
+    controller.setColorSafetyTickIntervalForTests(60000);
+    const QString captures=qEnvironmentVariable("EINK_LOCALE_CAPTURES");
+    for(const auto &locale:Localization::locales()) {
+        Localization::instance().setLanguage(locale.code);QCoreApplication::processEvents();QCoreApplication::sendPostedEvents(nullptr,QEvent::DeferredDelete);
+        QCOMPARE(controller.colorSafetyPhase("fake-external"),ColorSafetyPhase::AwaitingConfirmation);
+        QCOMPARE(raw->colorSafetyConfirmCalls,0);QCOMPARE(raw->colorSafetyRollbackCalls,0);
+        QCOMPARE(panel.findChild<QLabel*>("color-safety-title")->text(),L("saturation.experimental.dialog.confirm.title"));
+        auto *confirm=panel.findChild<QPushButton*>("color-safety-confirm");
+        auto *rollback=panel.findChild<QPushButton*>("color-safety-rollback");
+        QVERIFY(confirm->isVisible());QVERIFY(rollback->isVisible());
+        if(!captures.isEmpty())QVERIFY(panel.grab().save(captures+"/"+locale.code+"-safety.png"));
+        if(QGuiApplication::platformName()!="offscreen") {
+            for(const auto &line:confirm->text().split(QLatin1Char('\n')))QVERIFY2(confirm->width()>=confirm->fontMetrics().horizontalAdvance(line)+20,qPrintable(locale.code));
+            QVERIFY2(panel.rect().contains(confirm->mapTo(&panel,QPoint(confirm->width()-1,confirm->height()-1))),qPrintable(locale.code+QString(" panel=%1x%2 button=%3,%4 %5x%6").arg(panel.width()).arg(panel.height()).arg(confirm->mapTo(&panel,QPoint()).x()).arg(confirm->mapTo(&panel,QPoint()).y()).arg(confirm->width()).arg(confirm->height())));
+        }
+    }
+    panel.findChild<QPushButton*>("color-safety-rollback")->click();
+    QTRY_COMPARE(controller.colorSafetyPhase("fake-external"),ColorSafetyPhase::Idle);
+    QCOMPARE(raw->colorSafetyRollbackCalls,1);panel.hide();controller.shutdown();Localization::instance().setLanguage("en");
+}
+
+void E2ETests::allLocalesNativeJourney() {
+    const QString captures=qEnvironmentVariable("EINK_LOCALE_CAPTURES");
+    if(!captures.isEmpty())QDir().mkpath(captures);
+    for(const auto &locale:Localization::locales()) {
+        QTemporaryDir dir;auto fake=std::make_unique<FakePlatform>();auto *raw=fake.get();
+        ApplicationController controller(std::move(fake),SettingsStore(dir.filePath("settings.ini")));
+        controller.initialize();controller.setLanguage(locale.code);controller.setEink("fake-external",true);controller.waitForPendingOperations();
+        MainPanel panel(&controller);panel.setConfigurationBusy(true);panel.showPanel();QTest::qWait(5);
+        QCoreApplication::sendPostedEvents(nullptr,QEvent::DeferredDelete);
+        auto *picker=panel.findChild<QComboBox*>("language-combo");QVERIFY(picker);QCOMPARE(picker->count(),81);
+        for(int i=0;i<Localization::locales().size();++i) {
+            QCOMPARE(picker->itemText(i+1),Localization::locales()[i].name);
+            QCOMPARE(picker->itemData(i+1).toString(),Localization::locales()[i].code);
+        }
+        QCOMPARE(picker->currentData().toString(),locale.code);
+        QCOMPARE(panel.layoutDirection(),locale.rightToLeft?Qt::RightToLeft:Qt::LeftToRight);
+        QCOMPARE(panel.findChild<QPushButton*>("quit-button")->text(),L("quit"));
+        auto *slider=panel.findChild<QSlider*>("saturation-slider");QVERIFY(slider);QCOMPARE(slider->layoutDirection(),Qt::LeftToRight);
+        if(QGuiApplication::platformName()!="offscreen") {
+            QVERIFY2(panel.width()<=panel.windowHandle()->screen()->availableGeometry().width(),qPrintable(locale.code));
+            for(auto *button:panel.findChildren<QPushButton*>()) {
+                if(!button->property("choice-button").toBool()||button->property("_einkPendingDelete").toBool())continue;
+                QFont selected=button->font();selected.setWeight(QFont::Black);
+                QVERIFY2(button->width()>=QFontMetrics(selected).horizontalAdvance(button->text())+12,qPrintable(locale.code+" "+button->text()));
+            }
+        }
+        if(!captures.isEmpty())QVERIFY(panel.grab().save(captures+"/"+locale.code+"-panel.png"));
+        WelcomeDialog welcome(&controller);welcome.show();QTest::qWait(5);
+        QCOMPARE(welcome.findChild<QLabel*>("welcome-tray-instructions")->text(),L("welcome.windows.tray"));
+        if(!captures.isEmpty())QVERIFY(welcome.grab().save(captures+"/"+locale.code+"-welcome.png"));
+        welcome.hide();
+        // Fail through the real controller boundary; technical detail is not a translated summary.
+        raw->nightLightSetResult=ApplyResult::fail("Diagnostic 0x1234 / GPU");controller.setNightLightDisabled(true);
+        QTRY_COMPARE(controller.lastError(),QString("Diagnostic 0x1234 / GPU"));
+        QCOMPARE(panel.findChild<QLabel*>("error-message")->text(),L("error.operation"));
+        auto *details=panel.findChild<QLabel*>("error-diagnostics");QVERIFY(details);QVERIFY(details->isHidden());
+        QCOMPARE(details->text(),controller.lastError());
+        panel.findChild<QPushButton*>("error-details-toggle")->click();QVERIFY(!details->isHidden());
+        // Language changes must not mutate tuning or the original diagnostic.
+        const double saturation=controller.settingsFor("fake-external").saturation;
+        Localization::instance().setLanguage("en");QCoreApplication::processEvents();
+        QCOMPARE(panel.layoutDirection(),Qt::LeftToRight);QCOMPARE(controller.settingsFor("fake-external").saturation,saturation);
+        QCOMPARE(welcome.findChild<QLabel*>("welcome-tray-instructions")->text(),L("welcome.windows.tray"));
+        panel.hide();controller.shutdown();QCoreApplication::sendPostedEvents(nullptr,QEvent::DeferredDelete);
+    }
+    Localization::instance().setLanguage("en");
+}
 
 void E2ETests::completeUserJourney(){QTemporaryDir dir;const QString path=dir.filePath(QStringLiteral("settings.ini"));auto fake=std::make_unique<FakePlatform>();FakePlatform *raw=fake.get();ApplicationController controller(std::move(fake),SettingsStore(path));controller.initialize();QSignalSpy operationStarted(&controller,&ApplicationController::operationStarted);QSignalSpy operationFinished(&controller,&ApplicationController::operationFinished);MainPanel panel(&controller);panel.show();QTest::qWait(50);
     auto *version=panel.findChild<QLabel*>(QStringLiteral("header-version"));QVERIFY(version);QCOMPARE(version->text(),QStringLiteral("v1.2 Windows"));
@@ -189,7 +331,7 @@ void E2ETests::widerLayoutKeepsLabelsVisible(){
 }
 
 void E2ETests::modeButtonsAreContinuousAndPanelUsesScreenHeight(){
-    if(QGuiApplication::platformName()==QStringLiteral("offscreen"))QSKIP("Native size-hint propagation is required for content-aware window height checks.");QTemporaryDir dir;auto fake=std::make_unique<FakePlatform>();ApplicationController controller(std::move(fake),SettingsStore(dir.filePath(QStringLiteral("height.ini"))));controller.initialize();controller.settingsFor(QStringLiteral("fake-external")).isEink=true;MainPanel panel(&controller);QScreen *screen=QGuiApplication::primaryScreen();QVERIFY(screen);panel.showPanel(screen);QCoreApplication::processEvents();const QRect available=screen->availableGeometry();QCOMPARE(panel.height(),available.height()-32);QCOMPARE(panel.frameGeometry().top()-available.top(),16);QCOMPARE(available.bottom()-panel.frameGeometry().bottom(),16);
+    if(QGuiApplication::platformName()==QStringLiteral("offscreen"))QSKIP("Native size-hint propagation is required for content-aware window height checks.");QTemporaryDir dir;auto fake=std::make_unique<FakePlatform>();ApplicationController controller(std::move(fake),SettingsStore(dir.filePath(QStringLiteral("height.ini"))));controller.initialize();controller.settingsFor(QStringLiteral("fake-external")).isEink=true;MainPanel panel(&controller);QScreen *screen=QGuiApplication::primaryScreen();QVERIFY(screen);panel.showPanel(screen);QCoreApplication::processEvents();const QRect available=screen->availableGeometry();QVERIFY(panel.height()<=available.height()-32);QVERIFY(panel.frameGeometry().top()-available.top()>=16);QCOMPARE(available.bottom()-panel.frameGeometry().bottom(),16);
     auto continuous=[&panel](const char *leftName,const char *rightName){auto *left=panel.findChild<QPushButton*>(QString::fromLatin1(leftName));auto *right=panel.findChild<QPushButton*>(QString::fromLatin1(rightName));QVERIFY(left);QVERIFY(right);const int leftRight=left->mapTo(&panel,QPoint(left->width(),0)).x();const int rightLeft=right->mapTo(&panel,QPoint(0,0)).x();QCOMPARE(rightLeft-leftRight,0);QCOMPARE(left->height(),right->height());QVERIFY(left->property("choice-button").toBool());QVERIFY(right->property("choice-button").toBool());};continuous("text-off","text-medium");continuous("text-medium","text-strong");continuous("video-off","video-subtle");continuous("video-subtle","video-medium");
     auto *selected=panel.findChild<QPushButton*>(QStringLiteral("text-off"));auto *unselected=panel.findChild<QPushButton*>(QStringLiteral("text-medium"));QVERIFY(selected&&selected->isChecked());QVERIFY(unselected&&!unselected->isChecked());QCOMPARE(selected->property("selected-font-weight").toInt(),static_cast<int>(QFont::Black));
     auto darkBottomDepth=[](QPushButton *button){const QImage image=button->grab().toImage().convertToFormat(QImage::Format_ARGB32);const int x=image.width()/2;int depth=0;for(int y=image.height()-1;y>=0;--y){if(qGray(image.pixel(x,y))<100)++depth;else if(depth)break;}return depth;};

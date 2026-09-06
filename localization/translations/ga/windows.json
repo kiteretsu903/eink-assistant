@@ -38,5 +38,6 @@
   "night.disable.warning": "Le haghaidh scáileáin e-ink, molaimid Solas Oíche a dhíchumasú.",
   "help.windows": "Úsáideann Sáithiú agus RGB Bainistiú Uathoibríoch Dathanna ar Windows 11 24H2 nó níos nuaí, nó modh próifíle MHC2 ar thógálacha Windows 10 19041–19045. Úsáideann Codarsnacht Téacs, Feabhsú Físeáin agus Ardroghanna rampa gáma in aghaidh an scáileáin. Athchóirítear gach coigeartú scáileáin nuair a scoireann an aip agus cuirtear i bhfeidhm arís iad nuair a thosaíonn sí.",
   "welcome.windows.tray": "Oscail roghchlár na ndeilbhíní folaithe ar dheis an tascbharra, aimsigh deilbhín seo leathanaigh an leabhair, ansin tarraing isteach sa limistéar infheicthe é.",
-  "welcome.windows.tray.title": "Pionnáil deilbhín an tráidire"
+  "welcome.windows.tray.title": "Pionnáil deilbhín an tráidire",
+  "error.operation": "Níorbh fhéidir an oibríocht a chur i gcrích. Leathnaigh chun sonraí a fheiceáil."
 }

@@ -38,5 +38,6 @@
   "night.disable.warning": "Za zaslone z e-črnilom priporočamo izklop Nočne svetlobe.",
   "help.windows": "Nasičenost in RGB uporabljata samodejno upravljanje barv v Windows 11 24H2 ali novejšem oziroma pot profila MHC2 v graditvah Windows 10 19041–19045. Kontrast besedila, Izboljšava videa in Napredno uporabljajo lestvico gama za posamezen zaslon. Vse prilagoditve zaslonov se ob izhodu iz aplikacije obnovijo in ob zagonu znova uveljavijo.",
   "welcome.windows.tray": "Odprite meni skritih ikon na desni strani opravilne vrstice, poiščite to ikono knjižnih strani in jo povlecite v vidno območje.",
-  "welcome.windows.tray.title": "Pripni ikono v območju za obvestila"
+  "welcome.windows.tray.title": "Pripni ikono v območju za obvestila",
+  "error.operation": "Operacije ni bilo mogoče dokončati. Razširite za podrobnosti."
 }

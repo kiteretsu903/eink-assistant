@@ -38,5 +38,6 @@
   "night.disable.warning": "Para monitores e-ink, recomendamos desativar a Luz noturna.",
   "help.windows": "Saturação e RGB usam o Gerenciamento Automático de Cores no Windows 11 24H2 ou posterior, ou o método de perfil MHC2 nas compilações 19041–19045 do Windows 10. Contraste do texto, Melhoria de vídeo e Avançado usam uma rampa de Gamma por monitor. Todos os ajustes de monitor são restaurados ao sair do app e reaplicados ao iniciar.",
   "welcome.windows.tray": "Abra o menu de ícones ocultos à direita da barra de tarefas, encontre este ícone de páginas de livro e arraste-o para a área visível.",
-  "welcome.windows.tray.title": "Fixar o ícone na bandeja"
+  "welcome.windows.tray.title": "Fixar o ícone na bandeja",
+  "error.operation": "Não foi possível concluir a operação. Expanda para ver os detalhes."
 }

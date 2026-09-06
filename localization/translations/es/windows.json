@@ -38,5 +38,6 @@
   "night.disable.warning": "Para pantallas de tinta electrónica, recomendamos desactivar la Luz nocturna.",
   "help.windows": "Saturación y RGB utilizan la administración automática del color en Windows 11 24H2 o posterior, o el método de perfil MHC2 en las compilaciones 19041–19045 de Windows 10. Contraste del texto, Mejora de vídeo y Avanzado utilizan una rampa gamma por pantalla. Todos los ajustes de pantalla se restauran al salir de la app y se vuelven a aplicar al abrirla.",
   "welcome.windows.tray": "Abre el menú de iconos ocultos a la derecha de la barra de tareas, busca este icono de páginas de libro y arrástralo a la zona visible.",
-  "welcome.windows.tray.title": "Fijar el icono de la bandeja"
+  "welcome.windows.tray.title": "Fijar el icono de la bandeja",
+  "error.operation": "No se pudo completar la operación. Amplía la información para ver los detalles."
 }

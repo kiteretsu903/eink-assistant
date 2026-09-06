@@ -7,8 +7,9 @@
 > **Active localization work:** the
 > [80-locale Windows handoff](docs/handoffs/multilingual-80.md) describes shared
 > translation resources and the native integration and verification still
-> required on Windows. Current Windows support remains the four locales below
-> until that work passes; shared translation files alone do not expand the app.
+> required on Windows. The development executable now integrates 80 locales. See the
+> [Windows results](docs/handoffs/multilingual-80-results.md) for validation and
+> remaining release acceptance. Published downloads and Setup retain four locales.
 
 **Version status:** Windows 1.2 source baseline, currently unreleased.
 
@@ -21,7 +22,7 @@ same core and UI can be reused by a later Linux backend.
 
 - **Windows 7 SP1 through Windows 11:** tray UI, display selection, Text
   Contrast, Video Enhance, Advanced curves and five saved presets, visual
-  effects controls, display reconnection handling, four UI languages, and
+  effects controls, display reconnection handling, 80 UI languages (development branch), and
   launch at login.
 - **Tray icon:** Windows decides whether the icon begins in the visible area or
   hidden-icons menu. The app does not modify private Explorer preferences. Its

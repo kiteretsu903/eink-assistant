@@ -38,5 +38,6 @@
   "night.disable.warning": "E-papír-kijelzőkhöz az Éjszakai fény kikapcsolását javasoljuk.",
   "help.windows": "A Telítettség és az RGB a Windows 11 24H2 vagy újabb verziókon automatikus színkezelést, a Windows 10 19041–19045 buildjein MHC2-profilokat használ. A Szövegkontraszt, a Videójavítás és a Haladó beállítások kijelzőnkénti gammatáblát használnak. Kilépéskor minden kijelzőmódosítás visszaáll, indításkor pedig újra életbe lép.",
   "welcome.windows.tray": "Nyissa meg a tálca jobb oldalán a rejtett ikonok menüjét, keresse meg ezt a könyvlapokat ábrázoló ikont, majd húzza a látható területre.",
-  "welcome.windows.tray.title": "Az értesítési terület ikonjának rögzítése"
+  "welcome.windows.tray.title": "Az értesítési terület ikonjának rögzítése",
+  "error.operation": "A műveletet nem sikerült befejezni. Bontsa ki az üzenetet a részletekért."
 }

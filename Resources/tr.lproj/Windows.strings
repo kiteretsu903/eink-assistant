@@ -40,3 +40,4 @@
 "help.windows" = "Doygunluk ve RGB, Windows 11 24H2 veya üzerinde Otomatik Renk Yönetimi'ni ya da Windows 10'un 19041–19045 derlemelerinde MHC2 profil yolunu kullanır. Metin Kontrastı, Video İyileştirme ve Gelişmiş, ekran başına bir gamma eğrisi kullanır. Tüm ekran ayarları uygulamadan çıkıldığında geri yüklenir ve başlatıldığında yeniden uygulanır.";
 "welcome.windows.tray" = "Görev çubuğunun sağındaki gizli simgeler menüsünü açın, bu kitap sayfaları simgesini bulun ve görünür alana sürükleyin.";
 "welcome.windows.tray.title" = "Tepsi simgesini sabitleyin";
+"error.operation" = "İşlem tamamlanamadı. Ayrıntılar için daha fazlasını gösterin.";

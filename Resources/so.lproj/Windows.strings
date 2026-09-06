@@ -40,3 +40,4 @@
 "help.windows" = "Dheregga midabka iyo RGB waxay Windows 11 24H2 ama ka cusub ku adeegsadaan maaraynta midabka tooska ah, ama habka borofaylka MHC2 ee Windows 10 dhismayaasha 19041–19045. Kontrastiga qoraalka, Hagaajinta fiidyowga iyo Sare waxay adeegsadaan jadwal gamma oo shaashad kasta u gaar ah. Dhammaan hagaajinnada shaashadda dib ayaa looga noqdaa marka abka laga baxo, mar kalena waa la dabaqaa marka la bilaabo.";
 "welcome.windows.tray" = "Fur liiska astaamaha qarsoon ee midigta barta hawsha, hel astaantan bogagga buugga ah, ka dibna u jiid qaybta muuqata.";
 "welcome.windows.tray.title" = "Ku dheji astaanta saxanka nidaamka";
+"error.operation" = "Hawsha lama dhammaystiri karin. Ballaadhi si aad faahfaahinta u aragto.";

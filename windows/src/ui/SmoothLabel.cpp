@@ -1,6 +1,7 @@
 #include "SmoothLabel.h"
 
 #include <QImage>
+#include <QStyle>
 #include <QPainter>
 #include <QtMath>
 
@@ -18,7 +19,8 @@ void SmoothLabel::paintEvent(QPaintEvent *event) {
     QPainter textPainter(&layer);
     textPainter.setRenderHint(QPainter::TextAntialiasing,true);
     textPainter.setFont(font());textPainter.setPen(palette().color(foregroundRole()));
-    int flags=int(alignment())|Qt::TextDontClip;
+    textPainter.setLayoutDirection(layoutDirection());
+    int flags=int(QStyle::visualAlignment(layoutDirection(),alignment()));
     if(wordWrap())flags|=Qt::TextWordWrap;
     textPainter.drawText(contentsRect(),flags,text());
     textPainter.end();

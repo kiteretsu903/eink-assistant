@@ -38,5 +38,6 @@
   "night.disable.warning": "Za zaslone s e-tintom preporučujemo isključivanje Noćnog svjetla.",
   "help.windows": "Zasićenost i RGB koriste automatsko upravljanje bojama u sustavu Windows 11 24H2 ili novijem ili put profila MHC2 u međuverzijama 19041–19045 sustava Windows 10. Kontrast teksta, Poboljšanje videa i Napredno koriste zasebnu rampu Gamma za svaki zaslon. Sve prilagodbe zaslona vraćaju se pri izlasku iz aplikacije i ponovno primjenjuju pri pokretanju.",
   "welcome.windows.tray": "Otvorite izbornik skrivenih ikona desno na programskoj traci, pronađite ovu ikonu stranica knjige, a zatim je povucite u vidljivo područje.",
-  "welcome.windows.tray.title": "Prikvači ikonu područja obavijesti"
+  "welcome.windows.tray.title": "Prikvači ikonu područja obavijesti",
+  "error.operation": "Radnju nije bilo moguće dovršiti. Proširite za pojedinosti."
 }

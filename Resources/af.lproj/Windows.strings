@@ -40,3 +40,4 @@
 "help.windows" = "Versadiging en RGB gebruik outomatiese kleurbestuur op Windows 11 24H2 of nuwer, of die MHC2-profielmetode op Windows 10-bounommers 19041–19045. Tekskontras, Videoverbetering en Gevorderd gebruik 'n gammahelling per skerm. Alle skermverstellings word herstel wanneer die toepassing afsluit en weer toegepas wanneer dit begin.";
 "welcome.windows.tray" = "Maak die versteekte-ikone-kieslys regs op die taakbalk oop, vind hierdie boekbladsye-ikoon en sleep dit na die sigbare gebied.";
 "welcome.windows.tray.title" = "Speld die stelselbakkie-ikoon vas";
+"error.operation" = "Die bewerking kon nie voltooi word nie. Vou oop om besonderhede te sien.";

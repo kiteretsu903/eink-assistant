@@ -41,7 +41,7 @@ QString displayLabel(const DisplayInfo &display) {
 
 class ScrollFriendlySlider final : public QSlider {
 public:
-    explicit ScrollFriendlySlider(Qt::Orientation orientation):QSlider(orientation) {}
+    explicit ScrollFriendlySlider(Qt::Orientation orientation):QSlider(orientation) {setLayoutDirection(Qt::LeftToRight);}
 protected:
     void wheelEvent(QWheelEvent *event) override {
         QWidget *ancestor=parentWidget();
@@ -76,6 +76,7 @@ protected:
         const QColor ink=isEnabled()?QColor(QStringLiteral("#202020")):QColor(QStringLiteral("#777777"));
         const qreal centerY=height()/2.0;
 
+        painter.save();if(isRightToLeft()){painter.translate(width(),0);painter.scale(-1,1);}
         const QRectF check(1.5,centerY-13,26,26);
         painter.setPen(QPen(ink,2.2));
         painter.setBrush(isChecked()?QColor(QStringLiteral("#147ee5")):Qt::white);
@@ -95,10 +96,10 @@ protected:
             painter.drawLine(QPointF(45.5,centerY+10),QPointF(57.5,centerY+10));
         }
 
-        painter.setPen(ink);painter.setFont(font());
-        const QRect textRect(76,0,qMax(0,width()-76),height());
+        painter.restore();painter.setPen(ink);painter.setFont(font());
+        const QRect textRect=QStyle::visualRect(layoutDirection(),rect(),QRect(76,0,qMax(0,width()-76),height()));
         const QString elided=fontMetrics().elidedText(text(),Qt::ElideRight,textRect.width());
-        style()->drawItemText(&painter,textRect,Qt::AlignLeft|Qt::AlignVCenter,palette(),isEnabled(),elided,QPalette::WindowText);
+        style()->drawItemText(&painter,textRect,QStyle::visualAlignment(layoutDirection(),Qt::AlignLeft)|Qt::AlignVCenter,palette(),isEnabled(),elided,QPalette::WindowText);
         if(hasFocus()) {
             QStyleOptionFocusRect focus;focus.initFrom(this);focus.rect=rect().adjusted(0,0,-1,-1);style()->drawPrimitive(QStyle::PE_FrameFocusRect,&focus,&painter,this);
         }
@@ -119,6 +120,12 @@ public:
         setProperty("segment-position",positionName);
     }
 
+public:
+    QSize minimumSizeHint() const override {return sizeHint();}
+    QSize sizeHint() const override {
+        QFont selected=font();selected.setWeight(QFont::Black);
+        return QSize(qMax(QPushButton::sizeHint().width(),QFontMetrics(selected).horizontalAdvance(text())+28),qMax(34,QFontMetrics(selected).height()+16));
+    }
 protected:
     void paintEvent(QPaintEvent *) override {
         QPainter painter(this);painter.setRenderHint(QPainter::Antialiasing,true);
@@ -127,6 +134,7 @@ protected:
         const QRectF bounds=QRectF(rect()).adjusted(1.25,1.25,-1.25,-1.25);
         constexpr qreal radius=6.0;
 
+        painter.save();if(isRightToLeft()){painter.translate(width(),0);painter.scale(-1,1);}
         QPainterPath fill;
         if(m_position==Position::Standalone)fill.addRoundedRect(bounds,radius,radius);
         else if(m_position==Position::First) {
@@ -165,7 +173,7 @@ protected:
             painter.drawLine(QPointF(bounds.left()+inset,bounds.bottom()-1.0),QPointF(bounds.right()-inset,bounds.bottom()-1.0));
         }
 
-        QFont textFont=font();textFont.setWeight(isChecked()?QFont::Black:QFont::Normal);painter.setFont(textFont);
+        painter.restore();QFont textFont=font();textFont.setWeight(isChecked()?QFont::Black:QFont::Normal);painter.setFont(textFont);
         style()->drawItemText(&painter,rect().adjusted(6,2,-6,-3),Qt::AlignCenter,palette(),isEnabled(),text(),QPalette::ButtonText);
     }
 
@@ -191,15 +199,15 @@ protected:
         const qreal centerY=height()/2.0;QPainterPath chevron;
         if(m_expanded){chevron.moveTo(11,centerY-3);chevron.lineTo(16,centerY+2);chevron.lineTo(21,centerY-3);}
         else {chevron.moveTo(13,centerY-5);chevron.lineTo(18,centerY);chevron.lineTo(13,centerY+5);}
-        painter.drawPath(chevron);
-        style()->drawItemText(&painter,rect().adjusted(28,0,-8,0),Qt::AlignLeft|Qt::AlignVCenter,palette(),isEnabled(),text(),QPalette::ButtonText);
+        painter.save();if(isRightToLeft()){painter.translate(width(),0);painter.scale(-1,1);}painter.drawPath(chevron);painter.restore();
+        style()->drawItemText(&painter,QStyle::visualRect(layoutDirection(),rect(),rect().adjusted(28,0,-8,0)),QStyle::visualAlignment(layoutDirection(),Qt::AlignLeft)|Qt::AlignVCenter,palette(),isEnabled(),text(),QPalette::ButtonText);
     }
 private:
     bool m_expanded=false;
 };
 
 QLabel *valueLabel(const QString &text) {
-    auto *v=new SmoothLabel(text); v->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+    auto *v=new SmoothLabel(text); v->setLayoutDirection(Qt::LeftToRight);v->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     QFont f=v->font(); f.setWeight(QFont::DemiBold); f.setPointSize(13); v->setFont(f); return v;
 }
 
@@ -313,7 +321,7 @@ QWidget *DisplayCard::rgbSection(const DisplaySettings &state) {
     else {reset=ui::outlinedButton(L("rgb.reset"),QStringLiteral("rgb-reset"));reset->setEnabled(!state.rgb.isIdentity());connect(reset,&QPushButton::clicked,this,[this,w,reset]{for(const char *name:{"rgb-red","rgb-green","rgb-blue"})if(auto *s=w->findChild<QSlider*>(QString::fromLatin1(name)))s->setValue(100);reset->setEnabled(false);m_controller->setRgb(m_info.stableId,RgbBalance{});});head->addWidget(reset);}v->addLayout(head);
     if(m_rgbExpanded){
         const auto updateReset=[w,reset]{const auto *r=w->findChild<QSlider*>(QStringLiteral("rgb-red"));const auto *g=w->findChild<QSlider*>(QStringLiteral("rgb-green"));const auto *b=w->findChild<QSlider*>(QStringLiteral("rgb-blue"));reset->setEnabled((r&&r->value()!=100)||(g&&g->value()!=100)||(b&&b->value()!=100));};
-        auto add=[&](const char *key,const char *name,double value,int channel){auto *row=new QHBoxLayout;auto *nameLabel=label(L(key),true);nameLabel->setFixedWidth(55);row->addWidget(nameLabel);auto *s=slider(0,200,qRound(value*100),QString::fromLatin1(name));row->addWidget(s,1);auto *val=valueLabel(QStringLiteral("%1%").arg(qRound(value*100)));val->setFixedWidth(48);row->addWidget(val);connect(s,&QSlider::valueChanged,val,[val,updateReset](int x){val->setText(QStringLiteral("%1%").arg(x));updateReset();});connect(s,&QSlider::sliderReleased,this,[this,s,channel]{RgbBalance rgb=m_controller->settingsFor(m_info.stableId).rgb;double x=s->value()/100.0;if(channel==0)rgb.red=x;else if(channel==1)rgb.green=x;else rgb.blue=x;m_controller->setRgb(m_info.stableId,rgb);});v->addLayout(row);};
+        auto add=[&](const char *key,const char *name,double value,int channel){auto *row=new QHBoxLayout;auto *nameLabel=label(L(key),true);nameLabel->setMinimumWidth(qMax(55,nameLabel->fontMetrics().horizontalAdvance(nameLabel->text())+4));row->addWidget(nameLabel);auto *s=slider(0,200,qRound(value*100),QString::fromLatin1(name));row->addWidget(s,1);auto *val=valueLabel(QStringLiteral("%1%").arg(qRound(value*100)));val->setFixedWidth(48);row->addWidget(val);connect(s,&QSlider::valueChanged,val,[val,updateReset](int x){val->setText(QStringLiteral("%1%").arg(x));updateReset();});connect(s,&QSlider::sliderReleased,this,[this,s,channel]{RgbBalance rgb=m_controller->settingsFor(m_info.stableId).rgb;double x=s->value()/100.0;if(channel==0)rgb.red=x;else if(channel==1)rgb.green=x;else rgb.blue=x;m_controller->setRgb(m_info.stableId,rgb);});v->addLayout(row);};
         add("rgb.red","rgb-red",state.rgb.red,0);add("rgb.green","rgb-green",state.rgb.green,1);add("rgb.blue","rgb-blue",state.rgb.blue,2);
     }
     return w;
@@ -344,7 +352,7 @@ QWidget *DisplayCard::advancedSection(const DisplaySettings &state) {
     add("curve.knee","curve-knee",state.customCurve.knee,.05,1,0);add("curve.gamma","curve-gamma",state.customCurve.gamma,.30,6,1);add("curve.black","curve-black",state.customCurve.blackPoint,0,.40,2);add("curve.white","curve-white",state.customCurve.whitePoint,.60,1,3);
     auto *resetRow=new QHBoxLayout;resetRow->addStretch();auto *reset=ui::outlinedButton(L("advanced.reset"),QStringLiteral("curve-reset"));connect(reset,&QPushButton::clicked,this,[this]{m_controller->setCustomCurve(m_info.stableId,ToneCurve::identity());QTimer::singleShot(0,this,&DisplayCard::rebuild);});resetRow->addWidget(reset);v->addLayout(resetRow);
     v->addWidget(label(L("presets.title"),true));auto *slotLayout=new QHBoxLayout;
-    for(int i=0;i<5;++i){const SavedCurve saved=m_controller->settings().savedCurves.value(i);auto *b=ui::outlinedButton(saved.occupied?(saved.name.isEmpty()?QString::number(i+1):saved.name):QStringLiteral("+"),QStringLiteral("curve-slot-%1").arg(i+1));connect(b,&QPushButton::clicked,this,[this,i,saved]{if(saved.occupied)m_controller->applySavedCurve(i,m_info.stableId);else m_controller->saveCurve(i,m_controller->settingsFor(m_info.stableId).customCurve);});b->setContextMenuPolicy(Qt::CustomContextMenu);connect(b,&QWidget::customContextMenuRequested,this,[this,b,i,saved](const QPoint &p){if(!saved.occupied)return;QMenu menu;auto *rename=menu.addAction(L("presets.rename"));auto *overwrite=menu.addAction(L("presets.overwrite"));auto *clear=menu.addAction(L("presets.clear"));QAction *chosen=menu.exec(b->mapToGlobal(p));if(chosen==rename){bool ok=false;QString name=QInputDialog::getText(this,L("presets.rename"),L("presets.rename"),QLineEdit::Normal,saved.name,&ok);if(ok)m_controller->renameCurve(i,name);}else if(chosen==overwrite)m_controller->saveCurve(i,m_controller->settingsFor(m_info.stableId).customCurve);else if(chosen==clear)m_controller->clearCurve(i);});slotLayout->addWidget(b,1);}v->addLayout(slotLayout);v->addWidget(label(L("presets.hint"),false,true));return w;
+    for(int i=0;i<5;++i){const SavedCurve saved=m_controller->settings().savedCurves.value(i);auto *b=ui::outlinedButton(saved.occupied?(saved.name.isEmpty()?QString::number(i+1):saved.name):QStringLiteral("+"),QStringLiteral("curve-slot-%1").arg(i+1));connect(b,&QPushButton::clicked,this,[this,i,saved]{if(saved.occupied)m_controller->applySavedCurve(i,m_info.stableId);else m_controller->saveCurve(i,m_controller->settingsFor(m_info.stableId).customCurve);});b->setContextMenuPolicy(Qt::CustomContextMenu);connect(b,&QWidget::customContextMenuRequested,this,[this,b,i,saved](const QPoint &p){if(!saved.occupied)return;QMenu menu;auto *rename=menu.addAction(L("presets.rename"));auto *overwrite=menu.addAction(L("presets.overwrite"));auto *clear=menu.addAction(L("presets.clear"));QAction *chosen=menu.exec(b->mapToGlobal(p));if(chosen==rename){QInputDialog dialog(this);dialog.setObjectName(QStringLiteral("preset-rename-dialog"));dialog.setWindowTitle(L("presets.rename"));dialog.setLabelText(L("presets.rename"));dialog.setTextValue(saved.name);dialog.setOkButtonText(L("presets.rename"));dialog.setCancelButtonText(L("system.install.cancel"));connect(&Localization::instance(),&Localization::languageChanged,&dialog,[&dialog]{dialog.setWindowTitle(L("presets.rename"));dialog.setLabelText(L("presets.rename"));dialog.setOkButtonText(L("presets.rename"));dialog.setCancelButtonText(L("system.install.cancel"));});if(dialog.exec()==QDialog::Accepted)m_controller->renameCurve(i,dialog.textValue());}else if(chosen==overwrite)m_controller->saveCurve(i,m_controller->settingsFor(m_info.stableId).customCurve);else if(chosen==clear)m_controller->clearCurve(i);});slotLayout->addWidget(b,1);}v->addLayout(slotLayout);v->addWidget(label(L("presets.hint"),false,true));return w;
 }
 
 QWidget *DisplayCard::curveSection(const DisplaySettings &state) {

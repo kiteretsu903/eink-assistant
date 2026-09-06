@@ -38,5 +38,6 @@
   "night.disable.warning": "e-ink pantailetarako Gaueko argia desaktibatzea gomendatzen dugu.",
   "help.windows": "Saturazioak eta RGBk kolore-kudeaketa automatikoa erabiltzen dute Windows 11 24H2 edo berriagoan, edo MHC2 profilaren bidea Windows 10eko 19041–19045 konpilazioetan. Testuaren kontrasteak, Irudia hobetu aukerak eta Aurreratuak pantaila bakoitzaren gamma-taula erabiltzen dute. Pantailen doikuntza guztiak aplikaziotik irtetean leheneratzen dira, eta abiaraztean berriro aplikatzen dira.",
   "welcome.windows.tray": "Ireki ataza-barraren eskuineko ezkutuko ikonoen menua, bilatu liburu-orrien ikono hau eta arrastatu ikusgai dagoen eremura.",
-  "welcome.windows.tray.title": "Ainguratu sistemaren erretiluko ikonoa"
+  "welcome.windows.tray.title": "Ainguratu sistemaren erretiluko ikonoa",
+  "error.operation": "Ezin izan da eragiketa osatu. Zabaldu xehetasunak ikusteko."
 }

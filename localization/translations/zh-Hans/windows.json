@@ -38,5 +38,6 @@
   "night.disable.warning": "建议在墨水屏上禁用夜间模式。",
   "help.windows": "饱和度和 RGB 在 Windows 11 24H2 或更高版本上使用自动色彩管理，在 Windows 10 19041–19045 上使用 MHC2 配置文件路径。文字对比度、视频暗部增强和高级模式使用每显示器伽马表。退出应用时恢复所有显示调整，启动时重新应用。",
   "welcome.windows.tray.title": "固定任务栏图标",
-  "welcome.windows.tray": "打开任务栏右侧的隐藏图标菜单，找到这个书页图标，再拖到任务栏固定区域。"
+  "welcome.windows.tray": "打开任务栏右侧的隐藏图标菜单，找到这个书页图标，再拖到任务栏固定区域。",
+  "error.operation": "无法完成操作。展开查看详细信息。"
 }

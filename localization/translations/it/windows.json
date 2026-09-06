@@ -38,5 +38,6 @@
   "night.disable.warning": "Per gli schermi e-ink, consigliamo di disattivare Luce notturna.",
   "help.windows": "Saturazione e RGB usano la gestione automatica del colore su Windows 11 24H2 o successivo, oppure il percorso del profilo MHC2 su Windows 10 build 19041–19045. Contrasto del testo, Miglioramento video e Avanzate usano una rampa gamma per singolo schermo. Tutte le regolazioni degli schermi vengono ripristinate all'uscita dall'app e riapplicate all'avvio.",
   "welcome.windows.tray": "Apri il menu delle icone nascoste a destra della barra delle applicazioni, trova questa icona con le pagine di un libro e trascinala nell'area visibile.",
-  "welcome.windows.tray.title": "Fissa l'icona nell'area di notifica"
+  "welcome.windows.tray.title": "Fissa l'icona nell'area di notifica",
+  "error.operation": "Impossibile completare l’operazione. Espandi per visualizzare i dettagli."
 }

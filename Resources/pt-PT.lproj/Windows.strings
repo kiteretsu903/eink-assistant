@@ -40,3 +40,4 @@
 "help.windows" = "Saturação e RGB utilizam a gestão automática de cores no Windows 11 24H2 ou posterior, ou o método de perfil MHC2 nas compilações 19041–19045 do Windows 10. Contraste do texto, Melhoria de vídeo e Avançado utilizam uma rampa gamma por ecrã. Todos os ajustes do ecrã são restaurados ao sair da aplicação e reaplicados ao abrir.";
 "welcome.windows.tray" = "Abra o menu de ícones ocultos à direita da barra de tarefas, encontre este ícone de páginas de livro e arraste-o para a área visível.";
 "welcome.windows.tray.title" = "Fixar o ícone na área de notificação";
+"error.operation" = "Não foi possível concluir a operação. Expanda para ver os detalhes.";

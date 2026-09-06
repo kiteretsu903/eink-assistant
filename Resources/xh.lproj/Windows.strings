@@ -40,3 +40,4 @@
 "help.windows" = "Ukutyeba kombala neRGB zisebenzisa ulawulo lombala oluzenzekelayo kwiWindows 11 24H2 okanye entsha, okanye indlela yeprofayile yeMHC2 kwiWindows 10 iinguqulelo 19041–19045. Umahluko wombhalo, Ukuphucula ividiyo neZongezelelekileyo zisebenzisa igophe legamma kwisikrini ngasinye. Lonke uhlengahlengiso lwesikrini lubuyiselwa xa uphuma kwi-app luze lufakwe kwakhona xa uqalisa.";
 "welcome.windows.tray" = "Vula imenyu yee-ayikhoni ezifihliweyo ngasekunene kwebha yemisebenzi, fumana le ayikhoni yamaphepha encwadi, uze uyitsalele kwindawo ebonakalayo.";
 "welcome.windows.tray.title" = "Qhoboshela i-ayikhoni kwitreyi";
+"error.operation" = "Umsebenzi awukwazanga ukugqitywa. Yandisa ukuze ubone iinkcukacha.";

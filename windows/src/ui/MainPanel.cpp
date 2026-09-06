@@ -22,6 +22,7 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QTimer>
+#include <QTextLayout>
 #include <QVBoxLayout>
 #include <QWindow>
 
@@ -29,6 +30,13 @@ namespace eink {
 namespace {
 
 constexpr int kPanelWidth=680;
+
+QString wrappedActionText(const QString &text,const QFont &font,int width) {
+    QTextLayout layout(text,font);QTextOption option;option.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);layout.setTextOption(option);
+    QStringList lines;layout.beginLayout();
+    while(true){QTextLine line=layout.createLine();if(!line.isValid())break;line.setLineWidth(qMax(40,width));lines.append(text.mid(line.textStart(),line.textLength()).trimmed());}
+    layout.endLayout();return lines.join(QLatin1Char('\n'));
+}
 
 QString markdownEmphasisHtml(const QString &text) {
     const QString escaped=text.toHtmlEscaped();QString result;int cursor=0;
@@ -75,7 +83,7 @@ private:
 
 MainPanel::MainPanel(ApplicationController *controller,QWidget *parent):QWidget(parent),m_controller(controller) {
     setObjectName(QStringLiteral("main-panel")); setWindowTitle(L("app.title")); setWindowIcon(QIcon(QStringLiteral(":/app-icon.png")));
-    setWindowFlags(Qt::Tool|Qt::FramelessWindowHint|Qt::WindowStaysOnTopHint);setAttribute(Qt::WA_TranslucentBackground);setAutoFillBackground(false);setMinimumWidth(660);resize(kPanelWidth,720);setStyleSheet(ui::styleSheet()+QStringLiteral("QWidget#main-panel{border:0;background:transparent;}"));
+    setWindowFlags(Qt::Tool|Qt::FramelessWindowHint|Qt::WindowStaysOnTopHint);setAttribute(Qt::WA_TranslucentBackground);setAutoFillBackground(false);setMinimumWidth(0);resize(kPanelWidth,720);setStyleSheet(ui::styleSheet()+QStringLiteral("QWidget#main-panel{border:0;background:transparent;}"));
     auto *root=new QVBoxLayout(this);root->setContentsMargins(9,9,9,9);root->setSpacing(0);
     auto *header=new QWidget;header->setFixedHeight(59);auto *headerLayout=new QHBoxLayout(header);headerLayout->setContentsMargins(18,10,18,10);
     auto *title=makeLabel(L("app.title"),true);title->setObjectName(QStringLiteral("header-title"));QFont titleFont=title->font();titleFont.setPointSize(17);title->setFont(titleFont);headerLayout->addWidget(title);auto *version=makeLabel(QStringLiteral("v1.2 Windows"),false,true);version->setObjectName(QStringLiteral("header-version"));version->setWordWrap(false);version->setMinimumWidth(version->fontMetrics().horizontalAdvance(version->text())+2);headerLayout->addWidget(version);headerLayout->addStretch();
@@ -83,11 +91,18 @@ MainPanel::MainPanel(ApplicationController *controller,QWidget *parent):QWidget(
     auto *minimize=ui::outlinedButton(QStringLiteral("−"),QStringLiteral("minimize-button"));minimize->setFixedWidth(42);minimize->setFocusPolicy(Qt::NoFocus);minimize->setToolTip(L("minimize"));minimize->setAccessibleName(L("minimize"));connect(minimize,&QPushButton::clicked,this,&QWidget::hide);headerLayout->addWidget(minimize);auto *quit=ui::outlinedButton(L("quit"),QStringLiteral("quit-button"));connect(quit,&QPushButton::clicked,this,&MainPanel::quitRequested);headerLayout->addWidget(quit);root->addWidget(header);root->addWidget(ui::divider());
     m_scroll=new QScrollArea;m_scroll->setWidgetResizable(true);m_scroll->setMinimumHeight(0);m_scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);m_content=new QWidget;m_contentLayout=new QVBoxLayout(m_content);m_contentLayout->setSizeConstraint(QLayout::SetMinimumSize);m_contentLayout->setContentsMargins(18,16,18,18);m_contentLayout->setSpacing(16);m_scroll->setWidget(m_content);root->addWidget(m_scroll);setupColorSafetyOverlay();
     connect(m_controller,&ApplicationController::displaysChanged,this,[this]{if(m_rebuildPending)return;m_rebuildPending=true;QTimer::singleShot(0,this,[this]{m_rebuildPending=false;rebuildContent();});});
-    connect(m_controller,&ApplicationController::errorChanged,this,[this](const QString &message){if(m_error){m_error->setText(message);m_error->show();}});
+    connect(m_controller,&ApplicationController::errorChanged,this,[this](const QString &message){if(m_error){m_error->setText(L("error.operation"));m_error->setToolTip(message);m_error->show();if(m_errorDetails)m_errorDetails->setText(message);if(m_errorToggle)m_errorToggle->show();}});
     connect(m_controller,&ApplicationController::nightLightOperationFinished,this,[this]{m_nightLightTransitionActive=false;if(!isVisible())return;QTimer::singleShot(0,this,[this]{if(isVisible()){raise();activateWindow();}});});
     connect(m_controller,&ApplicationController::colorSafetyStateChanged,this,&MainPanel::updateColorSafetyOverlay);
     qApp->installEventFilter(this);
     Localization::instance().setLanguage(m_controller->settings().language); rebuildContent();
+    connect(&Localization::instance(),&Localization::languageChanged,this,[this]{
+        QTimer::singleShot(0,this,[this]{
+            rebuildContent();
+            if(isVisible())placeOnScreen(windowHandle()?windowHandle()->screen():QGuiApplication::primaryScreen());
+            if(!m_colorSafetyDisplayId.isEmpty())updateColorSafetyOverlay(m_colorSafetyDisplayId,m_controller->colorSafetyPhase(m_colorSafetyDisplayId),m_controller->colorSafetySecondsRemaining(m_colorSafetyDisplayId));
+        });
+    });
 }
 
 QLabel *MainPanel::makeLabel(const QString &text,bool heading,bool secondary) {auto *l=new SmoothLabel(text);l->setWordWrap(true);if(heading)l->setProperty("heading",true);if(secondary)l->setProperty("secondary",true);return l;}
@@ -138,16 +153,24 @@ QWidget *MainPanel::helpSection() {
 
 void MainPanel::setupColorSafetyOverlay() {
     m_colorSafetyOverlay=new QWidget(this);m_colorSafetyOverlay->setObjectName(QStringLiteral("color-safety-overlay"));m_colorSafetyOverlay->setAttribute(Qt::WA_StyledBackground,true);m_colorSafetyOverlay->setStyleSheet(QStringLiteral("QWidget#color-safety-overlay{background:rgba(0,0,0,145);border-radius:10px;}QFrame#color-safety-dialog{background:white;border:3px solid #202020;border-radius:10px;}QFrame#color-safety-dialog QLabel{background:transparent;border:0;}"));
-    auto *overlayLayout=new QVBoxLayout(m_colorSafetyOverlay);overlayLayout->setContentsMargins(30,30,30,30);overlayLayout->addStretch();auto *dialog=new QFrame;dialog->setObjectName(QStringLiteral("color-safety-dialog"));dialog->setMinimumSize(430,240);dialog->setMaximumWidth(510);auto *dialogLayout=new QVBoxLayout(dialog);dialogLayout->setContentsMargins(24,22,24,22);dialogLayout->setSpacing(14);
+    auto *overlayLayout=new QVBoxLayout(m_colorSafetyOverlay);overlayLayout->setSizeConstraint(QLayout::SetNoConstraint);overlayLayout->setContentsMargins(30,30,30,30);overlayLayout->addStretch();auto *dialog=new QFrame;dialog->setObjectName(QStringLiteral("color-safety-dialog"));dialog->setMinimumSize(430,240);dialog->setMaximumWidth(16777215);auto *dialogLayout=new QVBoxLayout(dialog);dialogLayout->setContentsMargins(24,22,24,22);dialogLayout->setSpacing(14);
     m_colorSafetyTitle=makeLabel(QString(),true);m_colorSafetyTitle->setObjectName(QStringLiteral("color-safety-title"));m_colorSafetyTitle->setAlignment(Qt::AlignCenter);QFont titleFont=m_colorSafetyTitle->font();titleFont.setPointSize(19);titleFont.setWeight(QFont::Black);m_colorSafetyTitle->setFont(titleFont);dialogLayout->addWidget(m_colorSafetyTitle);
     m_colorSafetyCountdown=makeLabel(QString(),true);m_colorSafetyCountdown->setObjectName(QStringLiteral("color-safety-countdown"));m_colorSafetyCountdown->setAlignment(Qt::AlignCenter);QFont countdownFont=m_colorSafetyCountdown->font();countdownFont.setPointSize(32);countdownFont.setWeight(QFont::Black);m_colorSafetyCountdown->setFont(countdownFont);m_colorSafetyCountdown->setStyleSheet(QStringLiteral("font-size:32pt;font-weight:900;color:#202020;"));dialogLayout->addWidget(m_colorSafetyCountdown);
     m_colorSafetyMessage=makeLabel(QString(),false,true);m_colorSafetyMessage->setObjectName(QStringLiteral("color-safety-message"));m_colorSafetyMessage->setAlignment(Qt::AlignCenter);dialogLayout->addWidget(m_colorSafetyMessage);
-    m_colorSafetyActions=new QWidget;m_colorSafetyActions->setObjectName(QStringLiteral("color-safety-actions"));auto *actions=new QHBoxLayout(m_colorSafetyActions);actions->setContentsMargins(0,2,0,0);actions->setSpacing(12);m_colorSafetyRollback=ui::outlinedButton(QString(),QStringLiteral("color-safety-rollback"));m_colorSafetyConfirm=ui::outlinedButton(QString(),QStringLiteral("color-safety-confirm"));m_colorSafetyRollback->setFixedHeight(42);m_colorSafetyConfirm->setFixedHeight(42);QFont confirmFont=m_colorSafetyConfirm->font();confirmFont.setWeight(QFont::Black);m_colorSafetyConfirm->setFont(confirmFont);m_colorSafetyConfirm->setStyleSheet(QStringLiteral("QPushButton{background:#c62828;color:white;border:3px solid #8e0000;font-weight:900;padding:8px 14px;}QPushButton:hover{background:#b71c1c;}QPushButton:pressed{background:#8e0000;}"));connect(m_colorSafetyRollback,&QPushButton::clicked,this,[this]{const QString displayId=m_colorSafetyDisplayId;if(!displayId.isEmpty())m_controller->rollbackExperimentalColor(displayId);});connect(m_colorSafetyConfirm,&QPushButton::clicked,this,[this]{const QString displayId=m_colorSafetyDisplayId;if(!displayId.isEmpty())m_controller->confirmExperimentalColor(displayId);});actions->addStretch();actions->addWidget(m_colorSafetyRollback);actions->addWidget(m_colorSafetyConfirm);actions->addStretch();dialogLayout->addWidget(m_colorSafetyActions);overlayLayout->addWidget(dialog,0,Qt::AlignHCenter);overlayLayout->addStretch();m_colorSafetyOverlay->setGeometry(rect());m_colorSafetyOverlay->hide();
+    m_colorSafetyActions=new QWidget;m_colorSafetyActions->setObjectName(QStringLiteral("color-safety-actions"));auto *actions=new QVBoxLayout(m_colorSafetyActions);actions->setContentsMargins(0,2,0,0);actions->setSpacing(12);m_colorSafetyRollback=ui::outlinedButton(QString(),QStringLiteral("color-safety-rollback"));m_colorSafetyConfirm=ui::outlinedButton(QString(),QStringLiteral("color-safety-confirm"));m_colorSafetyRollback->setMinimumHeight(42);m_colorSafetyConfirm->setMinimumHeight(42);QFont confirmFont=m_colorSafetyConfirm->font();confirmFont.setWeight(QFont::Black);m_colorSafetyConfirm->setFont(confirmFont);m_colorSafetyConfirm->setStyleSheet(QStringLiteral("QPushButton{background:#c62828;color:white;border:3px solid #8e0000;font-weight:900;padding:8px 14px;}QPushButton:hover{background:#b71c1c;}QPushButton:pressed{background:#8e0000;}"));connect(m_colorSafetyRollback,&QPushButton::clicked,this,[this]{const QString displayId=m_colorSafetyDisplayId;if(!displayId.isEmpty())m_controller->rollbackExperimentalColor(displayId);});connect(m_colorSafetyConfirm,&QPushButton::clicked,this,[this]{const QString displayId=m_colorSafetyDisplayId;if(!displayId.isEmpty())m_controller->confirmExperimentalColor(displayId);});actions->addStretch();actions->addWidget(m_colorSafetyRollback);actions->addWidget(m_colorSafetyConfirm);actions->addStretch();dialogLayout->addWidget(m_colorSafetyActions);overlayLayout->addWidget(dialog,0,Qt::AlignHCenter);overlayLayout->addStretch();m_colorSafetyOverlay->setGeometry(rect());m_colorSafetyOverlay->hide();
 }
 
 void MainPanel::updateColorSafetyOverlay(const QString &displayId,ColorSafetyPhase phase,int secondsRemaining) {
     if(phase==ColorSafetyPhase::Idle){m_colorSafetyPromptActive=false;m_colorSafetyDisplayId.clear();m_colorSafetyOverlay->hide();return;}
-    m_colorSafetyPromptActive=true;m_colorSafetyDisplayId=displayId;const bool confirming=phase==ColorSafetyPhase::AwaitingConfirmation;m_colorSafetyTitle->setText(L(confirming?"saturation.experimental.dialog.confirm.title":"saturation.experimental.dialog.preparing.title"));m_colorSafetyMessage->setText(L(confirming?"saturation.experimental.dialog.confirm.body":"saturation.experimental.dialog.preparing.body"));QString countdown=L("saturation.experimental.seconds");countdown.replace(QStringLiteral("%1"),QString::number(secondsRemaining));m_colorSafetyCountdown->setText(countdown);m_colorSafetyRollback->setText(L("saturation.experimental.rollback"));m_colorSafetyConfirm->setText(L("saturation.experimental.confirmButton"));m_colorSafetyActions->setVisible(confirming);m_colorSafetyOverlay->setGeometry(rect());m_colorSafetyOverlay->show();m_colorSafetyOverlay->raise();
+    for(auto *label:{m_colorSafetyTitle,m_colorSafetyMessage,m_colorSafetyCountdown}){QFont font=label->font();font.setFamily(QApplication::font().family());label->setFont(font);}
+    m_colorSafetyPromptActive=true;m_colorSafetyDisplayId=displayId;const bool confirming=phase==ColorSafetyPhase::AwaitingConfirmation;m_colorSafetyTitle->setText(L(confirming?"saturation.experimental.dialog.confirm.title":"saturation.experimental.dialog.preparing.title"));m_colorSafetyMessage->setText(L(confirming?"saturation.experimental.dialog.confirm.body":"saturation.experimental.dialog.preparing.body"));QString countdown=L("saturation.experimental.seconds");countdown.replace(QStringLiteral("%1"),QString::number(secondsRemaining));m_colorSafetyCountdown->setText(countdown);m_colorSafetyRollback->setText(L("saturation.experimental.rollback"));m_colorSafetyConfirm->setText(L("saturation.experimental.confirmButton"));auto *dialog=m_colorSafetyOverlay->findChild<QWidget*>(QStringLiteral("color-safety-dialog"));if(dialog)dialog->setFixedWidth(qMax(1,width()-60));
+    int actionHeight=42;
+    for(auto *button:{m_colorSafetyRollback,m_colorSafetyConfirm}) {
+        QFont font=button->font();font.setFamily(QApplication::font().family());button->setFont(font);button->ensurePolished();
+        button->setText(wrappedActionText(button->text(),button->font(),width()-160));
+        const int lines=button->text().count(QLatin1Char('\n'))+1;
+        actionHeight=qMax(actionHeight,lines*button->fontMetrics().lineSpacing()+28);
+    }m_colorSafetyRollback->setFixedHeight(actionHeight);m_colorSafetyConfirm->setFixedHeight(actionHeight);m_colorSafetyActions->setVisible(confirming);m_colorSafetyOverlay->setMinimumSize(0,0);m_colorSafetyOverlay->setGeometry(rect());m_colorSafetyOverlay->layout()->invalidate();m_colorSafetyOverlay->layout()->activate();m_colorSafetyOverlay->show();m_colorSafetyOverlay->raise();
 }
 
 QWidget *MainPanel::hardwareSetupNoticeSection() {
@@ -159,7 +182,14 @@ QWidget *MainPanel::hardwareSetupNoticeSection() {
 }
 
 void MainPanel::rebuildContent() {
+    // A stack-owned rename dialog runs a nested event loop. Keep its parent
+    // DisplayCard alive until it closes; the dialog retranslates independently.
+    if(QApplication::activeModalWidget()) {
+        QTimer::singleShot(50,this,&MainPanel::rebuildContent);
+        return;
+    }
     const int priorScroll=m_scroll->verticalScrollBar()->value();
+    m_processingMessage->setText(L("busy.configuring"));
     if(auto *title=findChild<QLabel*>(QStringLiteral("header-title"))){title->setText(L("app.title"));QFont font=title->font();font.setFamily(QApplication::font().family());title->setFont(font);}
     if(auto *minimize=findChild<QPushButton*>(QStringLiteral("minimize-button"))){minimize->setToolTip(L("minimize"));minimize->setAccessibleName(L("minimize"));}
     if(auto *quit=findChild<QPushButton*>(QStringLiteral("quit-button")))quit->setText(L("quit"));
@@ -171,8 +201,12 @@ void MainPanel::rebuildContent() {
         connect(card,&DisplayCard::contentSizeChanged,this,[this]{QTimer::singleShot(0,this,[this]{if(!isVisible())return;m_contentLayout->invalidate();m_contentLayout->activate();QScreen *screen=windowHandle()?windowHandle()->screen():QGuiApplication::screenAt(QCursor::pos());if(!screen)screen=QGuiApplication::primaryScreen();placeOnScreen(screen);});});
         m_contentLayout->addWidget(card);
     }
-    m_error=makeLabel(m_controller->lastError(),false,false);m_error->setObjectName(QStringLiteral("error-message"));m_error->setStyleSheet(QStringLiteral("color:#b00020;font-weight:600;"));m_error->setVisible(!m_controller->lastError().isEmpty());m_contentLayout->addWidget(m_error);m_contentLayout->addWidget(helpSection());m_contentLayout->addWidget(ui::divider());
-    auto *languageRow=new QHBoxLayout;languageRow->addWidget(makeLabel(L("language.title")));languageRow->addStretch();auto *languages=new QComboBox;languages->setObjectName(QStringLiteral("language-combo"));languages->addItem(L("language.system"),QStringLiteral("system"));languages->addItem(QStringLiteral("English"),QStringLiteral("en"));languages->addItem(QStringLiteral("简体中文"),QStringLiteral("zh-Hans"));languages->addItem(QStringLiteral("繁體中文"),QStringLiteral("zh-Hant"));languages->addItem(QStringLiteral("日本語"),QStringLiteral("ja"));int current=languages->findData(m_controller->settings().language);languages->setCurrentIndex(current<0?0:current);connect(languages,qOverload<int>(&QComboBox::activated),this,[this,languages](int index){const QString language=languages->itemData(index).toString();Localization::instance().setLanguage(language);m_controller->setLanguage(language);QTimer::singleShot(0,this,&MainPanel::rebuildContent);});languageRow->addWidget(languages);m_contentLayout->addLayout(languageRow);
+    m_error=makeLabel(L("error.operation"),false,false);m_error->setObjectName(QStringLiteral("error-message"));m_error->setStyleSheet(QStringLiteral("color:#b00020;font-weight:600;"));m_error->setVisible(!m_controller->lastError().isEmpty());m_contentLayout->addWidget(m_error);
+    m_errorDetails=makeLabel(m_controller->lastError());m_errorDetails->setObjectName(QStringLiteral("error-diagnostics"));m_errorDetails->setTextFormat(Qt::PlainText);m_errorDetails->setTextInteractionFlags(Qt::TextSelectableByMouse);m_errorDetails->setLayoutDirection(Qt::LeftToRight);m_errorDetails->setProperty("preserve-hidden",true);m_errorDetails->hide();
+    m_errorToggle=ui::outlinedButton(L("help.more"),QStringLiteral("error-details-toggle"));m_errorToggle->setProperty("preserve-hidden",true);m_errorToggle->setVisible(!m_controller->lastError().isEmpty());
+    connect(m_errorToggle,&QPushButton::clicked,this,[this]{const bool show=m_errorDetails->isHidden();m_errorDetails->setVisible(show);m_errorToggle->setText(L(show?"help.less":"help.more"));});
+    m_contentLayout->addWidget(m_errorToggle);m_contentLayout->addWidget(m_errorDetails);m_contentLayout->addWidget(helpSection());m_contentLayout->addWidget(ui::divider());
+    auto *languageRow=new QHBoxLayout;languageRow->addWidget(makeLabel(L("language.title")));languageRow->addStretch();auto *languages=new QComboBox;languages->setObjectName(QStringLiteral("language-combo"));languages->addItem(L("language.system"),QStringLiteral("system"));for(const auto &locale:Localization::locales()){languages->addItem(locale.name,locale.code);languages->setItemData(languages->count()-1,Localization::fontForLanguage(locale.code),Qt::FontRole);}languages->setMaxVisibleItems(15);languages->setStyleSheet(QStringLiteral("QComboBox { combobox-popup: 0; }"));int current=languages->findData(m_controller->settings().language);languages->setCurrentIndex(current<0?0:current);connect(languages,qOverload<int>(&QComboBox::activated),this,[this,languages](int index){const QString language=languages->itemData(index).toString();Localization::instance().setLanguage(language);m_controller->setLanguage(language);});languageRow->addWidget(languages);m_contentLayout->addLayout(languageRow);
     auto *loginRow=new QHBoxLayout;loginRow->addWidget(makeLabel(L("login.toggle")));loginRow->addStretch();auto *login=new EinkSwitch;login->setObjectName(QStringLiteral("launch-login-switch"));login->setChecked(m_controller->settings().launchAtLogin);connect(login,&QAbstractButton::toggled,this,[this](bool on){m_controller->setLaunchAtLogin(on);});loginRow->addWidget(login);m_contentLayout->addLayout(loginRow);m_contentLayout->addStretch();
     if(isVisible()) {
         for(QWidget *child:m_content->findChildren<QWidget*>()) if(child!=m_error&&!child->property("preserve-hidden").toBool()&&!child->property("_einkPendingDelete").toBool()) child->show();
@@ -186,12 +220,23 @@ void MainPanel::placeOnScreen(QScreen *screen) {
     if(!windowHandle())winId();
     if(QWindow *window=windowHandle();window&&window->screen()!=screen)window->setScreen(screen);
     const QRect area=screen->availableGeometry();
+    // Stylesheets and per-monitor DPI can change fonts after construction.
+    // Measure the polished font before deciding the content and panel widths.
+    for(auto *button:m_content->findChildren<QPushButton*>()) {
+        if(!button->property("choice-button").toBool()||button->property("_einkPendingDelete").toBool())continue;
+        button->ensurePolished();QFont font=button->font();font.setWeight(QFont::Black);
+        button->setMinimumWidth(qMax(button->sizeHint().width(),QFontMetrics(font).horizontalAdvance(button->text())+30));
+    }
     if(m_contentLayout)m_contentLayout->activate();
     const QMargins outer=layout()?layout()->contentsMargins():QMargins();
     const int chromeHeight=60+outer.top()+outer.bottom()+(m_scroll?m_scroll->frameWidth()*2:0);
     const int naturalHeight=chromeHeight+(m_contentLayout?m_contentLayout->sizeHint().height():0);
     const int height=qMin(qMax(1,area.height()-32),qMax(240,naturalHeight));
-    resize(kPanelWidth,height);
+    const int availableWidth=qMax(1,area.width()-32);
+    const int wantedWidth=qMax(kPanelWidth,m_contentLayout->minimumSize().width()+outer.left()+outer.right()+24);
+    // Keep one-line option rows intact; a small screen can scroll the content.
+    m_scroll->setHorizontalScrollBarPolicy(wantedWidth>availableWidth?Qt::ScrollBarAsNeeded:Qt::ScrollBarAlwaysOff);
+    resize(qMin(availableWidth,wantedWidth),height);
     move(area.right()-width()+1-16,area.bottom()-height+1-16);
 }
 

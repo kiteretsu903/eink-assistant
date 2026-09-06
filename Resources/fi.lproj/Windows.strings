@@ -40,3 +40,4 @@
 "help.windows" = "Värikylläisyys ja RGB käyttävät automaattista värinhallintaa Windows 11 24H2:ssa tai uudemmassa tai MHC2-profiilimenetelmää Windows 10:n koontiversioissa 19041–19045. Tekstin kontrasti, Videon parannus ja Lisäasetukset käyttävät näyttökohtaista Gamma-ramppia. Kaikki näyttösäädöt palautetaan sovelluksen lopettamisen yhteydessä ja otetaan uudelleen käyttöön käynnistettäessä.";
 "welcome.windows.tray" = "Avaa tehtäväpalkin oikealla puolella oleva piilotettujen kuvakkeiden valikko, etsi tämä kirjan sivuja esittävä kuvake ja vedä se näkyvälle alueelle.";
 "welcome.windows.tray.title" = "Kiinnitä ilmaisinalueen kuvake";
+"error.operation" = "Toimintoa ei voitu suorittaa loppuun. Näytä lisätiedot laajentamalla.";

@@ -40,3 +40,4 @@
 "help.windows" = "Njupụta agba na RGB na-eji njikwa agba na-akpaghị aka na Windows 11 24H2 ma ọ bụ nke ọhụrụ, ma ọ bụ ụzọ profaịlụ MHC2 na ụdị Windows 10 19041–19045. Ọdịiche ederede, ime ka vidio ka mma na ntọala ndị ọzọ na-eji ahịrị gamma maka enyo ọ bụla. A na-eweghachi mgbanwe enyo niile mgbe a na-apụ ma tinye ha ọzọ mgbe a na-amalite.";
 "welcome.windows.tray" = "Meghee menu akara zoro ezo n’aka nri nke ahịrị ọrụ, chọta akara ibe akwụkwọ a, wee dọrọ ya gaa n’ebe a na-ahụ anya.";
 "welcome.windows.tray.title" = "Tinye akara n’ebe a na-ahụ ya na sistemụ";
+"error.operation" = "Enweghị ike imecha ọrụ ahụ. Gbasaa ka ị hụ nkọwa.";

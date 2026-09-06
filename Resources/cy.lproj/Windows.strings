@@ -40,3 +40,4 @@
 "help.windows" = "Mae Dirlawnder ac RGB yn defnyddio Rheoli Lliw Awtomatig ar Windows 11 24H2 neu ddiweddarach, neu lwybr proffil MHC2 ar adeiladau Windows 10 19041–19045. Mae Cyferbyniad testun, Gwella fideo ac Uwch yn defnyddio ramp gama fesul sgrin. Caiff pob addasiad sgrin ei adfer wrth adael yr ap a'i gymhwyso eto wrth gychwyn.";
 "welcome.windows.tray" = "Agorwch y ddewislen eiconau cudd ar ochr dde'r bar tasgau, dewch o hyd i'r eicon tudalennau llyfr hwn, yna llusgwch ef i'r ardal weladwy.";
 "welcome.windows.tray.title" = "Pinio eicon yr hambwrdd";
+"error.operation" = "Ni ellid cwblhau’r weithred. Ehangwch i weld y manylion.";

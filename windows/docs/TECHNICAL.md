@@ -3,7 +3,7 @@
 **Document status:** authoritative for the Windows port
 **Application version:** 1.2.x
 **Release status:** source baseline prepared; Windows 1.2 is not released
-**Last reconciled with the source tree:** 2026-09-02
+**Last reconciled with the source tree:** 2026-09-06
 **Primary audience:** maintainers, release engineers, and later coding agents
 
 This document records the implemented Windows architecture, product decisions,
@@ -666,9 +666,59 @@ antialiasing closer to modern browser rendering. Do not depend on a single
 pan-CJK fallback font; it produces inconsistent glyph style and weight across
 languages.
 
-Supported UI locales are English, Simplified Chinese, Traditional Chinese, and
-Japanese. Every new user-facing string must be added to all four localization
-resources and exercised by localization tests.
+The development executable supports the 80 locales in the repository-root
+localization/locales.json. The picker contains their autonyms plus System.
+Published downloads and the Inno Setup installer retain four languages.
+Native legacy-OS acceptance remains separate from resource coverage.
+
+The localization/source English JSON and all translated JSON catalogs are
+authoritative. Run python scripts/build-localizations.py from the repository root
+after catalog edits. It generates the .strings files, registry copy and
+windows/src/resources.qrc; CMake validates these outputs on every build before
+AUTORCC. Python 3 is a build-time dependency only. New strings must be translated
+and AI-reviewed in every locale. The parser decodes the generator's JSON string
+literals with Qt JSON, preserving escaped quotes, backslashes, newlines, tabs,
+surrogate pairs and combining characters.
+
+Lookup layers are English shared, English Windows, selected shared, then selected
+Windows. Missing keys fall back at runtime but fail source/resource equality
+tests. Locale resolution uses Qt's system UI-language preference list, normalized
+hyphens and case, registry matching, Chinese script/region and Portuguese region
+fallbacks, then English. Explicit selections remain stored unchanged. Unknown Qt
+locale enums do not prevent registry languages from loading.
+
+Arabic, Hebrew, Persian and Urdu use RTL. Language changes update direction, tray
+actions, welcome copy and the safety prompt. Main content rebuilds on the next
+event-loop turn; a native modal rename dialog retranslates in place and defers
+parent rebuilding until it closes. Tuning state and safety decisions are never
+changed by retranslation. Sliders, curve coordinates and numeric RGB summaries
+keep LTR semantics; selectors, disclosure arrows, switches and segment end caps
+mirror for RTL.
+
+Installed script-aware UI fonts include the original CJK choices plus Malgun
+Gothic, Nirmala UI/legacy Indic fonts, Leelawadee/legacy Southeast Asian fonts,
+Myanmar Text, Nyala and Sylfaen when available. The picker assigns each autonym
+its own font. No font is bundled, and Qt glyph fallback remains enabled. Missing
+font/shaping coverage on a particular OS remains an acceptance limitation.
+
+Choice rows remain full-width and on one line. Minimum widths reserve bold
+selected-label metrics and padding; the panel grows beyond 680 logical pixels
+when needed, capped at the work area. If the screen cannot contain an unbroken
+row, horizontal scrolling preserves access. Vertical scrolling remains available.
+Safety actions stack vertically and use equal font-derived heights.
+Long safety-action labels wrap within the panel. The overlay's layout does not
+retain a wider previous locale's minimum width when the panel shrinks.
+
+Preset rename uses app-localized Rename and Not Now buttons, so no Qt translation
+catalogs are deployed. Failed ApplyResult values receive the localized
+error.operation summary with expandable, selectable original diagnostics;
+English backend prose, error codes and hardware details remain diagnostic text.
+No regex translation or worker-thread access to UI locale state is introduced.
+OS-owned UAC and Settings interfaces continue to follow the Windows language.
+
+The test-only safety tick-interval setter also updates an active fake-test timer,
+allowing locale sweeps to hold a prompt. Production watchdog timing is unchanged.
+See handoffs/multilingual-80-results.md for the current verification boundary.
 
 ### 9.5 Rounded windows
 
@@ -846,6 +896,7 @@ Required toolchain:
 - CMake;
 - Ninja;
 - PowerShell 7;
+- Python 3 for catalog validation (no deployed runtime dependency);
 - Inno Setup 6.7 or later for the installer.
 
 From the repository's `windows/` directory:
@@ -925,7 +976,8 @@ Core tests cover, among other cases:
 - ICC structural validity and saturation/RGB round trips;
 - settings persistence and saved curves;
 - Text/Video mutual exclusion;
-- all localization catalogs;
+- all 80 compiled catalogs compared with JSON source, escape round trips,
+  locale preference resolution, fallback and persisted locale identifiers;
 - serialized color work occurring off the UI thread;
 - Factory remaining an active identity profile;
 - abnormal-exit recovery ordering and cleanup.
@@ -1095,7 +1147,7 @@ Before changing behavior:
 5. Put potentially slow profile/topology work off the GUI thread and preserve
    serialization.
 6. Prefer updating existing widgets/state over rebuilding the panel.
-7. Add every string to all four locales.
+7. Add every string to all 80 registry locales and regenerate resources.
 8. Add a regression test for the reported failure, then run the full core and
    E2E baseline.
 9. For native/DPI/tray/font/color changes, perform a real Windows verification;

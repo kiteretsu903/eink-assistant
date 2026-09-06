@@ -40,3 +40,4 @@
 "help.windows" = "彩度和 RGB 在 Windows 11 24H2 或更新版本上使用自動色彩管理，在 Windows 10 19041–19045 上使用 MHC2 描述檔路徑。文字對比度、影片增強和進階模式使用每顯示器 Gamma 表。結束應用程式時還原所有顯示調整，啟動時重新套用。";
 "welcome.windows.tray.title" = "固定工作列圖示";
 "welcome.windows.tray" = "開啟工作列右側的隱藏圖示選單，找到這個書頁圖示，再拖到工作列固定區域。";
+"error.operation" = "無法完成操作。展開以查看詳細資訊。";

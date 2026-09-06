@@ -38,5 +38,6 @@
   "night.disable.warning": "Per a pantalles de tinta electrònica, recomanem desactivar la Llum nocturna.",
   "help.windows": "Saturació i RGB fan servir la gestió automàtica del color a Windows 11 24H2 o posterior, o la via del perfil MHC2 a les compilacions 19041–19045 de Windows 10. Contrast del text, Millora del vídeo i Avançat fan servir una rampa de Gamma per pantalla. Tots els ajustos de pantalla es restauren en sortir de l'app i es tornen a aplicar en obrir-la.",
   "welcome.windows.tray": "Obre el menú d'icones amagades a la dreta de la barra de tasques, troba aquesta icona de pàgines de llibre i arrossega-la a la zona visible.",
-  "welcome.windows.tray.title": "Fixa la icona de la safata"
+  "welcome.windows.tray.title": "Fixa la icona de la safata",
+  "error.operation": "No s’ha pogut completar l’operació. Amplieu la informació per veure’n els detalls."
 }

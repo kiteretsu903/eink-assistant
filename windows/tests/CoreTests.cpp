@@ -22,6 +22,9 @@
 #endif
 
 #include <QTemporaryDir>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QRegularExpression>
 #include <QEventLoop>
 #include <QFileInfo>
 #include <QOperatingSystemVersion>
@@ -45,6 +48,8 @@ private slots:
     void settingsRoundTrip();
     void controllerEnforcesMutualExclusion();
     void localizationResourcesLoad();
+    void allLocaleCatalogsMatchSources();
+    void localeResolutionAndEscapes();
     void colorChangesRunOffUiThread();
     void factoryKeepsIdentityProfileActive();
     void crashRecoveryRunsBeforeColorReapply();
@@ -200,6 +205,53 @@ void CoreTests::liveGpuPanelLaunchSmoke(){
 void CoreTests::nightLightCodecMatchesReference(){const QByteArray disabled=QByteArray::fromHex("434201000A0201002A068995FCBE062A2B0E1343420100D00A02C614A9F6E2D3EFEAE6ED0100000000");const QByteArray enabled=QByteArray::fromHex("434201000A0201002A068995FCBE062A2B0E15434201001000D00A02C614A9F6E2D3EFEAE6ED0100000000");NightLightStateRecord d,e;QString error;QVERIFY2(NightLightStateCodec::decode(disabled,&d,&error),qPrintable(error));QVERIFY2(NightLightStateCodec::decode(enabled,&e,&error),qPrintable(error));QVERIFY(!d.enabled);QVERIFY(e.enabled);QCOMPARE(d.initialized,1);QCOMPARE(d.cloudTimestamp,quint64(1742670473));QCOMPARE(d.transitionFileTime,quint64(133871411809270569ULL));QCOMPARE(NightLightStateCodec::encode(d),disabled);QCOMPARE(NightLightStateCodec::encode(e),enabled);QByteArray malformed=enabled;malformed[24]=char(1);QVERIFY(!NightLightStateCodec::decode(malformed,&e,&error));}
 void CoreTests::settingsRoundTrip(){QTemporaryDir dir;SettingsStore store(dir.filePath(QStringLiteral("settings.ini")));AppSettings s;s.language=QStringLiteral("ja");s.hideHardwareSetupNotice=true;s.trayDiscoveryShown=true;s.trayDiscoveryVersion=kCurrentTrayDiscoveryVersion;s.trayDiscoveryExecutablePath=QStringLiteral("C:/Apps/EinkAssistant.exe");auto &d=s.forDisplay(QStringLiteral("abc"));d.isEink=true;d.saturation=2;d.rgb.red=1.2;d.experimentalColorEnabled=true;d.confirmedColorFingerprint=QStringLiteral("confirmed");d.failedColorFingerprint=QStringLiteral("failed");s.savedCurves[0].occupied=true;s.savedCurves[0].name=QStringLiteral("Newsprint");store.save(s);const AppSettings loaded=store.load();QCOMPARE(loaded.language,QStringLiteral("ja"));QVERIFY(loaded.hideHardwareSetupNotice);QVERIFY(loaded.trayDiscoveryShown);QCOMPARE(loaded.trayDiscoveryVersion,kCurrentTrayDiscoveryVersion);QCOMPARE(loaded.trayDiscoveryExecutablePath,QStringLiteral("C:/Apps/EinkAssistant.exe"));QCOMPARE(loaded.displays.size(),1);QVERIFY(loaded.displays[0].isEink);QCOMPARE(loaded.displays[0].saturation,2.0);QVERIFY(loaded.displays[0].experimentalColorEnabled);QCOMPARE(loaded.displays[0].confirmedColorFingerprint,QStringLiteral("confirmed"));QCOMPARE(loaded.displays[0].failedColorFingerprint,QStringLiteral("failed"));QCOMPARE(loaded.savedCurves[0].name,QStringLiteral("Newsprint"));}
 void CoreTests::controllerEnforcesMutualExclusion(){QTemporaryDir dir;auto fake=std::make_unique<FakePlatform>();FakePlatform *raw=fake.get();ApplicationController c(std::move(fake),SettingsStore(dir.filePath(QStringLiteral("s.ini"))));c.initialize();c.setEink(QStringLiteral("fake-external"),true);c.setTextLevel(QStringLiteral("fake-external"),TextLevel::Solid);QCOMPARE(c.settingsFor(QStringLiteral("fake-external")).enhanceLevel,EnhanceLevel::Off);c.setEnhanceLevel(QStringLiteral("fake-external"),EnhanceLevel::Medium);QCOMPARE(c.settingsFor(QStringLiteral("fake-external")).textLevel,TextLevel::Off);QVERIFY(raw->curveApplyCalls>=2);c.shutdown();QVERIFY(raw->shutDown);}
+
+void CoreTests::allLocaleCatalogsMatchSources() {
+    QCOMPARE(Localization::locales().size(),80);
+    QSet<QString> codes;
+    for(const auto &locale:Localization::locales()) {
+        QVERIFY(!codes.contains(locale.code));codes.insert(locale.code);
+        QVERIFY(!locale.name.isEmpty());
+        for(bool platform:{false,true}) {
+            const QString kind=platform?"windows":"app";
+            const QString path=locale.code=="en"
+                ?QStringLiteral(EINK_SOURCE_ROOT "/localization/source/%1.en.json").arg(kind)
+                :QStringLiteral(EINK_SOURCE_ROOT "/localization/translations/%1/%2.json").arg(locale.code,kind);
+            QFile file(path);QVERIFY2(file.open(QIODevice::ReadOnly),qPrintable(path));
+            const auto source=QJsonDocument::fromJson(file.readAll()).object();
+            const auto embedded=Localization::catalog(locale.code,platform);
+            QCOMPARE(embedded.size(),source.size());
+            for(auto it=source.begin();it!=source.end();++it) {
+                QVERIFY(!embedded.value(it.key()).isEmpty());
+                QCOMPARE(embedded.value(it.key()),it.value().toString());
+            }
+        }
+        Localization::instance().setLanguage(locale.code);
+        const auto platform=Localization::catalog(locale.code,true);
+        for(auto it=platform.cbegin();it!=platform.cend();++it)
+            QCOMPARE(Localization::instance().text(it.key().toUtf8().constData()),it.value());
+        QTemporaryDir dir;SettingsStore store(dir.filePath("locale.ini"));AppSettings settings;settings.language=locale.code;store.save(settings);QCOMPARE(store.load().language,locale.code);
+    }
+    QVERIFY(Localization::catalog("missing").isEmpty());
+    Localization::instance().setLanguage("unknown");
+    QCOMPARE(L("night.open"),Localization::catalog("en",true).value("night.open"));
+    QCOMPARE(L("missing.key"),QString("missing.key"));
+    Localization::instance().setLanguage("en");
+}
+void CoreTests::localeResolutionAndEscapes() {
+    const QVector<QPair<QStringList,QString>> cases {
+        {{"zh_TW"},"zh-Hant"},{{"zh-HK"},"zh-Hant"},{{"zh-MO"},"zh-Hant"},
+        {{"zh-Hans-TW"},"zh-Hans"},{{"zh-Hant-CN"},"zh-Hant"},{{"zh-CN"},"zh-Hans"},
+        {{"pt_BR"},"pt-BR"},{{"pt-Latn-PT"},"pt-PT"},{{"pt"},"pt-PT"},
+        {{"unknown","fr-CA"},"fr"},{{"bad--tag","zu-ZA"},"zu"},
+        {{"fil-PH"},"fil"},{{"EN_us"},"en"},{{"../ar",""},"en"},{{},"en"}
+    };
+    for(const auto &item:cases)QCOMPARE(Localization::resolveLanguage(item.first),item.second);
+    const auto escaped=Localization::parseCatalog(R"test("key" = "quote: \" path: C:\\new\\test\nline\t\u0061 \ud83d\ude00 e\u0301";)test");
+    QCOMPARE(escaped.value("key"),QString::fromUtf8("quote: \" path: C:\\new\\test\nline\ta \xf0\x9f\x98\x80 e\xcc\x81"));
+    QVERIFY(Localization::parseCatalog(R"("x"="one"; "x"="two";)").isEmpty());
+}
+
 void CoreTests::localizationResourcesLoad(){Localization::instance().setLanguage(QStringLiteral("en"));QCOMPARE(L("app.title"),QStringLiteral("E-Ink Assistant"));QVERIFY(L("saturation.mhc2.compat")!=QStringLiteral("saturation.mhc2.compat"));QVERIFY(L("saturation.unsupported.driver").contains(QStringLiteral("current GPU/driver")));QVERIFY(L("saturation.experimental.enable").contains(QStringLiteral("Experimental")));Localization::instance().setLanguage(QStringLiteral("ja"));QVERIFY(L("app.title")!=QStringLiteral("app.title"));QCOMPARE(L("night.title"),QStringLiteral("夜間モード"));QVERIFY(L("saturation.mhc2.compat")!=QStringLiteral("saturation.mhc2.compat"));QVERIFY(L("saturation.open.intel")!=QStringLiteral("saturation.open.intel"));QVERIFY(L("saturation.experimental.confirmButton")!=QStringLiteral("saturation.experimental.confirmButton"));Localization::instance().setLanguage(QStringLiteral("zh-Hans"));QCOMPARE(L("welcome.windows.tray.title"),QStringLiteral("固定任务栏图标"));QVERIFY(L("welcome.windows.tray").contains(QStringLiteral("书页图标")));QVERIFY(L("system.lightMode.note").contains(QStringLiteral("墨水屏")));QVERIFY(!L("system.lightMode.note").contains(QStringLiteral("电子纸")));QVERIFY(L("saturation.mhc2.compat")!=QStringLiteral("saturation.mhc2.compat"));QVERIFY(L("saturation.unsupported.upgrade").contains(QStringLiteral("可能")));QVERIFY(L("saturation.experimental.preparing").contains(QStringLiteral("%1")));Localization::instance().setLanguage(QStringLiteral("zh-Hant"));QCOMPARE(L("night.open"),QStringLiteral("開啟夜間模式設定"));QVERIFY(L("welcome.windows.tray").contains(QStringLiteral("書頁圖示")));QVERIFY(L("saturation.mhc2.compat")!=QStringLiteral("saturation.mhc2.compat"));QVERIFY(L("saturation.connectedGpu")!=QStringLiteral("saturation.connectedGpu"));QVERIFY(L("saturation.experimental.rollback")!=QStringLiteral("saturation.experimental.rollback"));}
 void CoreTests::colorChangesRunOffUiThread(){QTemporaryDir dir;auto fake=std::make_unique<FakePlatform>();FakePlatform *raw=fake.get();ApplicationController c(std::move(fake),SettingsStore(dir.filePath(QStringLiteral("s.ini"))));c.initialize();c.setEink(QStringLiteral("fake-external"),true);c.waitForPendingOperations();raw->operationLog.clear();c.setSaturation(QStringLiteral("fake-external"),1.3,3);c.waitForPendingOperations();QCOMPARE(raw->operationLog.size(),1);QCOMPARE(raw->operationLog[0],QStringLiteral("color.apply"));c.shutdown();}
 void CoreTests::factoryKeepsIdentityProfileActive(){QTemporaryDir dir;auto fake=std::make_unique<FakePlatform>();FakePlatform *raw=fake.get();ApplicationController c(std::move(fake),SettingsStore(dir.filePath(QStringLiteral("s.ini"))));c.initialize();c.setEink(QStringLiteral("fake-external"),true);c.waitForPendingOperations();QVERIFY(raw->saturations.contains(QStringLiteral("fake-external")));QCOMPARE(raw->saturations.value(QStringLiteral("fake-external")),1.0);raw->operationLog.clear();c.setSaturation(QStringLiteral("fake-external"),1.0,2);c.waitForPendingOperations();QCOMPARE(raw->operationLog.size(),1);QCOMPARE(raw->operationLog[0],QStringLiteral("color.apply"));QVERIFY(raw->saturations.contains(QStringLiteral("fake-external")));c.shutdown();}

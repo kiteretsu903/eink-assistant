@@ -40,3 +40,4 @@
 "help.windows" = "Piesātinājums un RGB izmanto automātisko krāsu pārvaldību sistēmā Windows 11 24H2 vai jaunākā, vai MHC2 profila metodi Windows 10 būvējumos 19041–19045. Teksta kontrasts, Video uzlabošana un Papildu izmanto gamma līkni katram displejam. Visi displeja pielāgojumi tiek atjaunoti, aizverot lietotni, un atkārtoti piemēroti palaižot.";
 "welcome.windows.tray" = "Atveriet slēpto ikonu izvēlni uzdevumjoslas labajā pusē, atrodiet šo grāmatas lappušu ikonu un ievelciet to redzamajā zonā.";
 "welcome.windows.tray.title" = "Piespraust paziņojumu apgabala ikonu";
+"error.operation" = "Darbību neizdevās pabeigt. Izvērsiet, lai skatītu sīkāku informāciju.";

@@ -174,6 +174,7 @@ int ApplicationController::colorSafetySecondsRemaining(const QString &id) const 
 
 void ApplicationController::setColorSafetyTickIntervalForTests(int milliseconds) {
     m_colorSafetyTickIntervalMs=std::max(1,milliseconds);
+    m_colorSafetyTimer.setInterval(m_colorSafetyTickIntervalMs);
 }
 
 void ApplicationController::setExperimentalColorEnabled(const QString &id,bool enabled) {

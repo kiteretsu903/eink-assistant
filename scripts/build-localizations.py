@@ -119,6 +119,13 @@ def main():
         if entry['dir'] not in ('ltr', 'rtl') or not entry['name'].strip(): errors.append(f'Invalid locale metadata: {entry}')
     sources = {kind: read_json(ROOT / f'localization/source/{kind}.en.json') for kind in KINDS}
     planned = {ROOT / 'Resources/locales.json': dump_json(locales)}
+    qrc = ['<RCC>', '  <qresource prefix="/">',
+           '    <file alias="app-icon.png">../../docs/app-icon.png</file>',
+           '    <file alias="i18n/locales.json">../../Resources/locales.json</file>']
+    for code in codes:
+        for alias, filename in [(code, 'Localizable'), ('windows/' + code, 'Windows')]:
+            qrc.append(f'    <file alias="i18n/{alias}.strings">../../Resources/{code}.lproj/{filename}.strings</file>')
+    planned[ROOT / 'windows/src/resources.qrc'] = '\n'.join(qrc + ['  </qresource>', '</RCC>', ''])
     complete = []
     skipped = []
     for entry in locales:
@@ -146,14 +153,14 @@ def main():
         return 1
     for path, content in planned.items():
         if args.check:
-            if not path.exists() or path.read_text() != content: errors.append(f'Stale generated resource: {path.relative_to(ROOT)}')
+            if not path.exists() or path.read_text(encoding='utf-8') != content: errors.append(f'Stale generated resource: {path.relative_to(ROOT)}')
         else:
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(content, encoding='utf-8')
     if errors:
         print('\n'.join(errors), file=sys.stderr)
         return 1
-    print(f'{len(complete)}/80 locales validated; 117 shared app keys, 40 Windows keys, {len(sources["site"])} website keys each.')
+    print(f'{len(complete)}/80 locales validated; {len(sources["app"])} shared app keys, {len(sources["windows"])} Windows keys, {len(sources["site"])} website keys each.')
     if skipped: print('INCOMPLETE (development run): ' + ', '.join(skipped))
     return 0
 

@@ -38,5 +38,6 @@
   "night.disable.warning": "Ezibonisini ze-e-ink, sincoma ukuvala Ukukhanya kwasebusuku.",
   "help.windows": "Ukugcwala Kombala ne-RGB kusebenzisa Ukuphathwa Kombala Okuzenzakalelayo ku-Windows 11 24H2 noma entsha, noma indlela yephrofayela ye-MHC2 kumabuild e-Windows 10 angu-19041–19045. Ukugqama Kombhalo, Ukuthuthukisa Ividiyo nokuthi Okuthuthukile kusebenzisa ijika le-gamma lesibonisi ngasinye. Konke ukulungiswa kwesibonisi kubuyiselwa esimweni sokuqala uma uphuma ohlelweni bese kusetshenziswa futhi lapho luqalwa.",
   "welcome.windows.tray": "Vula imenyu yezithonjana ezifihliwe ngakwesokudla sebha yomsebenzi, thola lesi sithonjana samakhasi encwadi, bese usihudulela endaweni ebonakalayo.",
-  "welcome.windows.tray.title": "Phina isithonjana sethreyi"
+  "welcome.windows.tray.title": "Phina isithonjana sethreyi",
+  "error.operation": "Umsebenzi awukwazanga ukuqedwa. Nweba ukuze ubone imininingwane."
 }

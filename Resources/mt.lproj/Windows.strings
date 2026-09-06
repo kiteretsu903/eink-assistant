@@ -40,3 +40,4 @@
 "help.windows" = "Saturazzjoni u RGB jużaw Auto Color Management fuq Windows 11 24H2 jew aktar ġdid, jew il-metodu tal-profil MHC2 fuq Windows 10 builds 19041–19045. Kuntrast tat-test, Titjib tal-vidjo u Avvanzat jużaw kurva gamma għal kull skrin. L-aġġustamenti kollha tal-iskrin jiġu restawrati meta tagħlaq l-app u jiġu applikati mill-ġdid meta tiftaħha.";
 "welcome.windows.tray" = "Iftaħ il-menu tal-ikoni moħbija fuq il-lemin tat-taskbar, sib din l-ikona tal-paġni tal-ktieb, imbagħad iġbidha fiż-żona viżibbli.";
 "welcome.windows.tray.title" = "Waħħal l-ikona fiż-żona tan-notifiki";
+"error.operation" = "L-operazzjoni ma setgħetx titlesta. Espandi biex tara d-dettalji.";

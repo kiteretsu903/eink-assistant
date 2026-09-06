@@ -38,5 +38,6 @@
   "night.disable.warning": "Pri e-ink displejoch odporúčame vypnúť Nočné osvetlenie.",
   "help.windows": "Sýtosť a RGB používajú automatickú správu farieb vo Windows 11 24H2 alebo novšom, alebo cestu profilu MHC2 vo Windows 10 zostavách 19041–19045. Kontrast textu, Vylepšenie videa a Rozšírené používajú gama rampu pre jednotlivé displeje. Všetky úpravy displejov sa pri ukončení aplikácie vrátia do pôvodného stavu a pri spustení znova použijú.",
   "welcome.windows.tray": "Otvorte ponuku skrytých ikon vpravo na paneli úloh, nájdite túto ikonu strán knihy a presuňte ju do viditeľnej oblasti.",
-  "welcome.windows.tray.title": "Pripnúť ikonu v oblasti oznámení"
+  "welcome.windows.tray.title": "Pripnúť ikonu v oblasti oznámení",
+  "error.operation": "Operáciu sa nepodarilo dokončiť. Rozbaľte správu a zobrazte podrobnosti."
 }

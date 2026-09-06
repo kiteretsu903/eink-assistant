@@ -6,6 +6,7 @@
 #include "UiStyle.h"
 
 #include <QCheckBox>
+#include <QApplication>
 #include <QFrame>
 #include <QGuiApplication>
 #include <QHBoxLayout>
@@ -66,16 +67,17 @@ WelcomeDialog::WelcomeDialog(ApplicationController *controller,QWidget *parent)
     auto *title=new SmoothLabel(L("welcome.title"));QFont titleFont=title->font();titleFont.setPointSize(19);titleFont.setWeight(QFont::DemiBold);title->setFont(titleFont);title->setWordWrap(true);titleRow->addWidget(title,1);root->addLayout(titleRow);
     auto *tipsCard=new QFrame;tipsCard->setObjectName(QStringLiteral("welcome-tray-guide"));tipsCard->setStyleSheet(QStringLiteral("QFrame#welcome-tray-guide{border:2px solid #202020;border-radius:7px;background:white;}QFrame#welcome-tray-guide QLabel{border:0;background:transparent;}"));
     auto *tipsLayout=new QVBoxLayout(tipsCard);tipsLayout->setContentsMargins(14,12,14,12);tipsLayout->setSpacing(12);
-    auto addTip=[&](QWidget *tipIcon,const QString &heading,const QString &body,const QString &bodyObjectName,bool showOverflowArrow){
-        auto *row=new QHBoxLayout;row->setSpacing(12);row->setAlignment(Qt::AlignTop);row->addWidget(tipIcon,0,Qt::AlignTop);auto *text=new QWidget;auto *textLayout=new QVBoxLayout(text);textLayout->setContentsMargins(0,0,0,0);textLayout->setSpacing(2);auto *head=new SmoothLabel(heading);QFont f=head->font();f.setWeight(QFont::DemiBold);head->setFont(f);textLayout->addWidget(head);QString plainBody=body;plainBody.remove(QStringLiteral("**"));auto *description=new SmoothLabel(plainBody);if(!bodyObjectName.isEmpty())description->setObjectName(bodyObjectName);description->setWordWrap(true);description->setStyleSheet(QStringLiteral("color:#4a4a4a;border:0;"));if(showOverflowArrow){auto *bodyRow=new QHBoxLayout;bodyRow->setContentsMargins(0,0,0,0);bodyRow->setSpacing(4);bodyRow->addWidget(new OverflowArrowIcon,0,Qt::AlignTop);bodyRow->addWidget(description,1);textLayout->addLayout(bodyRow);}else textLayout->addWidget(description);row->addWidget(text,1);tipsLayout->addLayout(row);
+    auto addTip=[&](QWidget *tipIcon,const char *headingKey,const char *bodyKey,const QString &bodyObjectName,bool showOverflowArrow){
+        auto *row=new QHBoxLayout;row->setSpacing(12);row->setAlignment(Qt::AlignTop);row->addWidget(tipIcon,0,Qt::AlignTop);auto *text=new QWidget;auto *textLayout=new QVBoxLayout(text);textLayout->setContentsMargins(0,0,0,0);textLayout->setSpacing(2);auto *head=new SmoothLabel(L(headingKey));QFont f=head->font();f.setWeight(QFont::DemiBold);head->setFont(f);textLayout->addWidget(head);QString plainBody=L(bodyKey);plainBody.remove(QStringLiteral("**"));auto *description=new SmoothLabel(plainBody);if(!bodyObjectName.isEmpty())description->setObjectName(bodyObjectName);description->setWordWrap(true);head->setWordWrap(true);connect(&Localization::instance(),&Localization::languageChanged,description,[head,description,headingKey,bodyKey]{QFont font=head->font();font.setFamily(QApplication::font().family());head->setFont(font);head->setText(L(headingKey));QString text=L(bodyKey);text.remove(QStringLiteral("**"));description->setText(text);});description->setStyleSheet(QStringLiteral("color:#4a4a4a;border:0;"));if(showOverflowArrow){auto *bodyRow=new QHBoxLayout;bodyRow->setContentsMargins(0,0,0,0);bodyRow->setSpacing(4);bodyRow->addWidget(new OverflowArrowIcon,0,Qt::AlignTop);bodyRow->addWidget(description,1);textLayout->addLayout(bodyRow);}else textLayout->addWidget(description);row->addWidget(text,1);tipsLayout->addLayout(row);
     };
     auto *trayIcon=new QLabel;trayIcon->setObjectName(QStringLiteral("welcome-tray-icon"));trayIcon->setAlignment(Qt::AlignCenter);trayIcon->setFixedSize(64,64);QPixmap trayPreview=QPixmap::fromImage(ui::bookPagesTrayImage(192,true));trayPreview.setDevicePixelRatio(4.0);trayIcon->setPixmap(trayPreview);trayIcon->setStyleSheet(QStringLiteral("QLabel{background:white;border:1px solid #808080;border-radius:8px;}"));
-    addTip(trayIcon,L("welcome.windows.tray.title"),L("welcome.windows.tray"),QStringLiteral("welcome-tray-instructions"),true);
-    addTip(new WelcomeGlyph(WelcomeGlyph::Kind::Display),L("welcome.bigme.title"),L("welcome.bigme.body"),QString(),false);
-    addTip(new WelcomeGlyph(WelcomeGlyph::Kind::Sliders),L("welcome.other.title"),L("welcome.other.body"),QString(),false);
+    addTip(trayIcon,"welcome.windows.tray.title","welcome.windows.tray",QStringLiteral("welcome-tray-instructions"),true);
+    addTip(new WelcomeGlyph(WelcomeGlyph::Kind::Display),"welcome.bigme.title","welcome.bigme.body",QString(),false);
+    addTip(new WelcomeGlyph(WelcomeGlyph::Kind::Sliders),"welcome.other.title","welcome.other.body",QString(),false);
     root->addWidget(tipsCard);
     auto *bottom=new QHBoxLayout;auto *hide=new QCheckBox(L("welcome.hide"));hide->setObjectName(QStringLiteral("welcome-hide"));bottom->addWidget(hide);bottom->addStretch();
     auto *done=ui::outlinedButton(L("welcome.done"),QStringLiteral("welcome-done"));bottom->addWidget(done);root->addLayout(bottom);
+    connect(&Localization::instance(),&Localization::languageChanged,this,[this,title,hide,done]{QFont font=title->font();font.setFamily(QApplication::font().family());title->setFont(font);setWindowTitle(L("welcome.title"));title->setText(L("welcome.title"));hide->setText(L("welcome.hide"));done->setText(L("welcome.done"));if(isVisible()){adjustSize();positionNearNotificationArea();}});
     connect(done,&QPushButton::clicked,this,[this,hide]{if(hide->isChecked())m_controller->setShowWelcome(false);accept();});
 }
 

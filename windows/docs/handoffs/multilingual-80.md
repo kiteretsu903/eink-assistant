@@ -1,5 +1,8 @@
 # Windows 80-locale integration handoff
 
+Windows implementation follow-up: [results and remaining acceptance](multilingual-80-results.md).
+The preparation notes below remain the historical handoff record.
+
 This is an **active implementation handoff**, prepared on macOS on 2026-09-06.
 The shared translation work targets 80 locales for both applications and the
 website, with a focused 12-locale main README. Windows native integration and

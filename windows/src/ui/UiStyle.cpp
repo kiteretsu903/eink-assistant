@@ -57,7 +57,7 @@ QString styleSheet() {
         QScrollBar::handle:vertical:hover { background: #303030; }
         QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; border: 0; background: transparent; }
         QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: transparent; }
-        QScrollBar:horizontal { height: 0; }
+        QScrollBar:horizontal { height: 12px; }
         QToolTip { background: white; border: 2px solid #202020; color: #111111; padding: 5px; }
     )");
 }

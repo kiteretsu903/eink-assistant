@@ -40,3 +40,4 @@
 "help.windows" = "Độ bão hòa và RGB dùng Quản lý màu tự động trên Windows 11 24H2 trở lên, hoặc phương thức cấu hình MHC2 trên Windows 10 bản dựng 19041–19045. Độ tương phản văn bản, Tăng cường video và Nâng cao dùng dải gamma cho từng màn hình. Mọi điều chỉnh màn hình được khôi phục khi thoát ứng dụng và áp dụng lại khi mở.";
 "welcome.windows.tray" = "Mở menu biểu tượng ẩn ở bên phải thanh tác vụ, tìm biểu tượng trang sách này, rồi kéo vào vùng hiển thị.";
 "welcome.windows.tray.title" = "Ghim biểu tượng khay hệ thống";
+"error.operation" = "Không thể hoàn tất thao tác. Mở rộng để xem chi tiết.";

@@ -38,5 +38,6 @@
   "night.disable.warning": "E-tindi ekraanide puhul soovitame öövalgustuse välja lülitada.",
   "help.windows": "Küllastus ja RGB kasutavad Windows 11 24H2 või uuema automaatset värvihaldust või Windows 10 järkudes 19041–19045 MHC2 profiilimeetodit. Teksti kontrast, Video täiustamine ja Täpsemad sätted kasutavad ekraanipõhist gammatabelit. Kõik ekraaniseadistused taastatakse rakendusest väljumisel ja rakendatakse käivitamisel uuesti.",
   "welcome.windows.tray": "Ava tegumiriba paremas servas peidetud ikoonide menüü, leia see raamatulehtede ikoon ja lohista see nähtavasse alasse.",
-  "welcome.windows.tray.title": "Kinnita süsteemisalve ikoon"
+  "welcome.windows.tray.title": "Kinnita süsteemisalve ikoon",
+  "error.operation": "Toimingut ei saanud lõpule viia. Üksikasjade vaatamiseks laiendage teadet."
 }

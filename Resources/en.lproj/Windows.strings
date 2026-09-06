@@ -40,3 +40,4 @@
 "help.windows" = "Saturation and RGB use Auto Color Management on Windows 11 24H2 or above, or the MHC2 profile path on Windows 10 builds 19041–19045. Text Contrast, Video Enhance and Advanced use a per-display gamma ramp. All display adjustments are restored when the app quits and re-applied on launch.";
 "welcome.windows.tray" = "Open the hidden-icons menu on the right of the taskbar, find this book-pages icon, then drag it into the visible area.";
 "welcome.windows.tray.title" = "Pin the tray icon";
+"error.operation" = "The operation could not be completed. Show more for details.";

@@ -40,3 +40,4 @@
 "help.windows" = "Zasićenost i RGB koriste automatsko upravljanje bojama na Windowsu 11 24H2 ili novijem, ili MHC2 profilnu metodu na Windowsu 10, međuverzije 19041–19045. Kontrast teksta, Poboljšanje videa i Napredno koriste Gamma rampu po ekranu. Sva podešavanja ekrana vraćaju se pri izlasku iz aplikacije i ponovo primjenjuju pri pokretanju.";
 "welcome.windows.tray" = "Otvorite meni skrivenih ikona desno na traci zadataka, pronađite ovu ikonu stranica knjige, pa je povucite u vidljivo područje.";
 "welcome.windows.tray.title" = "Zakači ikonu u sistemskoj traci";
+"error.operation" = "Radnju nije bilo moguće dovršiti. Proširite za detalje.";

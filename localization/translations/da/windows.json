@@ -38,5 +38,6 @@
   "night.disable.warning": "Til e-ink-skærme anbefaler vi at deaktivere Nattelys.",
   "help.windows": "Mætning og RGB bruger Automatisk farvestyring på Windows 11 24H2 eller nyere, eller MHC2-profilmetoden på Windows 10 build 19041–19045. Tekstkontrast, Videoforbedring og Avanceret bruger en gammarampe pr. skærm. Alle skærmjusteringer gendannes, når appen afsluttes, og anvendes igen ved start.",
   "welcome.windows.tray": "Åbn menuen med skjulte ikoner til højre på proceslinjen, find dette ikon med bogsider, og træk det ind i det synlige område.",
-  "welcome.windows.tray.title": "Fastgør ikonet i meddelelsesområdet"
+  "welcome.windows.tray.title": "Fastgør ikonet i meddelelsesområdet",
+  "error.operation": "Handlingen kunne ikke fuldføres. Udvid for at se detaljer."
 }

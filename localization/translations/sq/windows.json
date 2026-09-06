@@ -38,5 +38,6 @@
   "night.disable.warning": "Për ekranet e-ink, rekomandojmë çaktivizimin e Dritës së natës.",
   "help.windows": "Ngopja dhe RGB përdorin menaxhimin automatik të ngjyrave në Windows 11 24H2 ose më të ri, ose metodën e profilit MHC2 në ndërtimet 19041–19045 të Windows 10. Kontrasti i tekstit, Përmirësimi i videos dhe Të avancuara përdorin një rampë gama për çdo ekran. Të gjitha rregullimet e ekranit rikthehen kur mbyllet aplikacioni dhe riaplikohen kur ai nis.",
   "welcome.windows.tray": "Hapni menynë e ikonave të fshehura në të djathtë të shiritit të detyrave, gjeni këtë ikonë me faqe libri dhe tërhiqeni në zonën e dukshme.",
-  "welcome.windows.tray.title": "Fikso ikonën në sirtarin e sistemit"
+  "welcome.windows.tray.title": "Fikso ikonën në sirtarin e sistemit",
+  "error.operation": "Veprimi nuk mund të përfundohej. Zgjerojeni për hollësi."
 }

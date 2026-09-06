@@ -5,6 +5,10 @@ to 80 locales and keeps the main README focused on 12. Windows receives the same
 shared strings plus a complete catalog of its current localization-layer text;
 native Windows integration and acceptance are a separate handoff.
 
+Windows now integrates the shared registry and both catalogs in the development
+executable. See [Windows results](../windows/docs/handoffs/multilingual-80-results.md)
+for the build, tests, native screenshots and remaining release acceptance.
+
 The downloadable macOS 2.6 and Windows 1.2 releases still have their original
 four interface languages. This branch does not publish or replace those files.
 The website comparison describes the current downloads explicitly.
@@ -85,3 +89,9 @@ local preview artifacts, and remaining acceptance work.
 
 Arabic, Hebrew, Persian and Urdu use right-to-left layout. Numeric controls,
 RGB values and shell commands retain their intended left-to-right order.
+
+The native generator also owns `windows/src/resources.qrc`. Run it after changing
+catalogs or the locale registry; Windows CMake builds reject stale generated
+resources. Windows currently has 41 platform keys, including the AI-reviewed
+generic failure summary added during native integration. Original backend error
+text is retained as expandable diagnostics.

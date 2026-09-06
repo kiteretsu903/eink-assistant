@@ -53,7 +53,9 @@ private:
     QScrollArea *m_scroll;
     QWidget *m_content;
     QVBoxLayout *m_contentLayout;
-    QLabel *m_error;
+    QLabel *m_error=nullptr;
+    QLabel *m_errorDetails=nullptr;
+    QPushButton *m_errorToggle=nullptr;
     QWidget *m_processingIndicator;
     QLabel *m_processingMessage;
     QWidget *m_colorSafetyOverlay=nullptr;
