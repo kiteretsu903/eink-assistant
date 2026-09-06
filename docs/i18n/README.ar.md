@@ -27,8 +27,8 @@
 
 يضبط E-Ink Assistant تباين النص وتفاصيل الظلال والألوان على شاشات الحبر الإلكتروني التي تختارها. تظل الشاشات الأخرى دون تغيير. يعمل إصدار macOS في شريط القوائم، ويعمل إصدار Windows في علبة النظام.
 
-[تنزيل macOS 2.6](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-v2.6.dmg) ·
-[تنزيل Windows 1.2](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-Windows-1.2-Setup.exe) ·
+[تنزيل macOS 2.7](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.7-windows-v1.3/E-Ink-Assistant-v2.7.dmg) ·
+[تنزيل Windows 1.3](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.7-windows-v1.3/E-Ink-Assistant-Windows-1.3-Setup.exe) ·
 [عرض جميع الإصدارات](https://github.com/kiteretsu903/eink-assistant/releases)
 
 مجاني ومفتوح المصدر ومرخّص بموجب MIT.
@@ -51,7 +51,7 @@
 | الشاشات المعكوسة / المكررة | تظل الشاشات الفعلية المعكوسة قابلة للاختيار كلٌّ على حدة | تؤثر منحنيات الدرجات اللونية على المصدر المشترك؛ ويتطلب التشبّع وRGB وضع التوسيع |
 | استعادة التغييرات | تُستعاد المنحنيات وملفات تعريف الألوان والتدرّج اللوني بالنقاط المؤقتة عند الإنهاء؛ ويبقى الاستثناء من Night Shift وTrue Tone دائماً | تُستعاد تغييرات Gamma والألوان والمؤثرات المرئية والإضاءة الليلية المؤقتة عند الإنهاء؛ وتُستعاد الألوان والإضاءة الليلية أيضاً بعد خروج غير طبيعي |
 | التشغيل عند تسجيل الدخول | مدعوم | مدعوم |
-| لغات الواجهة | الإنجليزية، الصينية المبسّطة، الصينية التقليدية، اليابانية | كما في macOS |
+| لغات الواجهة | 80 لغة | كما في macOS |
 | صلاحيات المسؤول | فقط للاستثناء الاختياري من Night Shift وTrue Tone | مطلوبة للمثبّت والتطبيق |
 
 [تفاصيل macOS](../../macos/README.md) ·
@@ -87,7 +87,7 @@
 
 ### macOS 14+، أجهزة Apple silicon
 
-1. نزّل ملف DMG لإصدار macOS 2.6 من الرابط أعلاه.
+1. نزّل ملف DMG لإصدار macOS 2.7 من الرابط أعلاه.
 2. افتحه واسحب **E-Ink Assistant** إلى **التطبيقات**.
 3. حاول فتح التطبيق مرة واحدة. إذا منعه macOS، فافتح **إعدادات النظام → الخصوصية والأمن** واختر **فتح على أي حال**.
 
@@ -101,7 +101,7 @@ xattr -dr com.apple.quarantine "/Applications/E-Ink Assistant.app"
 
 ### من Windows 7 SP1 إلى Windows 11، أجهزة x64
 
-1. نزّل مثبّت Windows 1.2 من الرابط أعلاه.
+1. نزّل مثبّت Windows 1.3 من الرابط أعلاه.
 2. شغّل ملف التثبيت ووافق على طلب صلاحيات المسؤول.
 3. افتح E-Ink Assistant من قائمة «ابدأ» أو علبة النظام.
 

@@ -27,8 +27,8 @@
 
 E-Ink Assistant は、選択した電子ペーパーディスプレイのテキストコントラスト、暗部の階調、色を調整します。ほかのディスプレイは変更しません。macOS 版はメニューバーに、Windows 版はシステムトレイに常駐します。
 
-[macOS 2.6 をダウンロード](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-v2.6.dmg) ·
-[Windows 1.2 をダウンロード](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-Windows-1.2-Setup.exe) ·
+[macOS 2.7 をダウンロード](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.7-windows-v1.3/E-Ink-Assistant-v2.7.dmg) ·
+[Windows 1.3 をダウンロード](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.7-windows-v1.3/E-Ink-Assistant-Windows-1.3-Setup.exe) ·
 [すべてのリリースを見る](https://github.com/kiteretsu903/eink-assistant/releases)
 
 無料・オープンソース。MIT ライセンスで公開しています。
@@ -51,7 +51,7 @@ E-Ink Assistant は、選択した電子ペーパーディスプレイのテキ�
 | ミラーリング／複製表示 | ミラーリングされた物理ディスプレイも個別に選択可能 | トーンカーブは共有の出力元に作用します。彩度と RGB には拡張表示モードが必要です |
 | 変更を元に戻す | 一時的なカーブ、カラープロファイル、ディザリングは終了時に復元。Night Shift / True Tone の除外設定は保持されます | 一時的なガンマ、色、視覚効果、夜間モードの変更は終了時に復元。色と夜間モードは異常終了後にも復元されます |
 | ログイン時に起動 | 対応 | 対応 |
-| 表示言語 | 英語、簡体字中国語、繁体字中国語、日本語 | macOS と同じ |
+| 表示言語 | 80言語 | macOS と同じ |
 | 管理者権限 | 任意の Night Shift / True Tone 除外設定にのみ必要 | インストーラーとアプリで必要 |
 
 [macOS 版の詳細](../../macos/README.md) ·
@@ -87,7 +87,7 @@ E-Ink Assistant は、選択した電子ペーパーディスプレイのテキ�
 
 ### macOS 14+、Apple silicon
 
-1. 上のリンクから macOS 2.6 の DMG をダウンロードします。
+1. 上のリンクから macOS 2.7 の DMG をダウンロードします。
 2. DMG を開き、**E-Ink Assistant** を **アプリケーション** にドラッグします。
 3. まず一度アプリを開いてみてください。macOS にブロックされた場合は、**システム設定 → プライバシーとセキュリティ**を開き、**このまま開く**を選択します。
 
@@ -101,7 +101,7 @@ xattr -dr com.apple.quarantine "/Applications/E-Ink Assistant.app"
 
 ### Windows 7 SP1 から Windows 11 まで、x64
 
-1. 上のリンクから Windows 1.2 のインストーラーをダウンロードします。
+1. 上のリンクから Windows 1.3 のインストーラーをダウンロードします。
 2. セットアップを実行し、管理者権限の確認を承認します。
 3. スタートメニューまたはシステムトレイから E-Ink Assistant を開きます。
 

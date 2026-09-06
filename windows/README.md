@@ -4,14 +4,11 @@
 > [`docs/TECHNICAL.md`](docs/TECHNICAL.md). It is the authoritative record
 > of Windows architecture, feature gates, lifecycle rules, tests, and decisions.
 
-> **Active localization work:** the
-> [80-locale Windows handoff](docs/handoffs/multilingual-80.md) describes shared
-> translation resources and the native integration and verification still
-> required on Windows. The development executable now integrates 80 locales. See the
-> [Windows results](docs/handoffs/multilingual-80-results.md) for validation and
-> remaining release acceptance. Published downloads and Setup retain four locales.
+> **Localization:** Windows 1.3 integrates 80 application locales. The
+> [Windows results](docs/handoffs/multilingual-80-results.md) record native
+> validation and remaining platform coverage limits. Setup retains four languages.
 
-**Version status:** Windows 1.3 source baseline, currently unreleased.
+**Version status:** Windows 1.3, released with macOS 2.7 on 2026-09-06.
 
 This directory contains the native Windows edition of E-Ink Assistant. It uses
 Qt 5.15 Widgets rather than a browser runtime, keeps the original high-contrast

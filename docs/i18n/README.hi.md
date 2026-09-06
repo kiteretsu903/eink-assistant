@@ -27,8 +27,8 @@
 
 E-Ink Assistant आपके चुने हुए ई-इंक डिस्प्ले पर टेक्स्ट कंट्रास्ट, अँधेरे हिस्सों की बारीकियाँ और रंग समायोजित करता है। अन्य डिस्प्ले नहीं बदलते। macOS संस्करण मेन्यू बार में और Windows संस्करण सिस्टम ट्रे में चलता है।
 
-[macOS 2.6 डाउनलोड करें](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-v2.6.dmg) ·
-[Windows 1.2 डाउनलोड करें](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-Windows-1.2-Setup.exe) ·
+[macOS 2.7 डाउनलोड करें](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.7-windows-v1.3/E-Ink-Assistant-v2.7.dmg) ·
+[Windows 1.3 डाउनलोड करें](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.7-windows-v1.3/E-Ink-Assistant-Windows-1.3-Setup.exe) ·
 [सभी रिलीज़ देखें](https://github.com/kiteretsu903/eink-assistant/releases)
 
 मुफ़्त, खुला स्रोत और MIT लाइसेंस प्राप्त।
@@ -51,7 +51,7 @@ E-Ink Assistant आपके चुने हुए ई-इंक डिस्�
 | मिरर किए गए / डुप्लिकेट डिस्प्ले | मिरर किए गए भौतिक डिस्प्ले अलग-अलग चुने जा सकते हैं | टोन वक्र साझा स्रोत को प्रभावित करते हैं; संतृप्ति और RGB के लिए विस्तारित मोड आवश्यक है |
 | बदलाव बहाल करें | अस्थायी वक्र, रंग प्रोफ़ाइल और डिथरिंग ऐप बंद करने पर बहाल होते हैं; Night Shift / True Tone से बाहर रखने का बदलाव स्थायी रहता है | अस्थायी Gamma, रंग, दृश्य और नाइट लाइट बदलाव ऐप बंद करने पर बहाल होते हैं; असामान्य रूप से ऐप बंद होने के बाद रंग और नाइट लाइट भी बहाल होते हैं |
 | लॉगिन पर शुरू करें | समर्थित | समर्थित |
-| इंटरफ़ेस भाषाएँ | अंग्रेज़ी, सरलीकृत चीनी, पारंपरिक चीनी, जापानी | macOS जैसा |
+| इंटरफ़ेस भाषाएँ | 80 भाषाएँ | macOS जैसा |
 | व्यवस्थापक पहुँच | केवल वैकल्पिक Night Shift / True Tone से बाहर रखने के लिए | इंस्टॉलर और ऐप के लिए आवश्यक |
 
 [macOS विवरण](../../macos/README.md) ·
@@ -87,7 +87,7 @@ E-Ink Assistant आपके चुने हुए ई-इंक डिस्�
 
 ### macOS 14+, Apple silicon
 
-1. ऊपर दिए गए लिंक से macOS 2.6 DMG डाउनलोड करें।
+1. ऊपर दिए गए लिंक से macOS 2.7 DMG डाउनलोड करें।
 2. इसे खोलें और **E-Ink Assistant** को **Applications** में खींचें।
 3. ऐप को एक बार खोलने का प्रयास करें। अगर macOS रोकता है, तो **सिस्टम सेटिंग → गोपनीयता और सुरक्षा** खोलें और **फिर भी खोलें** चुनें।
 
@@ -101,7 +101,7 @@ xattr -dr com.apple.quarantine "/Applications/E-Ink Assistant.app"
 
 ### Windows 7 SP1 से Windows 11 तक, x64
 
-1. ऊपर दिए गए लिंक से Windows 1.2 इंस्टॉलर डाउनलोड करें।
+1. ऊपर दिए गए लिंक से Windows 1.3 इंस्टॉलर डाउनलोड करें।
 2. Setup चलाएँ और व्यवस्थापक अनुमति अनुरोध स्वीकार करें।
 3. Start मेन्यू या सिस्टम ट्रे से E-Ink Assistant खोलें।
 

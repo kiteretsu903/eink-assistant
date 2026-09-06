@@ -28,8 +28,8 @@
 E-Ink Assistant 為你選取的電子紙顯示器調整文字對比度、暗部細節與色彩。
 其他顯示器維持原狀。macOS 版在選單列執行；Windows 版在系統匣執行。
 
-[下載 macOS 2.6](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-v2.6.dmg) ·
-[下載 Windows 1.2](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-Windows-1.2-Setup.exe) ·
+[下載 macOS 2.7](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.7-windows-v1.3/E-Ink-Assistant-v2.7.dmg) ·
+[下載 Windows 1.3](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.7-windows-v1.3/E-Ink-Assistant-Windows-1.3-Setup.exe) ·
 [查看所有版本](https://github.com/kiteretsu903/eink-assistant/releases)
 
 免費、開放原始碼，採用 MIT 授權。
@@ -52,7 +52,7 @@ E-Ink Assistant 為你選取的電子紙顯示器調整文字對比度、暗部�
 | 鏡像／同步顯示器 | 鏡像模式下仍可個別選取實體顯示器 | 色調曲線會影響共用的訊號來源；彩度與 RGB 需要延伸模式 |
 | 還原變更 | 結束時還原暫時套用的曲線、色彩描述檔與抖動設定；Night Shift／原彩排除設定會持續保留 | 結束時還原暫時套用的 Gamma、色彩、視覺效果與夜間模式變更；異常結束後也能復原色彩與夜間模式 |
 | 登入時啟動 | 支援 | 支援 |
-| 介面語言 | 英文、簡體中文、繁體中文、日文 | 與 macOS 相同 |
+| 介面語言 | 80 種語言 | 與 macOS 相同 |
 | 管理員權限 | 僅選用的 Night Shift／原彩排除功能需要 | 安裝程式與 App 皆需要 |
 
 [macOS 詳情](../../macos/README.md) ·
@@ -88,7 +88,7 @@ E-Ink Assistant 為你選取的電子紙顯示器調整文字對比度、暗部�
 
 ### macOS 14+，Apple silicon
 
-1. 使用上方連結下載 macOS 2.6 DMG。
+1. 使用上方連結下載 macOS 2.7 DMG。
 2. 開啟檔案，並將 **E-Ink Assistant** 拖入**應用程式**。
 3. 先嘗試開啟 App 一次。如果 macOS 阻擋開啟，請前往**系統設定 → 隱私權與安全性**，
    然後選擇**強制打開**。
@@ -104,7 +104,7 @@ xattr -dr com.apple.quarantine "/Applications/E-Ink Assistant.app"
 
 ### Windows 7 SP1 至 Windows 11，x64
 
-1. 使用上方連結下載 Windows 1.2 安裝程式。
+1. 使用上方連結下載 Windows 1.3 安裝程式。
 2. 執行安裝程式，並核准管理員權限提示。
 3. 從「開始」功能表或系統匣開啟 E-Ink Assistant。
 

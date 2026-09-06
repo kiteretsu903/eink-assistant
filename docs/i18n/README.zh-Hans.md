@@ -27,8 +27,8 @@
 
 E-Ink Assistant（墨水屏助手）调节所选墨水屏的文字对比度、暗部细节与色彩。其他显示器保持不变。macOS 版运行于菜单栏，Windows 版运行于系统托盘。
 
-[下载 macOS 2.6](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-v2.6.dmg) ·
-[下载 Windows 1.2](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-Windows-1.2-Setup.exe) ·
+[下载 macOS 2.7](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.7-windows-v1.3/E-Ink-Assistant-v2.7.dmg) ·
+[下载 Windows 1.3](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.7-windows-v1.3/E-Ink-Assistant-Windows-1.3-Setup.exe) ·
 [查看所有版本](https://github.com/kiteretsu903/eink-assistant/releases)
 
 免费开源，采用 MIT 许可证。
@@ -51,7 +51,7 @@ E-Ink Assistant（墨水屏助手）调节所选墨水屏的文字对比度、�
 | 镜像 / 复制显示器 | 镜像中的物理显示器仍可单独选择 | 色调曲线影响共享的显示源；饱和度与 RGB 需要扩展模式 |
 | 恢复更改 | 退出时恢复临时曲线、颜色配置文件和抖动设置；Night Shift / 原彩显示排除设置会保留 | 退出时恢复临时伽马、色彩、视觉效果和夜间模式更改；异常退出后也可恢复色彩和夜间模式 |
 | 登录时打开 | 支持 | 支持 |
-| 界面语言 | 英语、简体中文、繁体中文、日语 | 与 macOS 相同 |
+| 界面语言 | 80 种语言 | 与 macOS 相同 |
 | 管理员权限 | 仅可选的 Night Shift / 原彩显示排除设置需要 | 安装程序和应用均需要 |
 
 [macOS 详细说明](../../macos/README.md) ·
@@ -87,7 +87,7 @@ E-Ink Assistant（墨水屏助手）调节所选墨水屏的文字对比度、�
 
 ### macOS 14+，Apple 芯片
 
-1. 使用上方链接下载 macOS 2.6 DMG。
+1. 使用上方链接下载 macOS 2.7 DMG。
 2. 打开 DMG，将 **E-Ink Assistant** 拖入**应用程序**。
 3. 先尝试打开应用一次。如果 macOS 阻止打开，请前往**系统设置 → 隐私与安全性**，选择**仍要打开**。
 
@@ -101,7 +101,7 @@ xattr -dr com.apple.quarantine "/Applications/E-Ink Assistant.app"
 
 ### Windows 7 SP1 至 Windows 11，x64
 
-1. 使用上方链接下载 Windows 1.2 安装程序。
+1. 使用上方链接下载 Windows 1.3 安装程序。
 2. 运行安装程序并批准管理员权限提示。
 3. 从开始菜单或系统托盘打开 E-Ink Assistant。
 

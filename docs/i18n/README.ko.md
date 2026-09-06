@@ -27,8 +27,8 @@
 
 E-Ink Assistant는 선택한 전자잉크 디스플레이의 텍스트 명암, 어두운 영역의 세부 표현, 색상을 조정합니다. 다른 디스플레이는 바뀌지 않습니다. macOS 버전은 메뉴 막대에서, Windows 버전은 시스템 트레이에서 실행됩니다.
 
-[macOS 2.6 다운로드](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-v2.6.dmg) ·
-[Windows 1.2 다운로드](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-Windows-1.2-Setup.exe) ·
+[macOS 2.7 다운로드](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.7-windows-v1.3/E-Ink-Assistant-v2.7.dmg) ·
+[Windows 1.3 다운로드](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.7-windows-v1.3/E-Ink-Assistant-Windows-1.3-Setup.exe) ·
 [모든 릴리스 보기](https://github.com/kiteretsu903/eink-assistant/releases)
 
 무료 오픈 소스이며 MIT 라이선스로 제공됩니다.
@@ -51,7 +51,7 @@ E-Ink Assistant는 선택한 전자잉크 디스플레이의 텍스트 명암, �
 | 미러링 / 복제 디스플레이 | 미러링된 물리 디스플레이도 개별 선택 가능 | 색조 곡선은 공유된 출력 소스에 영향을 주며, 채도와 RGB에는 확장 모드가 필요 |
 | 변경 사항 복원 | 임시 곡선, 색상 프로필, 디더링은 종료 시 복원되지만 Night Shift / True Tone 제외 설정은 유지됨 | 임시 감마, 색상, 시각 효과, 야간 모드 변경은 종료 시 복원되며, 색상과 야간 모드는 비정상 종료 후에도 복구됨 |
 | 로그인 시 실행 | 지원 | 지원 |
-| 인터페이스 언어 | 영어, 중국어 간체, 중국어 번체, 일본어 | macOS와 동일 |
+| 인터페이스 언어 | 80개 언어 | macOS와 동일 |
 | 관리자 권한 | 선택 사항인 Night Shift / True Tone 제외 기능에만 필요 | 설치 프로그램과 앱에 필요 |
 
 [macOS 상세 정보](../../macos/README.md) ·
@@ -87,7 +87,7 @@ E-Ink Assistant는 선택한 전자잉크 디스플레이의 텍스트 명암, �
 
 ### macOS 14+, Apple silicon
 
-1. 위 링크에서 macOS 2.6 DMG를 다운로드하세요.
+1. 위 링크에서 macOS 2.7 DMG를 다운로드하세요.
 2. 파일을 열고 **E-Ink Assistant**를 **응용 프로그램**으로 드래그하세요.
 3. 앱을 한 번 열어 보세요. macOS가 차단하면 **시스템 설정 → 개인정보 보호 및 보안**에서 **확인 없이 열기**를 선택하세요.
 
@@ -101,7 +101,7 @@ xattr -dr com.apple.quarantine "/Applications/E-Ink Assistant.app"
 
 ### Windows 7 SP1부터 Windows 11까지, x64
 
-1. 위 링크에서 Windows 1.2 설치 프로그램을 다운로드하세요.
+1. 위 링크에서 Windows 1.3 설치 프로그램을 다운로드하세요.
 2. 설치 프로그램을 실행하고 관리자 권한 요청을 승인하세요.
 3. 시작 메뉴 또는 시스템 트레이에서 E-Ink Assistant를 여세요.
 

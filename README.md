@@ -29,8 +29,8 @@ E-Ink Assistant adjusts text contrast, shadow detail, and color on the e-ink
 displays you choose. Other displays stay unchanged. The macOS edition runs in
 the menu bar; the Windows edition runs in the system tray.
 
-[Download macOS 2.6](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-v2.6.dmg) ·
-[Download Windows 1.2](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-Windows-1.2-Setup.exe) ·
+[Download macOS 2.7](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.7-windows-v1.3/E-Ink-Assistant-v2.7.dmg) ·
+[Download Windows 1.3](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.7-windows-v1.3/E-Ink-Assistant-Windows-1.3-Setup.exe) ·
 [View all releases](https://github.com/kiteretsu903/eink-assistant/releases)
 
 Free, open source, and MIT licensed.
@@ -53,7 +53,7 @@ Free, open source, and MIT licensed.
 | Mirrored / duplicated displays | Mirrored physical displays remain individually selectable | Tone curves affect the shared source; Saturation and RGB require Extend mode |
 | Restore changes | Temporary curves, color profiles, and dithering restore on quit; the Night Shift / True Tone exclusion is persistent | Temporary gamma, color, visual, and Night Light changes restore on quit; color and Night Light also recover after an abnormal exit |
 | Launch at login | Supported | Supported |
-| Interface languages | English, Simplified Chinese, Traditional Chinese, Japanese | Same as macOS |
+| Interface languages | 80 languages | Same as macOS |
 | Administrator access | Only for the optional Night Shift / True Tone exclusion | Required by the installer and app |
 
 [macOS details](macos/README.md) ·
@@ -90,7 +90,7 @@ Free, open source, and MIT licensed.
 
 ### macOS 14+, Apple silicon
 
-1. Download the macOS 2.6 DMG using the link above.
+1. Download the macOS 2.7 DMG using the link above.
 2. Open it and drag **E-Ink Assistant** into **Applications**.
 3. Try to open the app once. If macOS blocks it, open **System Settings →
    Privacy & Security** and select **Open Anyway**.
@@ -109,7 +109,7 @@ xattr -dr com.apple.quarantine "/Applications/E-Ink Assistant.app"
 
 ### Windows 7 SP1 to Windows 11, x64
 
-1. Download the Windows 1.2 installer using the link above.
+1. Download the Windows 1.3 installer using the link above.
 2. Run Setup and approve the administrator prompt.
 3. Open E-Ink Assistant from the Start menu or system tray.
 

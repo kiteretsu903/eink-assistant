@@ -1,6 +1,6 @@
 # Windows changelog
 
-## 1.3 — Unreleased
+## 1.3 — 2026-09-06
 
 - Integrates 80 application UI locales from the shared translation registry.
 - Adds right-to-left layout, script-aware font selection, localized preset
@@ -11,7 +11,7 @@
 - Updates application and installer version metadata to 1.3. The installer UI
   retains English, Simplified Chinese, Traditional Chinese and Japanese.
 
-## 1.2 — Unreleased
+## 1.2 — 2026-09-04
 
 - Separates an already-usable ACM pipeline from an ACM toggle that Windows
   actually permits the app to change. A retained `enabled` bit no longer causes

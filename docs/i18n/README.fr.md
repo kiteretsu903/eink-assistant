@@ -30,8 +30,8 @@ couleurs des écrans à encre électronique de votre choix. Les autres écrans r
 inchangés. La version macOS se trouve dans la barre des menus ; la version Windows,
 dans la zone de notification.
 
-[Télécharger macOS 2.6](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-v2.6.dmg) ·
-[Télécharger Windows 1.2](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.6-windows-v1.2/E-Ink-Assistant-Windows-1.2-Setup.exe) ·
+[Télécharger macOS 2.7](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.7-windows-v1.3/E-Ink-Assistant-v2.7.dmg) ·
+[Télécharger Windows 1.3](https://github.com/kiteretsu903/eink-assistant/releases/download/macos-v2.7-windows-v1.3/E-Ink-Assistant-Windows-1.3-Setup.exe) ·
 [Voir toutes les versions](https://github.com/kiteretsu903/eink-assistant/releases)
 
 Gratuit, open source et sous licence MIT.
@@ -54,7 +54,7 @@ Gratuit, open source et sous licence MIT.
 | Écrans en recopie / dupliqués | Les écrans physiques en recopie restent sélectionnables individuellement | Les courbes tonales affectent la source partagée ; la saturation et RGB nécessitent le mode Étendre |
 | Rétablissement des modifications | Les courbes temporaires, profils colorimétriques et réglages de tramage sont rétablis à la fermeture ; l’exclusion de Night Shift / True Tone persiste | Les modifications temporaires du Gamma, des couleurs, des effets visuels et de l’éclairage nocturne sont rétablies à la fermeture ; les couleurs et l’éclairage nocturne sont aussi restaurés après un arrêt anormal |
 | Ouvrir à la connexion | Pris en charge | Pris en charge |
-| Langues de l’interface | Anglais, chinois simplifié, chinois traditionnel, japonais | Comme sous macOS |
+| Langues de l’interface | 80 langues | Comme sous macOS |
 | Accès administrateur | Uniquement pour l’exclusion facultative de Night Shift / True Tone | Requis par le programme d’installation et l’application |
 
 [Détails macOS](../../macos/README.md) ·
@@ -91,7 +91,7 @@ Gratuit, open source et sous licence MIT.
 
 ### macOS 14+, Apple silicon
 
-1. Téléchargez le DMG macOS 2.6 avec le lien ci-dessus.
+1. Téléchargez le DMG macOS 2.7 avec le lien ci-dessus.
 2. Ouvrez-le et faites glisser **E-Ink Assistant** dans **Applications**.
 3. Essayez d’ouvrir l’application une première fois. Si macOS la bloque, ouvrez
    **Réglages Système → Confidentialité et sécurité**, puis sélectionnez
@@ -111,7 +111,7 @@ xattr -dr com.apple.quarantine "/Applications/E-Ink Assistant.app"
 
 ### De Windows 7 SP1 à Windows 11, x64
 
-1. Téléchargez le programme d’installation Windows 1.2 avec le lien ci-dessus.
+1. Téléchargez le programme d’installation Windows 1.3 avec le lien ci-dessus.
 2. Exécutez le programme d’installation et acceptez la demande d’autorisation administrateur.
 3. Ouvrez E-Ink Assistant depuis le menu Démarrer ou la zone de notification.
 

@@ -1,17 +1,12 @@
 # Localization
 
-The `dev/multi-lingual` branch expands the macOS application and product website
-to 80 locales and keeps the main README focused on 12. Windows receives the same
-shared strings plus a complete catalog of its current localization-layer text;
-native Windows integration and acceptance are a separate handoff.
+macOS 2.7 and Windows 1.3 provide 80 application locales. The product website
+uses the same 80-locale registry and the main README remains focused on 12.
+Shared strings and platform-specific catalogs are integrated in both executables.
 
-Windows now integrates the shared registry and both catalogs in the development
-executable. See [Windows results](../windows/docs/handoffs/multilingual-80-results.md)
-for the build, tests, native screenshots and remaining release acceptance.
-
-The downloadable macOS 2.6 and Windows 1.2 releases still have their original
-four interface languages. This branch does not publish or replace those files.
-The website comparison describes the current downloads explicitly.
+See [Windows results](../windows/docs/handoffs/multilingual-80-results.md) for
+native build/test evidence and platform coverage limits. The Windows Setup UI
+retains four languages; the application language picker provides all 80.
 
 ## Sources and generated files
 
