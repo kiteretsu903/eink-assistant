@@ -1,5 +1,16 @@
 # Windows changelog
 
+## 1.3 — Unreleased
+
+- Integrates 80 application UI locales from the shared translation registry.
+- Adds right-to-left layout, script-aware font selection, localized preset
+  dialogs and expandable diagnostics behind a translated error summary.
+- Adapts preset rows and safety dialogs to translated text and display scaling.
+- Includes registry-wide regression coverage and native snapshots at 100%,
+  150% and 200% scaling. Legacy-OS and hardware release acceptance remain open.
+- Updates application and installer version metadata to 1.3. The installer UI
+  retains English, Simplified Chinese, Traditional Chinese and Japanese.
+
 ## 1.2 — Unreleased
 
 - Separates an already-usable ACM pipeline from an ACM toggle that Windows

@@ -1,8 +1,8 @@
 # E-Ink Assistant for Windows — Engineering Reference and Decision Record
 
 **Document status:** authoritative for the Windows port
-**Application version:** 1.2.x
-**Release status:** source baseline prepared; Windows 1.2 is not released
+**Application version:** 1.3.x
+**Release status:** local application and installer baseline prepared; Windows 1.3 is not publicly released
 **Last reconciled with the source tree:** 2026-09-06
 **Primary audience:** maintainers, release engineers, and later coding agents
 
@@ -36,7 +36,7 @@ The application does not install a service, kernel driver, or vendor-specific
 display hack. It does not pretend that a screen overlay is equivalent to real
 display color calibration.
 
-Windows 1.2 is recorded consistently in CMake project metadata, the executable
+Windows 1.3 is recorded consistently in CMake project metadata, the executable
 manifest and version resource, and the visible panel header. This source-tree
 identity does not create a public release, tag, website update, or root-product
 changelog entry.
@@ -494,7 +494,7 @@ Windows gamma ramp. The curve uses a smooth transition around the knee and
 black/white point remapping while remaining monotonic and preserving valid
 endpoints.
 
-Current Windows 1.2 presets are:
+Current Windows 1.3 presets are:
 
 | Group | Preset | Black | Gamma | Knee | White |
 | --- | --- | ---: | ---: | ---: | ---: |
